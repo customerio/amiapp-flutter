@@ -1,3 +1,4 @@
+import 'package:amiapp_flutter/src/app.dart';
 import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_config.dart';
 import 'package:customer_io/customer_io_enums.dart';
@@ -11,12 +12,12 @@ void main() async {
           siteId: "your_site_id",
           apiKey: "your_api_key",
           organizationId: "your_org_id",
-          region: Region.us)
-  );
+          region: Region.us));
 
-  runApp(const MyApp());
+  runApp(const AmiApp());
 }
 
+/// TODO: Unused, delete this later with Customer.io integration
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
