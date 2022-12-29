@@ -6,8 +6,11 @@ ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
+  'Debug-staging' => :debug,
   'Profile' => :release,
+  'Profile-staging' => :release,
   'Release' => :release,
+  'Release-staging' => :release,
 }
 
 def flutter_root
@@ -32,6 +35,11 @@ target 'Runner' do
   use_modular_headers!
   pod 'FirebaseMessaging'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+
+target 'NotificationServiceExtension' do
+  use_frameworks!
+  pod 'CustomerIO/MessagingPushFCM', '~> 2.0.0'
 end
 
 post_install do |installer|

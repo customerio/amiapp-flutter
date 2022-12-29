@@ -68,6 +68,7 @@ PODS:
 
 DEPENDENCIES:
   - customer_io (from `.symlinks/plugins/customer_io/ios`)
+  - CustomerIO/MessagingPushFCM (~> 2.0.0)
   - FirebaseMessaging
   - Flutter (from `Flutter`)
 
@@ -114,6 +115,6 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
 
-PODFILE CHECKSUM: 5b4c8e33b1e8fcb485cd841163edce423a3d44ef
+PODFILE CHECKSUM: dc71572d5ccc231df645be1ca011f335a38582c7
 
 COCOAPODS: 1.11.3
