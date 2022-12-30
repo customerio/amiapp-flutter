@@ -1,9 +1,10 @@
-import 'package:amiapp_flutter/src/screens/home.dart';
-import 'package:amiapp_flutter/src/screens/sign_in.dart';
+import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
 
 import '../auth.dart';
 import '../routing/route_state.dart';
+import '../screens/home.dart';
+import '../screens/sign_in.dart';
 import 'fade_transition_page.dart';
 
 /// Top-level navigator for the app to display pages based on the `routeState`
@@ -40,7 +41,23 @@ class _AmiAppNavigatorState extends State<AmiAppNavigator> {
           // Display the sign in screen.
           FadeTransitionPage<void>(
             key: _signInKey,
-            child: const SignInScreen(),
+            child: SignInScreen(
+              onSignIn: (credentials) async {
+                var signedIn = await authState.signIn(
+                  credentials.email,
+                  credentials.fullName,
+                );
+                if (signedIn) {
+                  CustomerIO.identify(
+                      identifier: credentials.email,
+                      attributes: {
+                        "name": credentials.fullName,
+                        "email": credentials.email
+                      });
+                  await routeState.go('/home');
+                }
+              },
+            ),
           )
         else ...[
           // Display the app
