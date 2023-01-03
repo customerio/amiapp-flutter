@@ -6,6 +6,7 @@ import 'routing/delegate.dart';
 import 'routing/parsed_route.dart';
 import 'routing/parser.dart';
 import 'routing/route_state.dart';
+import 'theme/sizes.dart';
 
 /// Main entry point of AmiApp
 class AmiApp extends StatefulWidget {
@@ -68,7 +69,10 @@ class _AmiAppState extends State<AmiApp> {
         TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
       },
     );
-    const themeExtensions = <ThemeExtension<dynamic>>[];
+    const themeExtensions = <ThemeExtension<dynamic>>[
+      Sizes.defaults(),
+    ];
+    ThemeData darkTheme = ThemeData.dark();
 
     return RouteStateScope(
       notifier: _routeState,
@@ -79,14 +83,21 @@ class _AmiAppState extends State<AmiApp> {
           routeInformationParser: _routeParser,
           themeMode: ThemeMode.system,
           theme: ThemeData(
-            // This is the base theme of our application in light color.
+            // This is the base theme of our application in light mode.
             primarySwatch: Colors.blueGrey,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.black,
+              elevation: 0,
+            ),
             pageTransitionsTheme: pageTransitionsTheme,
             extensions: themeExtensions,
           ),
-          darkTheme: ThemeData.dark().copyWith(
-            // This is the base theme of our application.
-            // primarySwatch: Colors.blueGrey,
+          darkTheme: darkTheme.copyWith(
+            appBarTheme: darkTheme.appBarTheme.copyWith(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
             pageTransitionsTheme: pageTransitionsTheme,
             extensions: themeExtensions,
           ),

@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 class AppContainer extends StatelessWidget {
   const AppContainer({
     super.key,
+    this.appBar,
     required this.body,
     this.resizeToAvoidBottomInset = false,
   });
 
+  final PreferredSizeWidget? appBar;
   final Widget body;
   final bool resizeToAvoidBottomInset;
 
@@ -16,6 +18,7 @@ class AppContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      appBar: appBar,
       body: SafeArea(
         child: body,
       ),

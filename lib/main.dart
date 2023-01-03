@@ -1,8 +1,9 @@
-import 'package:amiapp_flutter/src/app.dart';
 import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_config.dart';
 import 'package:customer_io/customer_io_enums.dart';
 import 'package:flutter/material.dart';
+
+import 'src/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
