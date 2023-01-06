@@ -11,14 +11,14 @@ class ViewLogsScreen extends StatefulWidget {
 }
 
 class _ViewLogsScreenState extends State<ViewLogsScreen> {
-  final _customerIOSDK = CustomerIOSDKScope.instance().sdk;
   List<String> _logs = [];
 
   @override
   void initState() {
-    _customerIOSDK
+    CustomerIOSDKScope.instance()
+        .sdk
         .getLogs()
-        .then((logs) => setState(() => _logs = logs?.reversed.toList() ?? []));
+        .then((logs) => setState(() => _logs = logs ?? []));
     super.initState();
   }
 
@@ -27,6 +27,13 @@ class _ViewLogsScreenState extends State<ViewLogsScreen> {
     return AppContainer(
       appBar: AppBar(
         title: const Text('View Logs'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: 'Share Logs',
+            onPressed: () {},
+          ),
+        ],
       ),
       body: ListView.builder(
         // Let the ListView know how many items it needs to build.

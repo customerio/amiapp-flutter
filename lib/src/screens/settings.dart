@@ -136,7 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           valueController: _bqMinNumberOfTasksValueController,
                         ),
                         const SizedBox(height: 32),
-                        const TextHeaderSection(
+                        const TextSectionHeader(
                           text: 'Features',
                         ),
                         SwitchSettingsFormField(

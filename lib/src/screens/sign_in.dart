@@ -27,7 +27,6 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final _customerIOSDK = CustomerIOSDKScope.instance().sdk;
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -36,7 +35,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   void initState() {
-    _customerIOSDK
+    CustomerIOSDKScope.instance()
+        .sdk
         .getUserAgent()
         .then((value) => setState(() => _userAgent = value));
     super.initState();
@@ -55,7 +55,7 @@ class _SignInScreenState extends State<SignInScreen> {
             onPressed: () {
               Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
-                  builder: (context) => SettingsScreen(),
+                  builder: (context) => const SettingsScreen(),
                 ),
               );
             },

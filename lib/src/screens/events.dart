@@ -76,7 +76,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Expanded(
-                    child: TextHeaderSection(
+                    child: TextSectionHeader(
                       text: 'Properties',
                     ),
                   ),

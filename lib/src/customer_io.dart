@@ -10,7 +10,7 @@ import 'package:flutter/services.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// This is only for sample app
-/// Please feel free to place sdk code wherever suits best for your app architecture
+/// Please feel free to place sdk related code wherever suits best for your app architecture
 /// But make sure to initialize Customer.io SDK only once from your app
 
 extension CustomerIOStringExtensions on String {
@@ -313,6 +313,8 @@ class CustomerIOSDKScope {
     return _instance = null;
   }
 
+  /// Avoid holding instance on screens where possible as it may stale
+  /// when sdk settings are changed at runtime
   factory CustomerIOSDKScope.instance() {
     return _instance ?? CustomerIOSDKScope._newInstance();
   }

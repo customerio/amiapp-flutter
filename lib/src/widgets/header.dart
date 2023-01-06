@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class TextHeaderSection extends StatelessWidget {
-  const TextHeaderSection({
+class TextSectionHeader extends StatelessWidget {
+  const TextSectionHeader({
     super.key,
     required this.text,
   });

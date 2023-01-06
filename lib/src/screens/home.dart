@@ -19,13 +19,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _customerIOSDK = CustomerIOSDKScope.instance().sdk;
-
   String? _userAgent;
 
   @override
   void initState() {
-    _customerIOSDK
+    CustomerIOSDKScope.instance()
+        .sdk
         .getUserAgent()
         .then((value) => setState(() => _userAgent = value));
     super.initState();
