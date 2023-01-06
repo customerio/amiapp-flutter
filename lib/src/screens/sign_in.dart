@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
 import '../components/container.dart';
+import '../customer_io.dart';
 import '../theme/sizes.dart';
 import '../widgets/app_footer.dart';
 import 'settings.dart';
@@ -26,9 +27,20 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  final _customerIOSDK = CustomerIOSDKScope.instance().sdk;
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
+
+  String? _userAgent;
+
+  @override
+  void initState() {
+    _customerIOSDK
+        .getUserAgent()
+        .then((value) => setState(() => _userAgent = value));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +55,7 @@ class _SignInScreenState extends State<SignInScreen> {
             onPressed: () {
               Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
-                  builder: (context) => const SettingsScreen(),
+                  builder: (context) => SettingsScreen(),
                 ),
               );
             },
@@ -145,7 +157,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
                 const Spacer(),
-                const TextFooter(text: 'User agent will be shown here'),
+                TextFooter(text: _userAgent ?? ''),
               ],
             ),
           ),

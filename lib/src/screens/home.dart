@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../auth.dart';
 import '../components/container.dart';
+import '../customer_io.dart';
 import '../theme/sizes.dart';
 import '../widgets/app_footer.dart';
 import 'attributes.dart';
@@ -10,8 +11,25 @@ import 'events.dart';
 import 'logs.dart';
 import 'settings.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final _customerIOSDK = CustomerIOSDKScope.instance().sdk;
+
+  String? _userAgent;
+
+  @override
+  void initState() {
+    _customerIOSDK
+        .getUserAgent()
+        .then((value) => setState(() => _userAgent = value));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +42,7 @@ class HomeScreen extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
-                  builder: (context) => const SettingsScreen(),
+                  builder: (context) => SettingsScreen(),
                 ),
               );
             },
@@ -48,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const _ActionList(),
                 const Spacer(),
-                const TextFooter(text: 'User agent will be shown here'),
+                TextFooter(text: _userAgent ?? ''),
               ],
             ),
           ),

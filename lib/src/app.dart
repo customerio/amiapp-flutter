@@ -1,7 +1,11 @@
+import 'dart:developer' as developer;
+
+import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
 
 import 'auth.dart';
 import 'components/navigator.dart';
+import 'customer_io.dart';
 import 'routing/delegate.dart';
 import 'routing/parsed_route.dart';
 import 'routing/parser.dart';
@@ -16,9 +20,10 @@ class AmiApp extends StatefulWidget {
   State<AmiApp> createState() => _AmiAppState();
 }
 
-/// App state that holds states for authentication and navigation
+/// AmiApp state that holds states for authentication, navigation and Customer.io SDK
 class _AmiAppState extends State<AmiApp> {
   final _auth = AmiAppAuth();
+  final _customerIOSDK = CustomerIOSDKScope.instance().sdk;
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   late final RouteState _routeState;
@@ -54,6 +59,15 @@ class _AmiAppState extends State<AmiApp> {
 
     // Listen for user login state and display the sign in screen when logged out.
     _auth.addListener(_handleAuthStateChanged);
+    // Initialize Customer.io SDK once when app is initialized
+    _customerIOSDK
+        .initialize()
+        .whenComplete(
+            () => developer.log('Customer.io SDK initialization successful'))
+        .catchError((error) {
+      developer
+          .log('Customer.io SDK could not be initialized to error:  $error');
+    });
 
     super.initState();
   }
@@ -123,6 +137,7 @@ class _AmiAppState extends State<AmiApp> {
 
   void _handleAuthStateChanged() {
     if (!_auth.signedIn) {
+      CustomerIO.clearIdentify();
       _routeState.go('/signin');
     }
   }

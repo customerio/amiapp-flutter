@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../components/container.dart';
 import '../theme/sizes.dart';
 import '../widgets/attribute_form_field.dart';
+import '../widgets/header.dart';
 
 class CustomEventScreen extends StatefulWidget {
   const CustomEventScreen({super.key});
@@ -74,13 +75,9 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Properties',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
+                  const Expanded(
+                    child: TextHeaderSection(
+                      text: 'Properties',
                     ),
                   ),
                   IconButton(

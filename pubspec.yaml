@@ -41,6 +41,7 @@ dependencies:
   quiver: ^3.2.1
   collection: ^1.16.0
   email_validator: ^2.1.17
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +66,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - assets/secrets/keys.json
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

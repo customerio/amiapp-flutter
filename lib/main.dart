@@ -1,19 +1,10 @@
 import 'package:customer_io/customer_io.dart';
-import 'package:customer_io/customer_io_config.dart';
-import 'package:customer_io/customer_io_enums.dart';
 import 'package:flutter/material.dart';
 
 import 'src/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await CustomerIO.initialize(
-      config: CustomerIOConfig(
-          siteId: "your_site_id",
-          apiKey: "your_api_key",
-          organizationId: "your_org_id",
-          region: Region.us));
 
   runApp(const AmiApp());
 }
