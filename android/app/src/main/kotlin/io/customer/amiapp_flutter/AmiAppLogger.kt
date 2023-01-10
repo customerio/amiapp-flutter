@@ -5,24 +5,24 @@ import io.customer.sdk.util.Logger
 internal class AmiAppLogger(
     private val logger: Logger,
 ) : Logger {
-    internal val cachedLogs = mutableListOf<String>()
+    internal val logsCache = mutableListOf<String>()
 
     fun clearLogs() {
-        cachedLogs.clear()
+        logsCache.clear()
     }
 
     override fun debug(message: String) {
-        cachedLogs.add(message)
+        logsCache.add(message)
         logger.debug(message)
     }
 
     override fun error(message: String) {
-        cachedLogs.add(message)
+        logsCache.add(message)
         logger.error(message)
     }
 
     override fun info(message: String) {
-        cachedLogs.add(message)
+        logsCache.add(message)
         logger.error(message)
     }
 }

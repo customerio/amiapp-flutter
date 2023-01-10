@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 
 import '../components/container.dart';
@@ -13,12 +15,18 @@ class ViewLogsScreen extends StatefulWidget {
 class _ViewLogsScreenState extends State<ViewLogsScreen> {
   List<String> _logs = [];
 
-  @override
-  void initState() {
+  void _fetchLogs() {
+    developer.log('Fetching logs from SDK');
     CustomerIOSDKScope.instance()
         .sdk
         .getLogs()
         .then((logs) => setState(() => _logs = logs ?? []));
+  }
+
+  @override
+  void initState() {
+    // fetch initial logs
+    _fetchLogs();
     super.initState();
   }
 
@@ -28,6 +36,17 @@ class _ViewLogsScreenState extends State<ViewLogsScreen> {
       appBar: AppBar(
         title: const Text('View Logs'),
         actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.sort),
+            tooltip: 'Reverse order',
+            onPressed: () =>
+                setState(() => _logs = _logs.reversed.toList(growable: false)),
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh Logs',
+            onPressed: () => _fetchLogs(),
+          ),
           IconButton(
             icon: const Icon(Icons.share),
             tooltip: 'Share Logs',

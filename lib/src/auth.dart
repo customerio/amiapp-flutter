@@ -1,8 +1,18 @@
 import 'package:flutter/widgets.dart';
 
+import 'customer_io.dart';
+
 /// Dummy authentication service as we only need login details to identify user
 class AmiAppAuth extends ChangeNotifier {
-  bool _signedIn = false;
+  AmiAppAuth() {
+    _signedIn = false;
+    CustomerIOSDKScope.instance()
+        .sdk
+        .fetchProfileIdentifier()
+        .then((value) => _signedIn = value != null && value.isNotEmpty);
+  }
+
+  late bool _signedIn;
 
   bool get signedIn => _signedIn;
 

@@ -2,6 +2,7 @@ import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
 
 import '../auth.dart';
+import '../customer_io.dart';
 import '../routing/route_state.dart';
 import '../screens/home.dart';
 import '../screens/sign_in.dart';
@@ -54,6 +55,9 @@ class _AmiAppNavigatorState extends State<AmiAppNavigator> {
                         "name": credentials.fullName,
                         "email": credentials.email
                       });
+                  CustomerIOSDKScope.instance()
+                      .sdk
+                      .saveProfileIdentifier(credentials.email);
                   await routeState.go('/home');
                 }
               },

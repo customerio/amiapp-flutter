@@ -142,6 +142,7 @@ class _AmiAppState extends State<AmiApp> {
   void _handleAuthStateChanged() {
     if (!_auth.signedIn) {
       CustomerIO.clearIdentify();
+      CustomerIOSDKScope.instance().sdk.clearProfileIdentifier();
       _routeState.go(URLPath.signIn);
     }
   }

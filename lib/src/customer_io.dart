@@ -171,10 +171,29 @@ class CustomerIOSDK {
     ).then((value) => _platform.invokeMethod('captureLogs'));
   }
 
+  /// Saves profile identifier locally to identify login state and triggers
+  /// SDK call for profile identification
+  Future<bool> saveProfileIdentifier(String identifier) =>
+      SharedPreferences.getInstance().then((prefs) {
+        return prefs.setString(_profileIdentifier, identifier);
+      });
+
+  Future<String?> fetchProfileIdentifier() =>
+      SharedPreferences.getInstance().then((prefs) {
+        return prefs.getString(_profileIdentifier);
+      });
+
+  Future<bool> clearProfileIdentifier() =>
+      SharedPreferences.getInstance().then((prefs) {
+        return prefs.remove(_profileIdentifier);
+      });
+
   Future<List<String>?> getLogs() async {
     try {
-      final result = await _platform.invokeMethod('getLogs');
-      return result.map((log) => log?.toString() ?? 'NULL').toList();
+      final List<Object?> result = await _platform.invokeMethod('getLogs');
+      return result
+          .map((log) => log?.toString() ?? 'NULL')
+          .toList(growable: false);
     } on PlatformException catch (ex) {
       developer.log("Failed to get logs from SDK: '${ex.message}'", error: ex);
       return null;
@@ -282,6 +301,8 @@ class CustomerIOConfigurations {
     );
   }
 }
+
+const _profileIdentifier = 'profileIdentifier';
 
 class _ConfigurationKey {
   static const siteId = 'siteId';

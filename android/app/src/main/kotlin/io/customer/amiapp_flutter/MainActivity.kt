@@ -37,13 +37,14 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun captureLogs(): Any? {
+        amiAppLogger.clearLogs()
         customerIOInstance.diGraph.overrideDependency(Logger::class.java, amiAppLogger)
         updateDeviceToken()
         return null
     }
 
     private fun getLogs(): List<String> {
-        return amiAppLogger.cachedLogs
+        return amiAppLogger.logsCache
     }
 
     private fun clearLogs(): Any? {
