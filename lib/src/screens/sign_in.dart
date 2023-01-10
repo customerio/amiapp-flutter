@@ -32,6 +32,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
 
   String? _userAgent;
+  AutovalidateMode? _autovalidateMode;
 
   @override
   void initState() {
@@ -79,7 +80,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 const Spacer(),
                 Form(
                   key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  autovalidateMode: _autovalidateMode,
                   child: Container(
                     constraints:
                         BoxConstraints.loose(sizes.inputFieldDefault()),
@@ -124,6 +125,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               minimumSize: sizes.buttonDefault(),
                             ),
                             onPressed: () async {
+                              _autovalidateMode =
+                                  AutovalidateMode.onUserInteraction;
                               if (_formKey.currentState!.validate()) {
                                 widget.onSignIn(Credentials(
                                     _fullNameController.value.text,

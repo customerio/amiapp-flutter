@@ -55,6 +55,9 @@ class _AmiAppState extends State<AmiApp> {
         URLPath.profileAttributes,
       ],
       guard: _guard,
+
+      /// since the sign in status is identified asynchronously, we should
+      /// consider replacing this with splash screen for better user experience
       initialRoute: URLPath.signIn,
     );
 
@@ -70,6 +73,13 @@ class _AmiAppState extends State<AmiApp> {
 
     // Listen for user login state and display the sign in screen when logged out.
     _auth.addListener(_handleAuthStateChanged);
+    _auth.validate().then((signedIn) {
+      if (signedIn) {
+        // update initial route
+        _routeState.go(URLPath.home);
+      }
+      return null;
+    });
     // Initialize Customer.io SDK once when app is initialized
     _initCustomerIO();
 

@@ -4,17 +4,15 @@ import 'customer_io.dart';
 
 /// Dummy authentication service as we only need login details to identify user
 class AmiAppAuth extends ChangeNotifier {
-  AmiAppAuth() {
-    _signedIn = false;
-    CustomerIOSDKScope.instance()
-        .sdk
-        .fetchProfileIdentifier()
-        .then((value) => _signedIn = value != null && value.isNotEmpty);
-  }
-
-  late bool _signedIn;
+  bool _signedIn = false;
 
   bool get signedIn => _signedIn;
+
+  // Validates current signed in state
+  Future<bool> validate() => CustomerIOSDKScope.instance()
+      .sdk
+      .fetchProfileIdentifier()
+      .then((value) => _signedIn = value != null && value.isNotEmpty);
 
   Future<void> signOut() async {
     // Sign out after short delay
