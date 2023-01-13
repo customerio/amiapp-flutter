@@ -32,6 +32,14 @@ extension CustomerIOStringExtensions on String {
     }
   }
 
+  double? toDoubleOrNull() {
+    if (isNotEmpty) {
+      return double.tryParse(this);
+    } else {
+      return null;
+    }
+  }
+
   bool? toBoolOrNull() {
     if (equalsIgnoreCase('true')) {
       return true;
@@ -52,6 +60,10 @@ extension CustomerIOSharedPreferencesExtensions on SharedPreferences {
 
   Future<bool> setOrRemoveInt(String key, int? value) {
     return value != null ? setInt(key, value) : remove(key);
+  }
+
+  Future<bool> setOrRemoveDouble(String key, double? value) {
+    return value != null ? setDouble(key, value) : remove(key);
   }
 
   Future<bool> setOrRemoveBool(String key, bool? value) {
@@ -108,54 +120,67 @@ class CustomerIOSDK {
 
   Future<bool> saveConfigurationsToPreferences(
     CustomerIOConfigurations configurations,
-  ) async {
-    return SharedPreferences.getInstance().then((prefs) async {
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.siteId, configurations.siteId);
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.apiKey, configurations.apiKey);
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.organizationId, configurations.organizationId);
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.region, configurations.region?.toString());
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.trackingUrl, configurations.trackingUrl);
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.gistEnvironment, configurations.gistEnvironment);
-      await prefs.setOrRemoveInt(_ConfigurationKey.backgroundQueueSecondsDelay,
-          configurations.backgroundQueueSecondsDelay);
-      await prefs.setOrRemoveInt(
-          _ConfigurationKey.backgroundQueueMinNumberOfTasks,
-          configurations.backgroundQueueMinNumberOfTasks);
-      await prefs.setOrRemoveBool(_ConfigurationKey.featureEnablePush,
-          configurations.featureEnablePush);
-      await prefs.setOrRemoveBool(_ConfigurationKey.featureTrackScreens,
-          configurations.featureTrackScreens);
-      await prefs.setOrRemoveBool(
-          _ConfigurationKey.featureTrackDeviceAttributes,
-          configurations.featureTrackDeviceAttributes);
-      return prefs.setOrRemoveBool(
-          _ConfigurationKey.featureDebugMode, configurations.featureDebugMode);
-    });
-  }
+  ) =>
+      SharedPreferences.getInstance().then((prefs) async {
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.siteId, configurations.siteId);
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.apiKey, configurations.apiKey);
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.organizationId, configurations.organizationId);
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.region, configurations.region?.toString());
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.trackingUrl, configurations.trackingUrl);
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.gistEnvironment, configurations.gistEnvironment);
+        await prefs.setOrRemoveDouble(
+            _ConfigurationKey.backgroundQueueSecondsDelay,
+            configurations.backgroundQueueSecondsDelay);
+        await prefs.setOrRemoveInt(
+            _ConfigurationKey.backgroundQueueMinNumberOfTasks,
+            configurations.backgroundQueueMinNumberOfTasks);
+        await prefs.setOrRemoveBool(_ConfigurationKey.featureEnablePush,
+            configurations.featureEnablePush);
+        await prefs.setOrRemoveBool(_ConfigurationKey.featureTrackScreens,
+            configurations.featureTrackScreens);
+        await prefs.setOrRemoveBool(
+            _ConfigurationKey.featureTrackDeviceAttributes,
+            configurations.featureTrackDeviceAttributes);
+        return prefs.setOrRemoveBool(_ConfigurationKey.featureDebugMode,
+            configurations.featureDebugMode);
+      });
+
+  Future<CustomerIOConfigurations> getDefaultConfigurations() =>
+      _loadConfigurationsFromProperties().then((propsConfig) {
+        if (propsConfig != null) {
+          developer.log(
+              'Customer.io SDK configurations fetched from properties in $pathToSDKCredentials successfully');
+          return propsConfig;
+        } else {
+          return Future.error(Exception(
+              'No configurations found for Customer.io SDK at $pathToSDKCredentials'));
+        }
+      });
 
   Future<void> initialize() async {
-    var prefsConfig = await _loadConfigurationsFromPreferences();
+    final prefsConfig = await _loadConfigurationsFromPreferences();
     if (prefsConfig != null) {
       _configurations = prefsConfig;
-      developer.log('Customer.io SDK initialized from preferences');
+      developer.log(
+          'Customer.io SDK configurations loaded from preferences successfully');
     } else {
-      var propsConfig = await _loadConfigurationsFromProperties();
+      final propsConfig = await _loadConfigurationsFromProperties();
       if (propsConfig != null) {
         _configurations = propsConfig;
         developer.log(
-            'Customer.io SDK initialized from properties in $pathToSDKCredentials');
+            'Customer.io SDK configurations loaded from properties in $pathToSDKCredentials successfully');
       } else {
         // initializing with dummy values to avoid unwanted runtime exceptions
         // on configurations
         _configurations =
             CustomerIOConfigurations(siteId: 'siteId', apiKey: 'apiKey');
-        developer.log('Customer.io SDK could not be initialized properly');
+        developer.log('Customer.io SDK configurations could not be fetched');
         return Future.error(Exception(
             'No values found for Customer.io SDK in preferences or $pathToSDKCredentials'));
       }
@@ -167,6 +192,15 @@ class CustomerIOSDK {
         apiKey: _configurations.apiKey,
         organizationId: _configurations.organizationId ?? '',
         region: _configurations.region ?? Region.us,
+        //config options go here
+        autoTrackDeviceAttributes:
+            _configurations.featureTrackDeviceAttributes ?? true,
+        autoTrackPushEvents: true,
+        backgroundQueueMinNumberOfTasks:
+            _configurations.backgroundQueueMinNumberOfTasks ?? 10,
+        backgroundQueueSecondsDelay:
+            _configurations.backgroundQueueSecondsDelay ?? 30.0,
+        logLevel: CioLogLevel.debug,
       ),
     ).then((value) => _platform.invokeMethod('captureLogs'));
   }
@@ -230,7 +264,7 @@ class CustomerIOConfigurations {
   Region? region;
   String? trackingUrl;
   String? gistEnvironment;
-  int? backgroundQueueSecondsDelay;
+  double? backgroundQueueSecondsDelay;
   int? backgroundQueueMinNumberOfTasks;
   bool? featureEnablePush;
   bool? featureTrackScreens;
@@ -290,7 +324,7 @@ class CustomerIOConfigurations {
       trackingUrl: prefs.getString(_ConfigurationKey.trackingUrl),
       gistEnvironment: prefs.getString(_ConfigurationKey.gistEnvironment),
       backgroundQueueSecondsDelay:
-          prefs.getInt(_ConfigurationKey.backgroundQueueSecondsDelay),
+          prefs.getDouble(_ConfigurationKey.backgroundQueueSecondsDelay),
       backgroundQueueMinNumberOfTasks:
           prefs.getInt(_ConfigurationKey.backgroundQueueMinNumberOfTasks),
       featureEnablePush: prefs.getBool(_ConfigurationKey.featureEnablePush),

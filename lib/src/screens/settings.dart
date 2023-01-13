@@ -115,10 +115,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TextSettingsFormField(
                           labelText: 'Site ID',
                           valueController: _siteIDValueController,
+                          validator: (value) => value?.isNotEmpty == true
+                              ? null
+                              : 'Site ID cannot be empty',
                         ),
                         TextSettingsFormField(
                           labelText: 'API Key',
                           valueController: _apiKeyValueController,
+                          validator: (value) => value?.isNotEmpty == true
+                              ? null
+                              : 'API Key cannot be empty',
                         ),
                         TextSettingsFormField(
                           labelText: 'Organization ID',
@@ -177,42 +183,77 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 minimumSize: sizes.buttonDefault(),
               ),
               onPressed: () {
-                final currentConfig = widget._customerIOSDK.configurations;
-                final newConfig = CustomerIOConfigurations(
-                  siteId: _siteIDValueController.text,
-                  apiKey: _apiKeyValueController.text,
-                  organizationId: _organizationIDValueController.text,
-                  region: currentConfig.region,
-                  trackingUrl: _trackingURLValueController.text,
-                  gistEnvironment: currentConfig.gistEnvironment,
-                  backgroundQueueSecondsDelay:
-                      _bqSecondsDelayValueController.text.toIntOrNull(),
-                  backgroundQueueMinNumberOfTasks:
-                      _bqMinNumberOfTasksValueController.text.toIntOrNull(),
-                  featureEnablePush: _featureEnablePush,
-                  featureTrackScreens: _featureTrackScreens,
-                  featureTrackDeviceAttributes: _featureTrackDeviceAttributes,
-                  featureDebugMode: _featureDebugMode,
-                );
-                widget._customerIOSDK
-                    .saveConfigurationsToPreferences(newConfig)
-                    .then((success) {
-                  if (success) {
-                    Navigator.of(context).pop();
-                    // Restart app here
-                  } else {
-                    _showSnackBar(context, 'Could not save settings');
-                  }
-                  return null;
-                });
+                if (_formKey.currentState!.validate()) {
+                  final currentConfig = widget._customerIOSDK.configurations;
+                  final newConfig = CustomerIOConfigurations(
+                    siteId: _siteIDValueController.text,
+                    apiKey: _apiKeyValueController.text,
+                    organizationId: _organizationIDValueController.text,
+                    region: currentConfig.region,
+                    trackingUrl: _trackingURLValueController.text,
+                    gistEnvironment: currentConfig.gistEnvironment,
+                    backgroundQueueSecondsDelay:
+                        _bqSecondsDelayValueController.text.toDoubleOrNull(),
+                    backgroundQueueMinNumberOfTasks:
+                        _bqMinNumberOfTasksValueController.text.toIntOrNull(),
+                    featureEnablePush: _featureEnablePush,
+                    featureTrackScreens: _featureTrackScreens,
+                    featureTrackDeviceAttributes: _featureTrackDeviceAttributes,
+                    featureDebugMode: _featureDebugMode,
+                  );
+                  widget._customerIOSDK
+                      .saveConfigurationsToPreferences(newConfig)
+                      .then((success) {
+                    if (success) {
+                      _showSnackBar(context, 'Settings saved successfully');
+                      Navigator.of(context).pop();
+                      // Restart app here
+                    } else {
+                      _showSnackBar(context, 'Could not save settings');
+                    }
+                    return null;
+                  });
+                }
               },
               child: Text(
                 'Save'.toUpperCase(),
               ),
             ),
           ),
+          TextButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: sizes.buttonDefault(),
+            ),
+            onPressed: () async {
+              final defaultConfig =
+                  await widget._customerIOSDK.getDefaultConfigurations();
+              setState(() {
+                _siteIDValueController.text = defaultConfig.siteId;
+                _apiKeyValueController.text = defaultConfig.apiKey;
+                _organizationIDValueController.text =
+                    defaultConfig.organizationId ?? '';
+                _trackingURLValueController.text =
+                    defaultConfig.trackingUrl ?? '';
+                _bqSecondsDelayValueController.text =
+                    defaultConfig.backgroundQueueSecondsDelay?.toString() ?? '';
+                _bqMinNumberOfTasksValueController.text =
+                    defaultConfig.backgroundQueueMinNumberOfTasks?.toString() ??
+                        '';
+                _featureEnablePush = defaultConfig.featureEnablePush == true;
+                _featureTrackScreens =
+                    defaultConfig.featureTrackScreens == true;
+                _featureTrackDeviceAttributes =
+                    defaultConfig.featureTrackDeviceAttributes == true;
+                _featureDebugMode = defaultConfig.featureDebugMode == true;
+              });
+            },
+            child: const Text(
+              'Restore Defaults',
+            ),
+          ),
+          const SizedBox(height: 8),
           const TextFooter(
-              text: 'Editing settings will require an app restart'),
+              text: 'Please restart app after saving any modifications'),
           const SizedBox(height: 8),
         ],
       ),

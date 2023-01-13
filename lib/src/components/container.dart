@@ -7,7 +7,7 @@ class AppContainer extends StatelessWidget {
     super.key,
     this.appBar,
     required this.body,
-    this.resizeToAvoidBottomInset = false,
+    this.resizeToAvoidBottomInset = true,
   });
 
   final PreferredSizeWidget? appBar;

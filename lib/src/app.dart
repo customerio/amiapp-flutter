@@ -1,16 +1,18 @@
 import 'dart:developer' as developer;
 
-import 'package:amiapp_flutter/src/routing/url.dart';
+import 'package:amiapp_flutter/src/screens/logs.dart';
 import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'auth.dart';
-import 'components/navigator.dart';
+import 'constants.dart';
 import 'customer_io.dart';
-import 'routing/delegate.dart';
-import 'routing/parsed_route.dart';
-import 'routing/parser.dart';
-import 'routing/route_state.dart';
+import 'screens/attributes.dart';
+import 'screens/events.dart';
+import 'screens/home.dart';
+import 'screens/settings.dart';
+import 'screens/sign_in.dart';
 import 'theme/sizes.dart';
 
 /// Main entry point of AmiApp
@@ -23,16 +25,13 @@ class AmiApp extends StatefulWidget {
 
 /// App state that holds states for authentication, navigation and Customer.io SDK
 class _AmiAppState extends State<AmiApp> {
-  final _auth = AmiAppAuth();
-  final _navigatorKey = GlobalKey<NavigatorState>();
+  late final AmiAppAuth _auth = AmiAppAuth();
+  late final GoRouter _router;
 
-  late final RouteState _routeState;
-  late final SimpleRouterDelegate _routerDelegate;
-  late final TemplateRouteParser _routeParser;
+  CustomerIOSDK get customerIOSDK => CustomerIOSDKScope.instance().sdk;
 
   void _initCustomerIO() async {
-    CustomerIOSDKScope.instance()
-        .sdk
+    customerIOSDK
         .initialize()
         .whenComplete(
             () => developer.log('Customer.io SDK initialization successful'))
@@ -43,44 +42,72 @@ class _AmiAppState extends State<AmiApp> {
 
   @override
   void initState() {
-    /// Configure the parser with all of the app's allowed path templates.
-    _routeParser = TemplateRouteParser(
-      allowedPaths: [
-        URLPath.home,
-        URLPath.signIn,
-        URLPath.settings,
-        URLPath.logs,
-        URLPath.customEvents,
-        URLPath.deviceAttributes,
-        URLPath.profileAttributes,
+    // GoRouter configurations.
+    _router = GoRouter(
+      debugLogDiagnostics: true,
+      initialLocation: URLPath.home,
+      refreshListenable: _auth,
+      redirect: (BuildContext context, GoRouterState state) => _guard(state),
+      routes: [
+        GoRoute(
+          name: 'SignIn',
+          path: URLPath.signIn,
+          builder: (context, state) => SignInScreen(
+            onSignIn: (credentials) {
+              _auth
+                  .signIn(credentials.email, credentials.fullName)
+                  .then((signedIn) {
+                if (signedIn) {
+                  CustomerIO.identify(
+                      identifier: credentials.email,
+                      attributes: {
+                        "name": credentials.fullName,
+                        "email": credentials.email
+                      });
+                  customerIOSDK.saveProfileIdentifier(credentials.email);
+                  context.go(URLPath.home);
+                }
+                return signedIn;
+              });
+            },
+          ),
+        ),
+        GoRoute(
+          name: 'Settings',
+          path: URLPath.settings,
+          builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          name: 'View Logs',
+          path: URLPath.viewLogs,
+          builder: (context, state) => const ViewLogsScreen(),
+        ),
+        GoRoute(
+          name: 'Home',
+          path: URLPath.home,
+          builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          name: 'CustomEvent',
+          path: URLPath.customEvents,
+          builder: (context, state) => const CustomEventScreen(),
+        ),
+        GoRoute(
+          name: 'DeviceAttributes',
+          path: URLPath.deviceAttributes,
+          builder: (context, state) => const DeviceAttributesScreen(),
+        ),
+        GoRoute(
+          name: 'ProfileAttributes',
+          path: URLPath.profileAttributes,
+          builder: (context, state) => const ProfileAttributesScreen(),
+        ),
       ],
-      guard: _guard,
-
-      /// since the sign in status is identified asynchronously, we should
-      /// consider replacing this with splash screen for better user experience
-      initialRoute: URLPath.signIn,
-    );
-
-    _routeState = RouteState(_routeParser);
-
-    _routerDelegate = SimpleRouterDelegate(
-      routeState: _routeState,
-      navigatorKey: _navigatorKey,
-      builder: (context) => AmiAppNavigator(
-        navigatorKey: _navigatorKey,
-      ),
     );
 
     // Listen for user login state and display the sign in screen when logged out.
     _auth.addListener(_handleAuthStateChanged);
-    _auth.validate().then((signedIn) {
-      if (signedIn) {
-        // update initial route
-        _routeState.go(URLPath.home);
-      }
-      return null;
-    });
-    // Initialize Customer.io SDK once when app is initialized
+    // Initialize Customer.io SDK once when app modules are initialized.
     _initCustomerIO();
 
     super.initState();
@@ -102,66 +129,77 @@ class _AmiAppState extends State<AmiApp> {
     ];
     ThemeData darkTheme = ThemeData.dark();
 
-    return RouteStateScope(
-      notifier: _routeState,
-      child: AmiAppAuthScope(
-        notifier: _auth,
-        child: MaterialApp.router(
-          routerDelegate: _routerDelegate,
-          routeInformationParser: _routeParser,
-          themeMode: ThemeMode.system,
-          theme: ThemeData(
-            // This is the base theme of our application in light mode.
-            primarySwatch: Colors.blueGrey,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.transparent,
-              foregroundColor: Colors.black,
-              elevation: 0,
-            ),
-            pageTransitionsTheme: pageTransitionsTheme,
-            extensions: themeExtensions,
+    return AmiAppAuthScope(
+      notifier: _auth,
+      child: MaterialApp.router(
+        routerConfig: _router,
+        themeMode: ThemeMode.system,
+        theme: ThemeData(
+          // This is the base theme of our application in light mode.
+          primarySwatch: Colors.blueGrey,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.black,
+            elevation: 0,
           ),
-          darkTheme: darkTheme.copyWith(
-            appBarTheme: darkTheme.appBarTheme.copyWith(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            pageTransitionsTheme: pageTransitionsTheme,
-            extensions: themeExtensions,
+          pageTransitionsTheme: pageTransitionsTheme,
+          extensions: themeExtensions,
+        ),
+        darkTheme: darkTheme.copyWith(
+          appBarTheme: darkTheme.appBarTheme.copyWith(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
+          pageTransitionsTheme: pageTransitionsTheme,
+          extensions: themeExtensions,
         ),
       ),
     );
   }
 
-  Future<ParsedRoute> _guard(ParsedRoute from) async {
-    final signedIn = _auth.signedIn;
-    final signInRoute = ParsedRoute(URLPath.signIn, URLPath.signIn, {}, {});
+  Future<String?> _guard(GoRouterState state) async {
+    final signedIn = _auth.signedIn ?? await _auth.updateState();
 
-    // Go to sign in screen if the user is not signed in
-    if (!signedIn && from != signInRoute) {
-      return signInRoute;
+    final target = state.path ?? state.location;
+    if (signedIn && target == URLPath.signIn) {
+      return Future.value(URLPath.home);
+    } else if (!signedIn &&
+        target != URLPath.signIn &&
+        target != URLPath.settings &&
+        target != URLPath.viewLogs) {
+      return Future.value(URLPath.signIn);
     }
-    // Go to home if the user is signed in and tries to go to sign in.
-    else if (signedIn && from == signInRoute) {
-      return ParsedRoute(URLPath.home, URLPath.home, {}, {});
+
+    final screenName = _getNameFromLocation(target);
+    if (screenName?.isNotEmpty == true) {
+      CustomerIO.screen(name: screenName!);
     }
-    return from;
+
+    return null;
+  }
+
+  String? _getNameFromLocation(String location) {
+    for (final route in _router.routeInformationParser.configuration.routes) {
+      final goRoute = route as GoRoute;
+      if (goRoute.path == location) {
+        return goRoute.name;
+      }
+    }
+    return null;
   }
 
   void _handleAuthStateChanged() {
-    if (!_auth.signedIn) {
+    if (_auth.signedIn == false) {
       CustomerIO.clearIdentify();
-      CustomerIOSDKScope.instance().sdk.clearProfileIdentifier();
-      _routeState.go(URLPath.signIn);
+      customerIOSDK.clearProfileIdentifier();
+      _router.go(URLPath.signIn);
     }
   }
 
   @override
   void dispose() {
     _auth.removeListener(_handleAuthStateChanged);
-    _routeState.dispose();
-    _routerDelegate.dispose();
+    _router.dispose();
     super.dispose();
   }
 }
