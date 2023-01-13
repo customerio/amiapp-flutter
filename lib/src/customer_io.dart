@@ -202,7 +202,7 @@ class CustomerIOSDK {
             _configurations.backgroundQueueSecondsDelay ?? 30.0,
         logLevel: CioLogLevel.debug,
       ),
-    ).then((value) => _platform.invokeMethod('captureLogs'));
+    ).then((value) => _platform.invokeMethod('onSDKInitialized'));
   }
 
   /// Saves profile identifier locally to identify login state and triggers

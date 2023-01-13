@@ -19,7 +19,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? _deviceToken;
 
   late final TextEditingController _deviceTokenValueController;
   late final TextEditingController _trackingURLValueController;
@@ -36,12 +35,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void initState() {
-    widget._customerIOSDK
-        .getDeviceToken()
-        .then((value) => setState(() => _deviceToken = value));
+    widget._customerIOSDK.getDeviceToken().then((value) =>
+        setState(() => _deviceTokenValueController.text = value ?? ''));
 
     final cioConfig = widget._customerIOSDK.configurations;
-    _deviceTokenValueController = TextEditingController(text: _deviceToken);
+    _deviceTokenValueController = TextEditingController();
     _trackingURLValueController =
         TextEditingController(text: cioConfig.trackingUrl);
     _siteIDValueController = TextEditingController(text: cioConfig.siteId);
@@ -100,9 +98,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             icon: const Icon(Icons.copy),
                             tooltip: 'Copy Token',
                             onPressed: () {
-                              Clipboard.setData(
-                                      ClipboardData(text: _deviceToken))
-                                  .then((_) => _showSnackBar(context,
+                              final clipboardData = ClipboardData(
+                                  text: _deviceTokenValueController.text ?? '');
+                              Clipboard.setData(clipboardData).then((_) =>
+                                  _showSnackBar(context,
                                       'Device Token copied to clipboard'));
                             },
                           ),

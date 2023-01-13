@@ -14,6 +14,7 @@ class ViewLogsScreen extends StatefulWidget {
 
 class _ViewLogsScreenState extends State<ViewLogsScreen> {
   List<String> _logs = [];
+  bool isAscending = true;
 
   void _fetchLogs() {
     developer.log('Fetching logs from SDK');
@@ -32,20 +33,29 @@ class _ViewLogsScreenState extends State<ViewLogsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Widget sortIcon;
+    if (isAscending) {
+      sortIcon = const Icon(Icons.arrow_downward);
+    } else {
+      sortIcon = const Icon(Icons.arrow_upward);
+    }
+
     return AppContainer(
       appBar: AppBar(
         title: const Text('View Logs'),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.sort),
-            tooltip: 'Reverse order',
-            onPressed: () =>
-                setState(() => _logs = _logs.reversed.toList(growable: false)),
-          ),
-          IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh Logs',
             onPressed: () => _fetchLogs(),
+          ),
+          IconButton(
+            icon: sortIcon,
+            tooltip: 'Reverse order',
+            onPressed: () => setState(() {
+              isAscending = !isAscending;
+              _logs = _logs.reversed.toList(growable: false);
+            }),
           ),
           IconButton(
             icon: const Icon(Icons.share),
