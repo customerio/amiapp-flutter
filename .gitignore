@@ -48,3 +48,6 @@ app.*.map.json
 
 # File to keep Customer.IO keys private
 /assets/secrets/keys.json
+
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
