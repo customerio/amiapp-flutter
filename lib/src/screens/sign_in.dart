@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
 import '../components/container.dart';
+import '../customer_io.dart';
 import '../theme/sizes.dart';
 import '../widgets/app_footer.dart';
 import 'settings.dart';
@@ -29,6 +30,18 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
+
+  String? _userAgent;
+  AutovalidateMode? _autovalidateMode;
+
+  @override
+  void initState() {
+    CustomerIOSDKScope.instance()
+        .sdk
+        .getUserAgent()
+        .then((value) => setState(() => _userAgent = value));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +80,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 const Spacer(),
                 Form(
                   key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  autovalidateMode: _autovalidateMode,
                   child: Container(
                     constraints:
                         BoxConstraints.loose(sizes.inputFieldDefault()),
@@ -112,6 +125,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               minimumSize: sizes.buttonDefault(),
                             ),
                             onPressed: () async {
+                              _autovalidateMode =
+                                  AutovalidateMode.onUserInteraction;
                               if (_formKey.currentState!.validate()) {
                                 widget.onSignIn(Credentials(
                                     _fullNameController.value.text,
@@ -145,7 +160,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
                 const Spacer(),
-                const TextFooter(text: 'User agent will be shown here'),
+                TextFooter(text: _userAgent ?? ''),
               ],
             ),
           ),

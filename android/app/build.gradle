@@ -67,4 +67,9 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // Adding customer.io android sdk dependencies so we can use them in native code
+    // These are not generally needed and should be avoided
+    implementation "io.customer.android:tracking"
+    implementation "io.customer.android:messaging-push-fcm"
+    implementation "io.customer.android:messaging-in-app"
 }

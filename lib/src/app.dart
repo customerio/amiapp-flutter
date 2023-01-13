@@ -1,7 +1,12 @@
+import 'dart:developer' as developer;
+
+import 'package:amiapp_flutter/src/routing/url.dart';
+import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
 
 import 'auth.dart';
 import 'components/navigator.dart';
+import 'customer_io.dart';
 import 'routing/delegate.dart';
 import 'routing/parsed_route.dart';
 import 'routing/parser.dart';
@@ -16,7 +21,7 @@ class AmiApp extends StatefulWidget {
   State<AmiApp> createState() => _AmiAppState();
 }
 
-/// App state that holds states for authentication and navigation
+/// App state that holds states for authentication, navigation and Customer.io SDK
 class _AmiAppState extends State<AmiApp> {
   final _auth = AmiAppAuth();
   final _navigatorKey = GlobalKey<NavigatorState>();
@@ -25,21 +30,35 @@ class _AmiAppState extends State<AmiApp> {
   late final SimpleRouterDelegate _routerDelegate;
   late final TemplateRouteParser _routeParser;
 
+  void _initCustomerIO() async {
+    CustomerIOSDKScope.instance()
+        .sdk
+        .initialize()
+        .whenComplete(
+            () => developer.log('Customer.io SDK initialization successful'))
+        .catchError((error) {
+      developer.log('Customer.io SDK could not be initialized:  $error');
+    });
+  }
+
   @override
   void initState() {
     /// Configure the parser with all of the app's allowed path templates.
     _routeParser = TemplateRouteParser(
       allowedPaths: [
-        '/signin',
-        '/settings',
-        '/home',
-        '/logs',
-        '/events/custom',
-        '/events/device',
-        '/events/profile',
+        URLPath.home,
+        URLPath.signIn,
+        URLPath.settings,
+        URLPath.logs,
+        URLPath.customEvents,
+        URLPath.deviceAttributes,
+        URLPath.profileAttributes,
       ],
       guard: _guard,
-      initialRoute: '/signin',
+
+      /// since the sign in status is identified asynchronously, we should
+      /// consider replacing this with splash screen for better user experience
+      initialRoute: URLPath.signIn,
     );
 
     _routeState = RouteState(_routeParser);
@@ -54,6 +73,15 @@ class _AmiAppState extends State<AmiApp> {
 
     // Listen for user login state and display the sign in screen when logged out.
     _auth.addListener(_handleAuthStateChanged);
+    _auth.validate().then((signedIn) {
+      if (signedIn) {
+        // update initial route
+        _routeState.go(URLPath.home);
+      }
+      return null;
+    });
+    // Initialize Customer.io SDK once when app is initialized
+    _initCustomerIO();
 
     super.initState();
   }
@@ -108,22 +136,24 @@ class _AmiAppState extends State<AmiApp> {
 
   Future<ParsedRoute> _guard(ParsedRoute from) async {
     final signedIn = _auth.signedIn;
-    final signInRoute = ParsedRoute('/signin', '/signin', {}, {});
+    final signInRoute = ParsedRoute(URLPath.signIn, URLPath.signIn, {}, {});
 
-    // Go to /signin if the user is not signed in
+    // Go to sign in screen if the user is not signed in
     if (!signedIn && from != signInRoute) {
       return signInRoute;
     }
-    // Go to /home if the user is signed in and tries to go to /signin.
+    // Go to home if the user is signed in and tries to go to sign in.
     else if (signedIn && from == signInRoute) {
-      return ParsedRoute('/home', '/home', {}, {});
+      return ParsedRoute(URLPath.home, URLPath.home, {}, {});
     }
     return from;
   }
 
   void _handleAuthStateChanged() {
     if (!_auth.signedIn) {
-      _routeState.go('/signin');
+      CustomerIO.clearIdentify();
+      CustomerIOSDKScope.instance().sdk.clearProfileIdentifier();
+      _routeState.go(URLPath.signIn);
     }
   }
 
