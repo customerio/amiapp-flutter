@@ -63,19 +63,22 @@ class _ViewLogsScreenState extends State<ViewLogsScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        // Let the ListView know how many items it needs to build.
-        itemCount: _logs.length,
-        // Provide a builder function. This is where the magic happens.
-        // Convert each item into a widget based on the type of item it is.
-        itemBuilder: (context, index) {
-          final log = _logs[index];
+      body: Scrollbar(
+        thumbVisibility: true,
+        child: ListView.builder(
+          // Let the ListView know how many items it needs to build.
+          itemCount: _logs.length,
+          // Provide a builder function. This is where the magic happens.
+          // Convert each item into a widget based on the type of item it is.
+          itemBuilder: (context, index) {
+            final log = _logs[index];
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Text(log),
-          );
-        },
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(log),
+            );
+          },
+        ),
       ),
     );
   }
