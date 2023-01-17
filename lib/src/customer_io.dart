@@ -1,12 +1,11 @@
 import 'dart:async' show Future;
-import 'dart:convert' show json;
 import 'dart:developer' as developer;
 
 import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_config.dart';
 import 'package:customer_io/customer_io_enums.dart';
-import 'package:flutter/services.dart'
-    show MethodChannel, PlatformException, rootBundle;
+import 'package:flutter/services.dart' show MethodChannel, PlatformException;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// This is only for sample app
@@ -71,37 +70,31 @@ extension CustomerIOSharedPreferencesExtensions on SharedPreferences {
   }
 }
 
-const _defaultPathToSDKCredentials = 'assets/secrets/keys.json';
 const _customerIOChannelName = 'io.customer.amiapp_flutter/customer_io';
 
 class CustomerIOSDK {
   static const _platform = MethodChannel(_customerIOChannelName);
 
-  CustomerIOSDK({
-    this.pathToSDKCredentials = _defaultPathToSDKCredentials,
-  });
-
-  late String pathToSDKCredentials;
   late CustomerIOConfigurations _configurations;
 
   CustomerIOConfigurations get configurations => _configurations;
 
-  Future<CustomerIOConfigurations?> _loadConfigurationsFromProperties() async {
-    return rootBundle.loadStructuredData<CustomerIOConfigurations?>(
-      pathToSDKCredentials,
-      (value) async {
-        try {
-          return CustomerIOConfigurations.fromJson(json.decode(value));
-        } catch (ex, s) {
-          developer.log(
-            'Unable to load Customer.io credentials from $pathToSDKCredentials',
-            error: ex,
-            stackTrace: s,
-          );
-          return null;
-        }
-      },
-    );
+  CustomerIOConfigurations? _getEnvironmentConfigurations() {
+    CustomerIOConfigurations? config;
+    try {
+      if (dotenv.env.isNotEmpty) {
+        config = CustomerIOConfigurations.fromEnv();
+      }
+      developer.log(
+          'No environment file found for Customer.io, dotenv initialization: ${dotenv.isInitialized}');
+    } catch (ex, s) {
+      developer.log(
+        'Unable to load Customer.io environment',
+        error: ex,
+        stackTrace: s,
+      );
+    }
+    return config;
   }
 
   Future<CustomerIOConfigurations?> _loadConfigurationsFromPreferences() async {
@@ -151,17 +144,8 @@ class CustomerIOSDK {
             configurations.featureDebugMode);
       });
 
-  Future<CustomerIOConfigurations> getDefaultConfigurations() =>
-      _loadConfigurationsFromProperties().then((propsConfig) {
-        if (propsConfig != null) {
-          developer.log(
-              'Customer.io SDK configurations fetched from properties in $pathToSDKCredentials successfully');
-          return propsConfig;
-        } else {
-          return Future.error(Exception(
-              'No configurations found for Customer.io SDK at $pathToSDKCredentials'));
-        }
-      });
+  CustomerIOConfigurations? getDefaultConfigurations() =>
+      _getEnvironmentConfigurations();
 
   Future<void> initialize() async {
     final prefsConfig = await _loadConfigurationsFromPreferences();
@@ -170,11 +154,11 @@ class CustomerIOSDK {
       developer.log(
           'Customer.io SDK configurations loaded from preferences successfully');
     } else {
-      final propsConfig = await _loadConfigurationsFromProperties();
-      if (propsConfig != null) {
-        _configurations = propsConfig;
+      final envConfig = _getEnvironmentConfigurations();
+      if (envConfig != null) {
+        _configurations = envConfig;
         developer.log(
-            'Customer.io SDK configurations loaded from properties in $pathToSDKCredentials successfully');
+            'Customer.io SDK configurations loaded from environment successfully');
       } else {
         // initializing with dummy values to avoid unwanted runtime exceptions
         // on configurations
@@ -182,7 +166,7 @@ class CustomerIOSDK {
             CustomerIOConfigurations(siteId: 'siteId', apiKey: 'apiKey');
         developer.log('Customer.io SDK configurations could not be fetched');
         return Future.error(Exception(
-            'No values found for Customer.io SDK in preferences or $pathToSDKCredentials'));
+            'No values found for Customer.io SDK in preferences or environment'));
       }
     }
 
@@ -286,25 +270,11 @@ class CustomerIOConfigurations {
     this.featureDebugMode,
   });
 
-  factory CustomerIOConfigurations.fromJson(Map<String, dynamic> jsonMap) {
-    return CustomerIOConfigurations(
-      siteId: jsonMap[_ConfigurationKey.siteId],
-      apiKey: jsonMap[_ConfigurationKey.apiKey],
-      organizationId: jsonMap[_ConfigurationKey.organizationId],
-      region: jsonMap[_ConfigurationKey.region]?.toRegion(),
-      trackingUrl: jsonMap[_ConfigurationKey.trackingUrl],
-      gistEnvironment: jsonMap[_ConfigurationKey.gistEnvironment],
-      backgroundQueueSecondsDelay:
-          jsonMap[_ConfigurationKey.backgroundQueueSecondsDelay],
-      backgroundQueueMinNumberOfTasks:
-          jsonMap[_ConfigurationKey.backgroundQueueMinNumberOfTasks],
-      featureEnablePush: jsonMap[_ConfigurationKey.featureEnablePush],
-      featureTrackScreens: jsonMap[_ConfigurationKey.featureTrackScreens],
-      featureTrackDeviceAttributes:
-          jsonMap[_ConfigurationKey.featureTrackDeviceAttributes],
-      featureDebugMode: jsonMap[_ConfigurationKey.featureDebugMode],
-    );
-  }
+  factory CustomerIOConfigurations.fromEnv() => CustomerIOConfigurations(
+        siteId: dotenv.env[_ConfigurationKey.siteId]!,
+        apiKey: dotenv.env[_ConfigurationKey.apiKey]!,
+        organizationId: dotenv.env[_ConfigurationKey.organizationId],
+      );
 
   factory CustomerIOConfigurations.fromPrefs(SharedPreferences prefs) {
     final siteId = prefs.getString(_ConfigurationKey.siteId);
@@ -339,19 +309,19 @@ class CustomerIOConfigurations {
 const _profileIdentifier = 'profileIdentifier';
 
 class _ConfigurationKey {
-  static const siteId = 'siteId';
-  static const apiKey = 'apiKey';
-  static const organizationId = 'organizationId';
-  static const region = 'region';
-  static const trackingUrl = 'trackingUrl';
-  static const gistEnvironment = 'gistEnvironment';
-  static const backgroundQueueSecondsDelay = 'backgroundQueueSecondsDelay';
+  static const siteId = 'SITE_ID';
+  static const apiKey = 'API_KEY';
+  static const organizationId = 'ORGANIZATION_ID';
+  static const region = 'REGION';
+  static const trackingUrl = 'TRACKING_URL';
+  static const gistEnvironment = 'GIST_ENVIRONMENT';
+  static const backgroundQueueSecondsDelay = 'BACKGROUND_QUEUE_SECONDS_DELAY';
   static const backgroundQueueMinNumberOfTasks =
-      'backgroundQueueMinNumberOfTasks';
-  static const featureDebugMode = 'debugMode';
-  static const featureEnablePush = 'enablePush';
-  static const featureTrackScreens = 'trackScreens';
-  static const featureTrackDeviceAttributes = 'trackDeviceAttributes';
+      'BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS';
+  static const featureDebugMode = 'DEBUG_MODE';
+  static const featureEnablePush = 'ENABLE_PUSH';
+  static const featureTrackScreens = 'TRACK_SCREENS';
+  static const featureTrackDeviceAttributes = 'TRACK_DEVICE_ATTRIBUTES';
 }
 
 class CustomerIOSDKScope {

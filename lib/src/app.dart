@@ -190,7 +190,7 @@ class _AmiAppState extends State<AmiApp> {
 
   void _handleAuthStateChanged() {
     if (_auth.signedIn == false) {
-      CustomerIO.clearIdentify();
+      // CustomerIO.clearIdentify();
       customerIOSDK.clearProfileIdentifier();
       _router.go(URLPath.signIn);
     }

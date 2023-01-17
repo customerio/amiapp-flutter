@@ -99,7 +99,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             tooltip: 'Copy Token',
                             onPressed: () {
                               final clipboardData = ClipboardData(
-                                  text: _deviceTokenValueController.text ?? '');
+                                  text: _deviceTokenValueController.text);
                               Clipboard.setData(clipboardData).then((_) =>
                                   _showSnackBar(context,
                                       'Device Token copied to clipboard'));
@@ -225,26 +225,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             onPressed: () async {
               final defaultConfig =
-                  await widget._customerIOSDK.getDefaultConfigurations();
-              setState(() {
-                _siteIDValueController.text = defaultConfig.siteId;
-                _apiKeyValueController.text = defaultConfig.apiKey;
-                _organizationIDValueController.text =
-                    defaultConfig.organizationId ?? '';
-                _trackingURLValueController.text =
-                    defaultConfig.trackingUrl ?? '';
-                _bqSecondsDelayValueController.text =
-                    defaultConfig.backgroundQueueSecondsDelay?.toString() ?? '';
-                _bqMinNumberOfTasksValueController.text =
-                    defaultConfig.backgroundQueueMinNumberOfTasks?.toString() ??
-                        '';
-                _featureEnablePush = defaultConfig.featureEnablePush == true;
-                _featureTrackScreens =
-                    defaultConfig.featureTrackScreens == true;
-                _featureTrackDeviceAttributes =
-                    defaultConfig.featureTrackDeviceAttributes == true;
-                _featureDebugMode = defaultConfig.featureDebugMode == true;
-              });
+                  widget._customerIOSDK.getDefaultConfigurations();
+              if (defaultConfig != null) {
+                setState(() {
+                  _siteIDValueController.text = defaultConfig.siteId;
+                  _apiKeyValueController.text = defaultConfig.apiKey;
+                  _organizationIDValueController.text =
+                      defaultConfig.organizationId ?? '';
+                  _trackingURLValueController.text =
+                      defaultConfig.trackingUrl ?? '';
+                  _bqSecondsDelayValueController.text =
+                      defaultConfig.backgroundQueueSecondsDelay?.toString() ??
+                          '';
+                  _bqMinNumberOfTasksValueController.text = defaultConfig
+                          .backgroundQueueMinNumberOfTasks
+                          ?.toString() ??
+                      '';
+                  _featureEnablePush = defaultConfig.featureEnablePush == true;
+                  _featureTrackScreens =
+                      defaultConfig.featureTrackScreens == true;
+                  _featureTrackDeviceAttributes =
+                      defaultConfig.featureTrackDeviceAttributes == true;
+                  _featureDebugMode = defaultConfig.featureDebugMode == true;
+                });
+                _showSnackBar(context, 'Restored default values');
+              } else {
+                _showSnackBar(context, 'No default values found');
+              }
             },
             child: const Text(
               'Restore Defaults',
