@@ -18,8 +18,7 @@ class _ViewLogsScreenState extends State<ViewLogsScreen> {
 
   void _fetchLogs() {
     developer.log('Fetching logs from SDK');
-    CustomerIOSDKScope.instance()
-        .sdk
+    CustomerIOSDKInstance.get()
         .getLogs()
         .then((logs) => setState(() => _logs = logs ?? []));
   }

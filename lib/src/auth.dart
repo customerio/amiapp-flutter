@@ -15,7 +15,7 @@ class AmiAppAuth extends ChangeNotifier {
 
   // Validates current signed in state
   Future<bool> updateState() =>
-      CustomerIOSDKScope.instance().sdk.fetchProfileIdentifier().then((value) {
+      CustomerIOSDKInstance.get().fetchProfileIdentifier().then((value) {
         _signedIn = value != null && value.isNotEmpty;
         notifyListeners();
         return _signedIn == true;

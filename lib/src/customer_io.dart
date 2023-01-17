@@ -5,6 +5,7 @@ import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_config.dart';
 import 'package:customer_io/customer_io_enums.dart';
 import 'package:flutter/services.dart' show MethodChannel, PlatformException;
+import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,24 +73,38 @@ extension CustomerIOSharedPreferencesExtensions on SharedPreferences {
 
 const _customerIOChannelName = 'io.customer.amiapp_flutter/customer_io';
 
-class CustomerIOSDK {
+class CustomerIOSDK extends ChangeNotifier {
   static const _platform = MethodChannel(_customerIOChannelName);
 
-  late CustomerIOConfigurations _configurations;
+  CustomerIOConfigurations? _configurations;
 
-  CustomerIOConfigurations get configurations => _configurations;
+  CustomerIOConfigurations? get configurations => _configurations;
+
+  @override
+  bool operator ==(Object other) =>
+      other is CustomerIOSDK && other._configurations == _configurations;
+
+  @override
+  int get hashCode => _configurations?.hashCode ?? 0;
+
+  @override
+  void dispose() {
+    CustomerIOSDKInstance.dispose();
+    super.dispose();
+  }
 
   CustomerIOConfigurations? _getEnvironmentConfigurations() {
     CustomerIOConfigurations? config;
     try {
       if (dotenv.env.isNotEmpty) {
         config = CustomerIOConfigurations.fromEnv();
+      } else {
+        developer.log(
+            'No env file found, dotenv initialization: ${dotenv.isInitialized}');
       }
-      developer.log(
-          'No environment file found for Customer.io, dotenv initialization: ${dotenv.isInitialized}');
     } catch (ex, s) {
       developer.log(
-        'Unable to load Customer.io environment',
+        'Unable to load Customer.io configurations from env',
         error: ex,
         stackTrace: s,
       );
@@ -142,49 +157,59 @@ class CustomerIOSDK {
             configurations.featureTrackDeviceAttributes);
         return prefs.setOrRemoveBool(_ConfigurationKey.featureDebugMode,
             configurations.featureDebugMode);
+      }).then((value) {
+        notifyListeners();
+        return value;
       });
 
   CustomerIOConfigurations? getDefaultConfigurations() =>
       _getEnvironmentConfigurations();
 
   Future<void> initialize() async {
-    final prefsConfig = await _loadConfigurationsFromPreferences();
-    if (prefsConfig != null) {
-      _configurations = prefsConfig;
-      developer.log(
-          'Customer.io SDK configurations loaded from preferences successfully');
-    } else {
-      final envConfig = _getEnvironmentConfigurations();
-      if (envConfig != null) {
-        _configurations = envConfig;
+    if (_configurations == null) {
+      final prefsConfig = await _loadConfigurationsFromPreferences();
+      if (prefsConfig != null) {
+        _configurations = prefsConfig;
         developer.log(
-            'Customer.io SDK configurations loaded from environment successfully');
+            'Customer.io SDK configurations loaded from preferences successfully');
       } else {
-        // initializing with dummy values to avoid unwanted runtime exceptions
-        // on configurations
-        _configurations =
-            CustomerIOConfigurations(siteId: 'siteId', apiKey: 'apiKey');
-        developer.log('Customer.io SDK configurations could not be fetched');
-        return Future.error(Exception(
-            'No values found for Customer.io SDK in preferences or environment'));
+        final envConfig = _getEnvironmentConfigurations();
+        if (envConfig != null) {
+          _configurations = envConfig;
+          developer.log(
+              'Customer.io SDK configurations loaded from environment successfully');
+        } else {
+          developer.log('Customer.io SDK configurations could not be fetched');
+          return Future.error(Exception(
+              'No values found for Customer.io SDK in preferences or environment'));
+        }
       }
+    } else {
+      _platform.invokeMethod('clearLogs');
+      developer.log('Customer.io SDK configurations already initialized');
     }
 
+    final CioLogLevel logLevel;
+    if (_configurations?.featureDebugMode == false) {
+      logLevel = CioLogLevel.error;
+    } else {
+      logLevel = CioLogLevel.debug;
+    }
     return CustomerIO.initialize(
       config: CustomerIOConfig(
-        siteId: _configurations.siteId,
-        apiKey: _configurations.apiKey,
-        organizationId: _configurations.organizationId ?? '',
-        region: _configurations.region ?? Region.us,
+        siteId: _configurations?.siteId ?? '',
+        apiKey: _configurations?.apiKey ?? '',
+        organizationId: _configurations?.organizationId ?? '',
+        region: _configurations?.region ?? Region.us,
         //config options go here
         autoTrackDeviceAttributes:
-            _configurations.featureTrackDeviceAttributes ?? true,
+            _configurations?.featureTrackDeviceAttributes ?? true,
         autoTrackPushEvents: true,
         backgroundQueueMinNumberOfTasks:
-            _configurations.backgroundQueueMinNumberOfTasks ?? 10,
+            _configurations?.backgroundQueueMinNumberOfTasks ?? 10,
         backgroundQueueSecondsDelay:
-            _configurations.backgroundQueueSecondsDelay ?? 30.0,
-        logLevel: CioLogLevel.debug,
+            _configurations?.backgroundQueueSecondsDelay ?? 30.0,
+        logLevel: logLevel,
       ),
     ).then((value) => _platform.invokeMethod('onSDKInitialized'));
   }
@@ -250,10 +275,10 @@ class CustomerIOConfigurations {
   String? gistEnvironment;
   double? backgroundQueueSecondsDelay;
   int? backgroundQueueMinNumberOfTasks;
-  bool? featureEnablePush;
-  bool? featureTrackScreens;
-  bool? featureTrackDeviceAttributes;
-  bool? featureDebugMode;
+  bool featureEnablePush;
+  bool featureTrackScreens;
+  bool featureTrackDeviceAttributes;
+  bool featureDebugMode;
 
   CustomerIOConfigurations({
     required this.siteId,
@@ -264,10 +289,10 @@ class CustomerIOConfigurations {
     this.gistEnvironment,
     this.backgroundQueueSecondsDelay,
     this.backgroundQueueMinNumberOfTasks,
-    this.featureEnablePush,
-    this.featureTrackScreens,
-    this.featureTrackDeviceAttributes,
-    this.featureDebugMode,
+    this.featureEnablePush = true,
+    this.featureTrackScreens = true,
+    this.featureTrackDeviceAttributes = true,
+    this.featureDebugMode = true,
   });
 
   factory CustomerIOConfigurations.fromEnv() => CustomerIOConfigurations(
@@ -297,11 +322,15 @@ class CustomerIOConfigurations {
           prefs.getDouble(_ConfigurationKey.backgroundQueueSecondsDelay),
       backgroundQueueMinNumberOfTasks:
           prefs.getInt(_ConfigurationKey.backgroundQueueMinNumberOfTasks),
-      featureEnablePush: prefs.getBool(_ConfigurationKey.featureEnablePush),
-      featureTrackScreens: prefs.getBool(_ConfigurationKey.featureTrackScreens),
+      featureEnablePush:
+          prefs.getBool(_ConfigurationKey.featureEnablePush) != false,
+      featureTrackScreens:
+          prefs.getBool(_ConfigurationKey.featureTrackScreens) != false,
       featureTrackDeviceAttributes:
-          prefs.getBool(_ConfigurationKey.featureTrackDeviceAttributes),
-      featureDebugMode: prefs.getBool(_ConfigurationKey.featureDebugMode),
+          prefs.getBool(_ConfigurationKey.featureTrackDeviceAttributes) !=
+              false,
+      featureDebugMode:
+          prefs.getBool(_ConfigurationKey.featureDebugMode) != false,
     );
   }
 }
@@ -318,34 +347,36 @@ class _ConfigurationKey {
   static const backgroundQueueSecondsDelay = 'BACKGROUND_QUEUE_SECONDS_DELAY';
   static const backgroundQueueMinNumberOfTasks =
       'BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS';
-  static const featureDebugMode = 'DEBUG_MODE';
   static const featureEnablePush = 'ENABLE_PUSH';
   static const featureTrackScreens = 'TRACK_SCREENS';
   static const featureTrackDeviceAttributes = 'TRACK_DEVICE_ATTRIBUTES';
+  static const featureDebugMode = 'DEBUG_MODE';
 }
 
-class CustomerIOSDKScope {
-  static CustomerIOSDKScope? _instance;
+class CustomerIOSDKScope extends InheritedNotifier<CustomerIOSDK> {
+  const CustomerIOSDKScope({
+    required super.notifier,
+    required super.child,
+    super.key,
+  });
+}
 
-  late final CustomerIOSDK sdk;
+class CustomerIOSDKInstance {
+  final CustomerIOSDK sdk;
 
-  CustomerIOSDKScope._newInstance() {
+  CustomerIOSDKInstance._newInstance(this.sdk) {
     _instance = this;
-    sdk = CustomerIOSDK();
   }
 
-  static clear() {
-    return _instance = null;
+  factory CustomerIOSDKInstance._get() {
+    return _instance ?? CustomerIOSDKInstance._newInstance(CustomerIOSDK());
   }
 
-  /// Avoid holding instance on screens where possible as it may stale
-  /// when sdk settings are changed at runtime
-  factory CustomerIOSDKScope.instance() {
-    return _instance ?? CustomerIOSDKScope._newInstance();
+  static CustomerIOSDKInstance? _instance;
+
+  static CustomerIOSDK get() {
+    return CustomerIOSDKInstance._get().sdk;
   }
 
-  factory CustomerIOSDKScope.createNew() {
-    _instance = null;
-    return CustomerIOSDKScope._newInstance();
-  }
+  static dispose() => _instance = null;
 }

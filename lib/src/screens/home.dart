@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    final customerIOSDK = CustomerIOSDKScope.instance().sdk;
+    final customerIOSDK = CustomerIOSDKInstance.get();
     customerIOSDK
         .fetchProfileIdentifier()
         .then((value) => setState(() => _email = value));

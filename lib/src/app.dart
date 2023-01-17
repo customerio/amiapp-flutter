@@ -25,13 +25,12 @@ class AmiApp extends StatefulWidget {
 
 /// App state that holds states for authentication, navigation and Customer.io SDK
 class _AmiAppState extends State<AmiApp> {
-  late final AmiAppAuth _auth = AmiAppAuth();
+  final CustomerIOSDK _customerIOSDK = CustomerIOSDKInstance.get();
+  final AmiAppAuth _auth = AmiAppAuth();
   late final GoRouter _router;
 
-  CustomerIOSDK get customerIOSDK => CustomerIOSDKScope.instance().sdk;
-
   void _initCustomerIO() async {
-    customerIOSDK
+    _customerIOSDK
         .initialize()
         .whenComplete(
             () => developer.log('Customer.io SDK initialization successful'))
@@ -64,7 +63,7 @@ class _AmiAppState extends State<AmiApp> {
                         "name": credentials.fullName,
                         "email": credentials.email
                       });
-                  customerIOSDK.saveProfileIdentifier(credentials.email);
+                  _customerIOSDK.saveProfileIdentifier(credentials.email);
                   context.go(URLPath.home);
                 }
                 return signedIn;
@@ -109,6 +108,7 @@ class _AmiAppState extends State<AmiApp> {
     _auth.addListener(_handleAuthStateChanged);
     // Initialize Customer.io SDK once when app modules are initialized.
     _initCustomerIO();
+    _customerIOSDK.addListener(_handleSDKConfigurationsChanged);
 
     super.initState();
   }
@@ -129,29 +129,32 @@ class _AmiAppState extends State<AmiApp> {
     ];
     ThemeData darkTheme = ThemeData.dark();
 
-    return AmiAppAuthScope(
-      notifier: _auth,
-      child: MaterialApp.router(
-        routerConfig: _router,
-        themeMode: ThemeMode.system,
-        theme: ThemeData(
-          // This is the base theme of our application in light mode.
-          primarySwatch: Colors.blueGrey,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.black,
-            elevation: 0,
+    return CustomerIOSDKScope(
+      notifier: _customerIOSDK,
+      child: AmiAppAuthScope(
+        notifier: _auth,
+        child: MaterialApp.router(
+          routerConfig: _router,
+          themeMode: ThemeMode.system,
+          theme: ThemeData(
+            // This is the base theme of our application in light mode.
+            primarySwatch: Colors.blueGrey,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.black,
+              elevation: 0,
+            ),
+            pageTransitionsTheme: pageTransitionsTheme,
+            extensions: themeExtensions,
           ),
-          pageTransitionsTheme: pageTransitionsTheme,
-          extensions: themeExtensions,
-        ),
-        darkTheme: darkTheme.copyWith(
-          appBarTheme: darkTheme.appBarTheme.copyWith(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
+          darkTheme: darkTheme.copyWith(
+            appBarTheme: darkTheme.appBarTheme.copyWith(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            pageTransitionsTheme: pageTransitionsTheme,
+            extensions: themeExtensions,
           ),
-          pageTransitionsTheme: pageTransitionsTheme,
-          extensions: themeExtensions,
         ),
       ),
     );
@@ -190,16 +193,25 @@ class _AmiAppState extends State<AmiApp> {
 
   void _handleAuthStateChanged() {
     if (_auth.signedIn == false) {
-      // CustomerIO.clearIdentify();
-      customerIOSDK.clearProfileIdentifier();
+      CustomerIO.clearIdentify();
+      _customerIOSDK.clearProfileIdentifier();
       _router.go(URLPath.signIn);
     }
+  }
+
+  void _handleSDKConfigurationsChanged() {
+    _initCustomerIO();
   }
 
   @override
   void dispose() {
     _auth.removeListener(_handleAuthStateChanged);
+    _customerIOSDK.removeListener(_handleSDKConfigurationsChanged);
+
+    _auth.dispose();
+    _customerIOSDK.dispose();
     _router.dispose();
+
     super.dispose();
   }
 }
