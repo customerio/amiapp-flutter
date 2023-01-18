@@ -43,7 +43,8 @@ class _AmiAppState extends State<AmiApp> {
   void initState() {
     // GoRouter configurations.
     _router = GoRouter(
-      debugLogDiagnostics: true,
+      debugLogDiagnostics:
+          _customerIOSDK.configurations?.featureDebugMode != false,
       initialLocation: URLPath.home,
       refreshListenable: _auth,
       redirect: (BuildContext context, GoRouterState state) => _guard(state),
@@ -173,9 +174,11 @@ class _AmiAppState extends State<AmiApp> {
       return Future.value(URLPath.signIn);
     }
 
-    final screenName = _getNameFromLocation(target);
-    if (screenName?.isNotEmpty == true) {
-      CustomerIO.screen(name: screenName!);
+    if (_customerIOSDK.configurations?.featureTrackScreens != false) {
+      final screenName = _getNameFromLocation(target);
+      if (screenName?.isNotEmpty == true) {
+        CustomerIO.screen(name: screenName!);
+      }
     }
 
     return null;
