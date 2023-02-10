@@ -46,5 +46,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# File to keep Customer.IO keys private
-/assets/secrets/keys.json
+# Environment files
+*.env
+
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist

@@ -1,15 +1,15 @@
+import 'package:amiapp_flutter/src/random.dart';
 import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../auth.dart';
 import '../components/container.dart';
+import '../components/scroll_view.dart';
+import '../constants.dart';
 import '../customer_io.dart';
 import '../theme/sizes.dart';
 import '../widgets/app_footer.dart';
-import 'attributes.dart';
-import 'events.dart';
-import 'logs.dart';
-import 'settings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,12 +19,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String? _email;
   String? _userAgent;
 
   @override
   void initState() {
-    CustomerIOSDKScope.instance()
-        .sdk
+    final customerIOSDK = CustomerIOSDKInstance.get();
+    customerIOSDK
+        .fetchProfileIdentifier()
+        .then((value) => setState(() => _email = value));
+    customerIOSDK
         .getUserAgent()
         .then((value) => setState(() => _userAgent = value));
     super.initState();
@@ -39,37 +43,37 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Open SDK Configurations',
             onPressed: () {
-              Navigator.of(context).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (context) => SettingsScreen(),
-                ),
-              );
+              context.push(URLPath.settings);
             },
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                const Spacer(),
-                Center(
-                  child: Text(
-                    'What would you like to test?',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+      body: FullScreenScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Hi, $_email',
+                  style: Theme.of(context).textTheme.headline5,
                 ),
-                const _ActionList(),
-                const Spacer(),
-                TextFooter(text: _userAgent ?? ''),
-              ],
+              ),
             ),
-          ),
-        ],
+            const Spacer(),
+            Center(
+              child: Text(
+                'What would you like to test?',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            const _ActionList(),
+            const Spacer(),
+            TextFooter(text: _userAgent ?? ''),
+          ],
+        ),
       ),
     );
   }
@@ -78,12 +82,16 @@ class _HomeScreenState extends State<HomeScreen> {
 class _ActionList extends StatelessWidget {
   const _ActionList();
 
-  void sendRandomEvent() {
-    CustomerIO.track(name: "ButtonClick", attributes: {
-      'stringType': 'message',
-      'numberType': 123,
-      'booleanType': true,
-    });
+  void _showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  void _sendRandomEvent(BuildContext context) {
+    final randomValues = RandomValues();
+    final eventName = randomValues.getEventName();
+    CustomerIO.track(
+        name: eventName, attributes: randomValues.getEventAttributes());
+    _showSnackBar(context, 'Event tracked with name: $eventName');
   }
 
   @override
@@ -93,7 +101,7 @@ class _ActionList extends StatelessWidget {
     const actionItems = _ActionItem.values;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 64.0),
+      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: actionItems
@@ -104,41 +112,19 @@ class _ActionList extends StatelessWidget {
                       minimumSize: sizes.buttonDefault(),
                     ),
                     onPressed: () {
-                      late Route<dynamic>? route;
                       switch (item) {
                         case _ActionItem.randomEvent:
-                          sendRandomEvent();
-                          route = null;
-                          break;
-                        case _ActionItem.customEvent:
-                          route = MaterialPageRoute<void>(
-                            builder: (context) => const CustomEventScreen(),
-                          );
-                          break;
-                        case _ActionItem.deviceAttributes:
-                          route = MaterialPageRoute<void>(
-                            builder: (context) =>
-                                const DeviceAttributesScreen(),
-                          );
-                          break;
-                        case _ActionItem.profileAttributes:
-                          route = MaterialPageRoute<void>(
-                            builder: (context) =>
-                                const ProfileAttributesScreen(),
-                          );
-                          break;
-                        case _ActionItem.viewLogs:
-                          route = MaterialPageRoute<void>(
-                            builder: (context) => const ViewLogsScreen(),
-                          );
+                          _sendRandomEvent(context);
                           break;
                         case _ActionItem.signOut:
                           authState.signOut();
-                          route = null;
                           break;
-                      }
-                      if (route != null) {
-                        Navigator.of(context).push<void>(route);
+                        default:
+                          final String? location = item.targetLocation();
+                          if (location != null) {
+                            context.push(location);
+                          }
+                          break;
                       }
                     },
                     child: Text(
@@ -177,6 +163,23 @@ extension _ActionNames on _ActionItem {
         return "View Logs";
       case _ActionItem.signOut:
         return "Log Out";
+    }
+  }
+
+  String? targetLocation() {
+    switch (this) {
+      case _ActionItem.randomEvent:
+        return null;
+      case _ActionItem.customEvent:
+        return URLPath.customEvents;
+      case _ActionItem.deviceAttributes:
+        return URLPath.deviceAttributes;
+      case _ActionItem.profileAttributes:
+        return URLPath.profileAttributes;
+      case _ActionItem.viewLogs:
+        return URLPath.viewLogs;
+      case _ActionItem.signOut:
+        return null;
     }
   }
 }

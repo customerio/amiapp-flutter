@@ -1,6 +1,10 @@
 package io.customer.amiapp_flutter
 
+import io.customer.base.internal.InternalCustomerIOApi
 import io.customer.sdk.CustomerIO
+import io.customer.sdk.CustomerIOShared
+import io.customer.sdk.di.CustomerIOStaticComponent
+import io.customer.sdk.di.DiGraph
 import io.customer.sdk.util.Logger
 import io.customer.messagingpush.provider.FCMTokenProviderImpl
 
@@ -8,9 +12,13 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
+@OptIn(InternalCustomerIOApi::class)
 class MainActivity : FlutterActivity() {
-    private val customerIOInstance: CustomerIO by lazy { CustomerIO.instance() }
-    private val amiAppLogger: AmiAppLogger by lazy { AmiAppLogger(logger = customerIOInstance.diGraph.logger) }
+    private val sdkStaticDIGraph: CustomerIOStaticComponent by lazy { CustomerIOStaticComponent() }
+
+    // Creating new instance of [CustomerIOStaticComponent] as logger is lazy and will not be
+    // overriden if accessed before from same instance
+    private val amiAppLogger: AmiAppLogger by lazy { AmiAppLogger(logger = CustomerIOStaticComponent().logger) }
     private var deviceToken: String? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -19,13 +27,17 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun configureCustomerIOChannel(flutterEngine: FlutterEngine) {
+        // Override logger at earliest to capture all logs
+        sdkStaticDIGraph.overrideDependency(Logger::class.java, amiAppLogger)
+        CustomerIOShared.createInstance(sdkStaticDIGraph)
+
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             CUSTOMER_IO_CHANNEL,
         ).setMethodCallHandler { call, result ->
             // This method is invoked on the main thread.
             when (call.method) {
-                "captureLogs" -> result.success(captureLogs())
+                "onSDKInitialized" -> result.success(onSDKInitialized())
                 "getLogs" -> result.success(getLogs())
                 "clearLogs" -> result.success(clearLogs())
                 "getUserAgent" -> result.success(getUserAgent())
@@ -36,9 +48,7 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun captureLogs(): Any? {
-        amiAppLogger.clearLogs()
-        customerIOInstance.diGraph.overrideDependency(Logger::class.java, amiAppLogger)
+    private fun onSDKInitialized(): Any? {
         updateDeviceToken()
         return null
     }
@@ -58,7 +68,7 @@ class MainActivity : FlutterActivity() {
 
     private fun updateDeviceToken(): Any? {
         val fcmTokenProvider = FCMTokenProviderImpl(
-            logger = customerIOInstance.diGraph.logger,
+            logger = sdkStaticDIGraph.logger,
             context = this,
         )
         fcmTokenProvider.getCurrentToken { token ->

@@ -1,12 +1,12 @@
 import 'dart:async' show Future;
-import 'dart:convert' show json;
 import 'dart:developer' as developer;
 
 import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_config.dart';
 import 'package:customer_io/customer_io_enums.dart';
-import 'package:flutter/services.dart'
-    show MethodChannel, PlatformException, rootBundle;
+import 'package:flutter/services.dart' show MethodChannel, PlatformException;
+import 'package:flutter/widgets.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// This is only for sample app
@@ -27,6 +27,14 @@ extension CustomerIOStringExtensions on String {
   int? toIntOrNull() {
     if (isNotEmpty) {
       return int.tryParse(this);
+    } else {
+      return null;
+    }
+  }
+
+  double? toDoubleOrNull() {
+    if (isNotEmpty) {
+      return double.tryParse(this);
     } else {
       return null;
     }
@@ -54,42 +62,54 @@ extension CustomerIOSharedPreferencesExtensions on SharedPreferences {
     return value != null ? setInt(key, value) : remove(key);
   }
 
+  Future<bool> setOrRemoveDouble(String key, double? value) {
+    return value != null ? setDouble(key, value) : remove(key);
+  }
+
   Future<bool> setOrRemoveBool(String key, bool? value) {
     return value != null ? setBool(key, value) : remove(key);
   }
 }
 
-const _defaultPathToSDKCredentials = 'assets/secrets/keys.json';
 const _customerIOChannelName = 'io.customer.amiapp_flutter/customer_io';
 
-class CustomerIOSDK {
+class CustomerIOSDK extends ChangeNotifier {
   static const _platform = MethodChannel(_customerIOChannelName);
 
-  CustomerIOSDK({
-    this.pathToSDKCredentials = _defaultPathToSDKCredentials,
-  });
+  CustomerIOConfigurations? _configurations;
 
-  late String pathToSDKCredentials;
-  late CustomerIOConfigurations _configurations;
+  CustomerIOConfigurations? get configurations => _configurations;
 
-  CustomerIOConfigurations get configurations => _configurations;
+  @override
+  bool operator ==(Object other) =>
+      other is CustomerIOSDK && other._configurations == _configurations;
 
-  Future<CustomerIOConfigurations?> _loadConfigurationsFromProperties() async {
-    return rootBundle.loadStructuredData<CustomerIOConfigurations?>(
-      pathToSDKCredentials,
-      (value) async {
-        try {
-          return CustomerIOConfigurations.fromJson(json.decode(value));
-        } catch (ex, s) {
-          developer.log(
-            'Unable to load Customer.io credentials from $pathToSDKCredentials',
-            error: ex,
-            stackTrace: s,
-          );
-          return null;
-        }
-      },
-    );
+  @override
+  int get hashCode => _configurations?.hashCode ?? 0;
+
+  @override
+  void dispose() {
+    CustomerIOSDKInstance.dispose();
+    super.dispose();
+  }
+
+  CustomerIOConfigurations? _getEnvironmentConfigurations() {
+    CustomerIOConfigurations? config;
+    try {
+      if (dotenv.env.isNotEmpty) {
+        config = CustomerIOConfigurations.fromEnv();
+      } else {
+        developer.log(
+            'No env file found, dotenv initialization: ${dotenv.isInitialized}');
+      }
+    } catch (ex, s) {
+      developer.log(
+        'Unable to load Customer.io configurations from env',
+        error: ex,
+        stackTrace: s,
+      );
+    }
+    return config;
   }
 
   Future<CustomerIOConfigurations?> _loadConfigurationsFromPreferences() async {
@@ -108,67 +128,90 @@ class CustomerIOSDK {
 
   Future<bool> saveConfigurationsToPreferences(
     CustomerIOConfigurations configurations,
-  ) async {
-    return SharedPreferences.getInstance().then((prefs) async {
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.siteId, configurations.siteId);
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.apiKey, configurations.apiKey);
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.organizationId, configurations.organizationId);
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.region, configurations.region?.toString());
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.trackingUrl, configurations.trackingUrl);
-      await prefs.setOrRemoveString(
-          _ConfigurationKey.gistEnvironment, configurations.gistEnvironment);
-      await prefs.setOrRemoveInt(_ConfigurationKey.backgroundQueueSecondsDelay,
-          configurations.backgroundQueueSecondsDelay);
-      await prefs.setOrRemoveInt(
-          _ConfigurationKey.backgroundQueueMinNumberOfTasks,
-          configurations.backgroundQueueMinNumberOfTasks);
-      await prefs.setOrRemoveBool(_ConfigurationKey.featureEnablePush,
-          configurations.featureEnablePush);
-      await prefs.setOrRemoveBool(_ConfigurationKey.featureTrackScreens,
-          configurations.featureTrackScreens);
-      await prefs.setOrRemoveBool(
-          _ConfigurationKey.featureTrackDeviceAttributes,
-          configurations.featureTrackDeviceAttributes);
-      return prefs.setOrRemoveBool(
-          _ConfigurationKey.featureDebugMode, configurations.featureDebugMode);
-    });
-  }
+  ) =>
+      SharedPreferences.getInstance().then((prefs) async {
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.siteId, configurations.siteId);
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.apiKey, configurations.apiKey);
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.organizationId, configurations.organizationId);
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.region, configurations.region?.toString());
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.trackingUrl, configurations.trackingUrl);
+        await prefs.setOrRemoveString(
+            _ConfigurationKey.gistEnvironment, configurations.gistEnvironment);
+        await prefs.setOrRemoveDouble(
+            _ConfigurationKey.backgroundQueueSecondsDelay,
+            configurations.backgroundQueueSecondsDelay);
+        await prefs.setOrRemoveInt(
+            _ConfigurationKey.backgroundQueueMinNumberOfTasks,
+            configurations.backgroundQueueMinNumberOfTasks);
+        await prefs.setOrRemoveBool(_ConfigurationKey.featureEnablePush,
+            configurations.featureEnablePush);
+        await prefs.setOrRemoveBool(_ConfigurationKey.featureTrackScreens,
+            configurations.featureTrackScreens);
+        await prefs.setOrRemoveBool(
+            _ConfigurationKey.featureTrackDeviceAttributes,
+            configurations.featureTrackDeviceAttributes);
+        return prefs.setOrRemoveBool(_ConfigurationKey.featureDebugMode,
+            configurations.featureDebugMode);
+      }).then((value) {
+        notifyListeners();
+        return value;
+      });
+
+  CustomerIOConfigurations? getDefaultConfigurations() =>
+      _getEnvironmentConfigurations();
 
   Future<void> initialize() async {
-    var prefsConfig = await _loadConfigurationsFromPreferences();
-    if (prefsConfig != null) {
-      _configurations = prefsConfig;
-      developer.log('Customer.io SDK initialized from preferences');
-    } else {
-      var propsConfig = await _loadConfigurationsFromProperties();
-      if (propsConfig != null) {
-        _configurations = propsConfig;
+    if (_configurations == null) {
+      final prefsConfig = await _loadConfigurationsFromPreferences();
+      if (prefsConfig != null) {
+        _configurations = prefsConfig;
         developer.log(
-            'Customer.io SDK initialized from properties in $pathToSDKCredentials');
+            'Customer.io SDK configurations loaded from preferences successfully');
       } else {
-        // initializing with dummy values to avoid unwanted runtime exceptions
-        // on configurations
-        _configurations =
-            CustomerIOConfigurations(siteId: 'siteId', apiKey: 'apiKey');
-        developer.log('Customer.io SDK could not be initialized properly');
-        return Future.error(Exception(
-            'No values found for Customer.io SDK in preferences or $pathToSDKCredentials'));
+        final envConfig = _getEnvironmentConfigurations();
+        if (envConfig != null) {
+          _configurations = envConfig;
+          developer.log(
+              'Customer.io SDK configurations loaded from environment successfully');
+        } else {
+          developer.log('Customer.io SDK configurations could not be fetched');
+          return Future.error(Exception(
+              'No values found for Customer.io SDK in preferences or environment'));
+        }
       }
+    } else {
+      _platform.invokeMethod('clearLogs');
+      developer.log('Customer.io SDK configurations already initialized');
     }
 
+    final CioLogLevel logLevel;
+    if (_configurations?.featureDebugMode == false) {
+      logLevel = CioLogLevel.error;
+    } else {
+      logLevel = CioLogLevel.debug;
+    }
     return CustomerIO.initialize(
       config: CustomerIOConfig(
-        siteId: _configurations.siteId,
-        apiKey: _configurations.apiKey,
-        organizationId: _configurations.organizationId ?? '',
-        region: _configurations.region ?? Region.us,
+        siteId: _configurations?.siteId ?? '',
+        apiKey: _configurations?.apiKey ?? '',
+        organizationId: _configurations?.organizationId ?? '',
+        region: _configurations?.region ?? Region.us,
+        //config options go here
+        autoTrackDeviceAttributes:
+            _configurations?.featureTrackDeviceAttributes ?? true,
+        autoTrackPushEvents: true,
+        backgroundQueueMinNumberOfTasks:
+            _configurations?.backgroundQueueMinNumberOfTasks ?? 10,
+        backgroundQueueSecondsDelay:
+            _configurations?.backgroundQueueSecondsDelay ?? 30.0,
+        logLevel: logLevel,
       ),
-    ).then((value) => _platform.invokeMethod('captureLogs'));
+    ).then((value) => _platform.invokeMethod('onSDKInitialized'));
   }
 
   /// Saves profile identifier locally to identify login state and triggers
@@ -230,12 +273,12 @@ class CustomerIOConfigurations {
   Region? region;
   String? trackingUrl;
   String? gistEnvironment;
-  int? backgroundQueueSecondsDelay;
+  double? backgroundQueueSecondsDelay;
   int? backgroundQueueMinNumberOfTasks;
-  bool? featureEnablePush;
-  bool? featureTrackScreens;
-  bool? featureTrackDeviceAttributes;
-  bool? featureDebugMode;
+  bool featureEnablePush;
+  bool featureTrackScreens;
+  bool featureTrackDeviceAttributes;
+  bool featureDebugMode;
 
   CustomerIOConfigurations({
     required this.siteId,
@@ -246,31 +289,17 @@ class CustomerIOConfigurations {
     this.gistEnvironment,
     this.backgroundQueueSecondsDelay,
     this.backgroundQueueMinNumberOfTasks,
-    this.featureEnablePush,
-    this.featureTrackScreens,
-    this.featureTrackDeviceAttributes,
-    this.featureDebugMode,
+    this.featureEnablePush = true,
+    this.featureTrackScreens = true,
+    this.featureTrackDeviceAttributes = true,
+    this.featureDebugMode = true,
   });
 
-  factory CustomerIOConfigurations.fromJson(Map<String, dynamic> jsonMap) {
-    return CustomerIOConfigurations(
-      siteId: jsonMap[_ConfigurationKey.siteId],
-      apiKey: jsonMap[_ConfigurationKey.apiKey],
-      organizationId: jsonMap[_ConfigurationKey.organizationId],
-      region: jsonMap[_ConfigurationKey.region]?.toRegion(),
-      trackingUrl: jsonMap[_ConfigurationKey.trackingUrl],
-      gistEnvironment: jsonMap[_ConfigurationKey.gistEnvironment],
-      backgroundQueueSecondsDelay:
-          jsonMap[_ConfigurationKey.backgroundQueueSecondsDelay],
-      backgroundQueueMinNumberOfTasks:
-          jsonMap[_ConfigurationKey.backgroundQueueMinNumberOfTasks],
-      featureEnablePush: jsonMap[_ConfigurationKey.featureEnablePush],
-      featureTrackScreens: jsonMap[_ConfigurationKey.featureTrackScreens],
-      featureTrackDeviceAttributes:
-          jsonMap[_ConfigurationKey.featureTrackDeviceAttributes],
-      featureDebugMode: jsonMap[_ConfigurationKey.featureDebugMode],
-    );
-  }
+  factory CustomerIOConfigurations.fromEnv() => CustomerIOConfigurations(
+        siteId: dotenv.env[_ConfigurationKey.siteId]!,
+        apiKey: dotenv.env[_ConfigurationKey.apiKey]!,
+        organizationId: dotenv.env[_ConfigurationKey.organizationId],
+      );
 
   factory CustomerIOConfigurations.fromPrefs(SharedPreferences prefs) {
     final siteId = prefs.getString(_ConfigurationKey.siteId);
@@ -290,14 +319,18 @@ class CustomerIOConfigurations {
       trackingUrl: prefs.getString(_ConfigurationKey.trackingUrl),
       gistEnvironment: prefs.getString(_ConfigurationKey.gistEnvironment),
       backgroundQueueSecondsDelay:
-          prefs.getInt(_ConfigurationKey.backgroundQueueSecondsDelay),
+          prefs.getDouble(_ConfigurationKey.backgroundQueueSecondsDelay),
       backgroundQueueMinNumberOfTasks:
           prefs.getInt(_ConfigurationKey.backgroundQueueMinNumberOfTasks),
-      featureEnablePush: prefs.getBool(_ConfigurationKey.featureEnablePush),
-      featureTrackScreens: prefs.getBool(_ConfigurationKey.featureTrackScreens),
+      featureEnablePush:
+          prefs.getBool(_ConfigurationKey.featureEnablePush) != false,
+      featureTrackScreens:
+          prefs.getBool(_ConfigurationKey.featureTrackScreens) != false,
       featureTrackDeviceAttributes:
-          prefs.getBool(_ConfigurationKey.featureTrackDeviceAttributes),
-      featureDebugMode: prefs.getBool(_ConfigurationKey.featureDebugMode),
+          prefs.getBool(_ConfigurationKey.featureTrackDeviceAttributes) !=
+              false,
+      featureDebugMode:
+          prefs.getBool(_ConfigurationKey.featureDebugMode) != false,
     );
   }
 }
@@ -305,43 +338,45 @@ class CustomerIOConfigurations {
 const _profileIdentifier = 'profileIdentifier';
 
 class _ConfigurationKey {
-  static const siteId = 'siteId';
-  static const apiKey = 'apiKey';
-  static const organizationId = 'organizationId';
-  static const region = 'region';
-  static const trackingUrl = 'trackingUrl';
-  static const gistEnvironment = 'gistEnvironment';
-  static const backgroundQueueSecondsDelay = 'backgroundQueueSecondsDelay';
+  static const siteId = 'SITE_ID';
+  static const apiKey = 'API_KEY';
+  static const organizationId = 'ORGANIZATION_ID';
+  static const region = 'REGION';
+  static const trackingUrl = 'TRACKING_URL';
+  static const gistEnvironment = 'GIST_ENVIRONMENT';
+  static const backgroundQueueSecondsDelay = 'BACKGROUND_QUEUE_SECONDS_DELAY';
   static const backgroundQueueMinNumberOfTasks =
-      'backgroundQueueMinNumberOfTasks';
-  static const featureDebugMode = 'debugMode';
-  static const featureEnablePush = 'enablePush';
-  static const featureTrackScreens = 'trackScreens';
-  static const featureTrackDeviceAttributes = 'trackDeviceAttributes';
+      'BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS';
+  static const featureEnablePush = 'ENABLE_PUSH';
+  static const featureTrackScreens = 'TRACK_SCREENS';
+  static const featureTrackDeviceAttributes = 'TRACK_DEVICE_ATTRIBUTES';
+  static const featureDebugMode = 'DEBUG_MODE';
 }
 
-class CustomerIOSDKScope {
-  static CustomerIOSDKScope? _instance;
+class CustomerIOSDKScope extends InheritedNotifier<CustomerIOSDK> {
+  const CustomerIOSDKScope({
+    required super.notifier,
+    required super.child,
+    super.key,
+  });
+}
 
-  late final CustomerIOSDK sdk;
+class CustomerIOSDKInstance {
+  final CustomerIOSDK sdk;
 
-  CustomerIOSDKScope._newInstance() {
+  CustomerIOSDKInstance._newInstance(this.sdk) {
     _instance = this;
-    sdk = CustomerIOSDK();
   }
 
-  static clear() {
-    return _instance = null;
+  factory CustomerIOSDKInstance._get() {
+    return _instance ?? CustomerIOSDKInstance._newInstance(CustomerIOSDK());
   }
 
-  /// Avoid holding instance on screens where possible as it may stale
-  /// when sdk settings are changed at runtime
-  factory CustomerIOSDKScope.instance() {
-    return _instance ?? CustomerIOSDKScope._newInstance();
+  static CustomerIOSDKInstance? _instance;
+
+  static CustomerIOSDK get() {
+    return CustomerIOSDKInstance._get().sdk;
   }
 
-  factory CustomerIOSDKScope.createNew() {
-    _instance = null;
-    return CustomerIOSDKScope._newInstance();
-  }
+  static dispose() => _instance = null;
 }

@@ -1,11 +1,14 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../components/container.dart';
+import '../components/scroll_view.dart';
+import '../constants.dart';
 import '../customer_io.dart';
+import '../random.dart';
 import '../theme/sizes.dart';
 import '../widgets/app_footer.dart';
-import 'settings.dart';
 
 class Credentials {
   final String email;
@@ -32,12 +35,11 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
 
   String? _userAgent;
-  AutovalidateMode? _autovalidateMode;
+  AutovalidateMode? _autoValidateMode;
 
   @override
   void initState() {
-    CustomerIOSDKScope.instance()
-        .sdk
+    CustomerIOSDKInstance.get()
         .getUserAgent()
         .then((value) => setState(() => _userAgent = value));
     super.initState();
@@ -54,117 +56,107 @@ class _SignInScreenState extends State<SignInScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Open SDK Configurations',
             onPressed: () {
-              Navigator.of(context).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (context) => const SettingsScreen(),
-                ),
-              );
+              context.push(URLPath.settings);
             },
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Center(
-                  child: Text(
-                    'Flutter Ami App',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                ),
-                const Spacer(),
-                Form(
-                  key: _formKey,
-                  autovalidateMode: _autovalidateMode,
-                  child: Container(
-                    constraints:
-                        BoxConstraints.loose(sizes.inputFieldDefault()),
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        TextFormField(
-                          controller: _fullNameController,
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelText: 'First Name',
-                          ),
-                          keyboardType: TextInputType.name,
-                          textCapitalization: TextCapitalization.words,
-                          textInputAction: TextInputAction.next,
-                          validator: (value) => value?.isNotEmpty == true
-                              ? null
-                              : 'Name cannot be empty',
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: TextFormField(
-                            controller: _emailController,
-                            decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
-                              labelText: 'Email',
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.done,
-                            validator: (value) =>
-                                EmailValidator.validate(value ?? '')
-                                    ? null
-                                    : 'Please enter valid email',
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 48.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: sizes.buttonDefault(),
-                            ),
-                            onPressed: () async {
-                              _autovalidateMode =
-                                  AutovalidateMode.onUserInteraction;
-                              if (_formKey.currentState!.validate()) {
-                                widget.onSignIn(Credentials(
-                                    _fullNameController.value.text,
-                                    _emailController.value.text));
-                              }
-                            },
-                            child: Text(
-                              'Login'.toUpperCase(),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: TextButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: sizes.buttonDefault(),
-                            ),
-                            onPressed: () async {
-                              widget.onSignIn(Credentials(
-                                'flutter-ready-to-roll',
-                                'roll@flutter.io',
-                              ));
-                            },
-                            child: const Text(
-                              'Generate Random Login',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                TextFooter(text: _userAgent ?? ''),
-              ],
+      body: FullScreenScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Center(
+              child: Text(
+                'Flutter Ami App',
+                style: Theme.of(context).textTheme.headline4,
+              ),
             ),
-          ),
-        ],
+            const Spacer(),
+            Form(
+              key: _formKey,
+              autovalidateMode: _autoValidateMode,
+              child: Container(
+                constraints: BoxConstraints.loose(sizes.inputFieldDefault()),
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    TextFormField(
+                      controller: _fullNameController,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'First Name',
+                      ),
+                      keyboardType: TextInputType.name,
+                      textCapitalization: TextCapitalization.words,
+                      textInputAction: TextInputAction.next,
+                      validator: (value) => value?.isNotEmpty == true
+                          ? null
+                          : 'Name cannot be empty',
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: TextFormField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Email',
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.done,
+                        validator: (value) =>
+                            EmailValidator.validate(value ?? '')
+                                ? null
+                                : 'Please enter valid email',
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 48.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: sizes.buttonDefault(),
+                        ),
+                        onPressed: () async {
+                          _autoValidateMode =
+                              AutovalidateMode.onUserInteraction;
+                          if (_formKey.currentState!.validate()) {
+                            widget.onSignIn(Credentials(
+                                _emailController.value.text,
+                                _fullNameController.value.text));
+                          }
+                        },
+                        child: Text(
+                          'Login'.toUpperCase(),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: TextButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: sizes.buttonDefault(),
+                        ),
+                        onPressed: () async {
+                          final randomValues = RandomValues();
+                          widget.onSignIn(Credentials(
+                            randomValues.getEmail(),
+                            randomValues.getFullName(),
+                          ));
+                        },
+                        child: const Text(
+                          'Generate Random Login',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Spacer(),
+            TextFooter(text: _userAgent ?? ''),
+          ],
+        ),
       ),
     );
   }
