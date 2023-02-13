@@ -134,8 +134,8 @@ class CustomerIOSDK extends ChangeNotifier {
             _ConfigurationKey.siteId, configurations.siteId);
         await prefs.setOrRemoveString(
             _ConfigurationKey.apiKey, configurations.apiKey);
-        await prefs.setOrRemoveString(
-            _ConfigurationKey.organizationId, configurations.organizationId);
+        await prefs.setOrRemoveBool(
+            _ConfigurationKey.enableInApp, configurations.enableInApp);
         await prefs.setOrRemoveString(
             _ConfigurationKey.region, configurations.region?.toString());
         await prefs.setOrRemoveString(
@@ -199,7 +199,7 @@ class CustomerIOSDK extends ChangeNotifier {
       config: CustomerIOConfig(
         siteId: _configurations?.siteId ?? '',
         apiKey: _configurations?.apiKey ?? '',
-        organizationId: _configurations?.organizationId ?? '',
+        enableInApp: _configurations?.enableInApp ?? true,
         region: _configurations?.region ?? Region.us,
         //config options go here
         autoTrackDeviceAttributes:
@@ -269,7 +269,7 @@ class CustomerIOSDK extends ChangeNotifier {
 class CustomerIOConfigurations {
   String siteId;
   String apiKey;
-  String? organizationId;
+  bool enableInApp;
   Region? region;
   String? trackingUrl;
   String? gistEnvironment;
@@ -283,7 +283,7 @@ class CustomerIOConfigurations {
   CustomerIOConfigurations({
     required this.siteId,
     required this.apiKey,
-    this.organizationId,
+    this.enableInApp = true,
     this.region,
     this.trackingUrl,
     this.gistEnvironment,
@@ -296,10 +296,8 @@ class CustomerIOConfigurations {
   });
 
   factory CustomerIOConfigurations.fromEnv() => CustomerIOConfigurations(
-        siteId: dotenv.env[_ConfigurationKey.siteId]!,
-        apiKey: dotenv.env[_ConfigurationKey.apiKey]!,
-        organizationId: dotenv.env[_ConfigurationKey.organizationId],
-      );
+      siteId: dotenv.env[_ConfigurationKey.siteId]!,
+      apiKey: dotenv.env[_ConfigurationKey.apiKey]!);
 
   factory CustomerIOConfigurations.fromPrefs(SharedPreferences prefs) {
     final siteId = prefs.getString(_ConfigurationKey.siteId);
@@ -314,7 +312,7 @@ class CustomerIOConfigurations {
     return CustomerIOConfigurations(
       siteId: siteId,
       apiKey: apiKey,
-      organizationId: prefs.getString(_ConfigurationKey.organizationId),
+      enableInApp: prefs.getBool(_ConfigurationKey.enableInApp)! != false,
       region: prefs.getString(_ConfigurationKey.region)?.toRegion(),
       trackingUrl: prefs.getString(_ConfigurationKey.trackingUrl),
       gistEnvironment: prefs.getString(_ConfigurationKey.gistEnvironment),
@@ -340,7 +338,7 @@ const _profileIdentifier = 'profileIdentifier';
 class _ConfigurationKey {
   static const siteId = 'SITE_ID';
   static const apiKey = 'API_KEY';
-  static const organizationId = 'ORGANIZATION_ID';
+  static const enableInApp = 'enableInApp';
   static const region = 'REGION';
   static const trackingUrl = 'TRACKING_URL';
   static const gistEnvironment = 'GIST_ENVIRONMENT';

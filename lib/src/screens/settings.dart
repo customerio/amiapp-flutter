@@ -24,11 +24,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController _trackingURLValueController;
   late final TextEditingController _siteIDValueController;
   late final TextEditingController _apiKeyValueController;
-  late final TextEditingController _organizationIDValueController;
   late final TextEditingController _bqSecondsDelayValueController;
   late final TextEditingController _bqMinNumberOfTasksValueController;
 
   late bool _featureTrackScreens;
+  late bool _featureEnableInApp;
   late bool _featureTrackDeviceAttributes;
   late bool _featureDebugMode;
 
@@ -43,8 +43,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         TextEditingController(text: cioConfig?.trackingUrl);
     _siteIDValueController = TextEditingController(text: cioConfig?.siteId);
     _apiKeyValueController = TextEditingController(text: cioConfig?.apiKey);
-    _organizationIDValueController =
-        TextEditingController(text: cioConfig?.organizationId);
     _bqSecondsDelayValueController = TextEditingController(
         text: cioConfig?.backgroundQueueSecondsDelay?.toString());
     _bqMinNumberOfTasksValueController = TextEditingController(
@@ -52,6 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _featureTrackScreens = cioConfig?.featureTrackScreens ?? true;
     _featureTrackDeviceAttributes =
         cioConfig?.featureTrackDeviceAttributes ?? true;
+    _featureEnableInApp = cioConfig?.enableInApp ?? true;
     _featureDebugMode = cioConfig?.featureDebugMode ?? true;
 
     super.initState();
@@ -70,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final newConfig = CustomerIOConfigurations(
       siteId: _siteIDValueController.text,
       apiKey: _apiKeyValueController.text,
-      organizationId: _organizationIDValueController.text,
+      enableInApp: _featureEnableInApp,
       region: currentConfig?.region,
       trackingUrl: _trackingURLValueController.text,
       gistEnvironment: currentConfig?.gistEnvironment,
@@ -106,7 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _siteIDValueController.text = defaultConfig.siteId;
       _apiKeyValueController.text = defaultConfig.apiKey;
-      _organizationIDValueController.text = defaultConfig.organizationId ?? '';
+      _featureEnableInApp = defaultConfig.enableInApp;
       _trackingURLValueController.text = defaultConfig.trackingUrl ?? '';
       _bqSecondsDelayValueController.text =
           defaultConfig.backgroundQueueSecondsDelay?.toString() ?? '';
@@ -182,9 +181,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ? null
                               : 'API Key cannot be empty',
                         ),
-                        TextSettingsFormField(
-                          labelText: 'Organization ID',
-                          valueController: _organizationIDValueController,
+                        SwitchSettingsFormField(
+                          labelText: 'Enable In-app',
+                          value: _featureEnableInApp,
+                          updateState: ((value) =>
+                              setState(() => _featureEnableInApp = value)),
                         ),
                         const SizedBox(height: 32),
                         TextSettingsFormField(
