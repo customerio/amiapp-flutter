@@ -51,3 +51,9 @@ app.*.map.json
 
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+
+# iOS Signing files
+app_store_connect_creds.json
+ami_app_ci_server-google_cloud_service_account.json
+gc_keys.json
+GoogleService-Info.plist
