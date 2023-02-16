@@ -67,7 +67,7 @@ import FirebaseCore
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.badge, .sound])
+        completionHandler([.alert, .badge, .sound])
     }
 }
 
