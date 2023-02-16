@@ -181,12 +181,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ? null
                               : 'API Key cannot be empty',
                         ),
-                        SwitchSettingsFormField(
-                          labelText: 'Enable In-app',
-                          value: _featureEnableInApp,
-                          updateState: ((value) =>
-                              setState(() => _featureEnableInApp = value)),
-                        ),
                         const SizedBox(height: 32),
                         TextSettingsFormField(
                           labelText: 'backgroundQueueSecondsDelay',
@@ -201,6 +195,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         const SizedBox(height: 32),
                         const TextSectionHeader(
                           text: 'Features',
+                        ),
+                        SwitchSettingsFormField(
+                          labelText: 'Enable In-app',
+                          value: _featureEnableInApp,
+                          updateState: ((value) =>
+                              setState(() => _featureEnableInApp = value)),
                         ),
                         SwitchSettingsFormField(
                           labelText: 'Track Screens',
