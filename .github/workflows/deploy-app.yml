@@ -1,0 +1,122 @@
+# Deploy the app to stable. Not builds for development/QA
+name: Deploy non-development builds 
+on:
+  push:
+    branches: [main, beta, alpha]
+
+env:
+  XCODE_VERSION: "14.0"
+  GITHUB_CONTEXT: ${{ toJSON(github) }} # used by fastlane for deploying app 
+  FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 6 # increase timeout for xcodebuild settings. We have seen this command take a bit longer to do on CI server. 
+
+jobs:
+  deploy-app:
+    name: Deploy app
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11' # Robolectric requires v9, but we choose LTS: https://adoptopenjdk.net/
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - name: Setup environment for building and releasing app 
+        uses: ./.github/actions/prepare-for-app-build
+        with:
+          GOOGLE_SERVICES_BASE64: "${{ secrets.GOOGLE_SERVICES_BASE64 }}" # cat ios/SampleApp/Google-Services.plist | base64
+          ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}" # cat env.js | base64
+          FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }} # cat ami_app_ci_server-google_cloud_service_account.json | base64
+          MATCH_GOOGLE_CLOUD_KEYS_B64: ${{ secrets.MATCH_GOOGLE_CLOUD_KEYS_B64 }} # cat gc_keys.json | base64      
+          GOOGLE_SERVICES_ANDROID_BASE64: ${{ secrets.GOOGLE_SERVICES_ANDROID_BASE64 }} # cat android/app/google-services.json | base64      
+            
+      # Perform git related tasks inside of semantic-release because `git config user...` is already setup. It's easier to run commands in there with exec plugin.
+      - name: Deploy app via semantic release 
+        uses: cycjimmy/semantic-release-action@v2
+        id: semantic-release
+        with: 
+          # version numbers below can be in many forms: M, M.m, M.m.p
+          semantic_version: 18
+          extra_plugins: |
+            @semantic-release/changelog@6
+            @semantic-release/git@10
+            @semantic-release/exec@6
+        env:
+          # Needs to push git commits to repo. Needs write access. 
+          # github access token to Ami CI shared github account. 
+          # token scoped to just public repositories and is added as a collaborator to the project so it can push code. 
+          GITHUB_TOKEN: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}           
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }} # for firebase ios app distribution 
+          FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }} # for firebase android app distribution 
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT_B64 }}
+          
+      - name: Notify team of success 
+        uses: slackapi/slack-github-action@v1.18.0
+        if: steps.semantic-release.outputs.new_release_published == 'true' # only run if a git tag was made. 
+        with:
+          # Use block kit for format of the JSON payloads: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "Flutter Ami app *stable build* ready for installing",
+              "blocks": [
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "*Flutter Ami app stable build* ready for installing"
+                      }
+                  },
+                  {
+                      "type": "divider"
+                  },
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "*Version ${{ steps.semantic-release.outputs.new_release_version }}* is ready for using!\n\nThis is a non-development build and therefore, is designed to be used by everyone in the company."
+                      }
+                  }
+              ]
+            }
+        env:
+          # Incoming webhook URL that sends message into the correct Slack channel. 
+          # Help on how to get the webhook URL: https://github.com/marketplace/actions/slack-send#setup-2
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK   
+
+      - name: Notify team of failure 
+        uses: slackapi/slack-github-action@v1.18.0
+        if: ${{ failure() }} # only run this if any previous step failed 
+        with:
+          # Use block kit for format of the JSON payloads: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "Flutter Ami app *stable build* failed to build",
+              "blocks": [
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "*Flutter Ami app stable build* failed to build"
+                      }
+                  },
+                  {
+                      "type": "divider"
+                  },
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue."
+                      }
+                  }
+              ]
+            }
+        env:
+          # Incoming webhook URL that sends message into the correct Slack channel. 
+          # Help on how to get the webhook URL: https://github.com/marketplace/actions/slack-send#setup-2
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK   

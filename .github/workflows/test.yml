@@ -1,0 +1,57 @@
+name: Tests
+
+on:  
+  # Uncomment this if build on every push is needed
+  # push:
+  #   branches-ignore: [main, beta, alpha] # skip for deployment branches. 
+  #   tags-ignore: ['*']
+  pull_request:
+    branches: ['*']
+
+env:
+  XCODE_VERSION: "14.0"
+  GITHUB_CONTEXT: ${{ toJSON(github) }} # used by fastlane for deploying app 
+  FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 6 # increase timeout for xcodebuild settings. We have seen this command take a bit longer to do on CI server. 
+
+jobs:
+  deploy-builds:
+    runs-on: macos-12
+    name: Deploy development builds 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11' # Robolectric requires v9, but we choose LTS: https://adoptopenjdk.net/
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+    - name: Setup environment for building and releasing app 
+      uses: ./.github/actions/prepare-for-app-build
+      with:
+        GOOGLE_SERVICES_BASE64: "${{ secrets.GOOGLE_SERVICES_BASE64 }}" # cat ios/Runner/GoogleService-Info.plist | base64
+        ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}" # cat env.js | base64
+        FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }} # cat ami_app_ci_server-google_cloud_service_account.json | base64
+        MATCH_GOOGLE_CLOUD_KEYS_B64: ${{ secrets.MATCH_GOOGLE_CLOUD_KEYS_B64 }} # cat gc_keys.json | base64                 
+        GOOGLE_SERVICES_ANDROID_BASE64: ${{ secrets.GOOGLE_SERVICES_ANDROID_BASE64 }} # cat android/app/google-services.json | base64      
+
+    - name: Deploy Android development build via Fastlane 
+      uses: maierj/fastlane-action@v2.0.1
+      with:
+        lane: 'android deploy_app'
+        skip-tracking: true
+      env: 
+        FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }} # for firebase android app distribution 
+
+    - name: Deploy iOS development build via Fastlane 
+      uses: maierj/fastlane-action@v2.0.1
+      with:
+        lane: 'ios deploy_app'
+        skip-tracking: true
+      env: 
+        FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }} # login to Firebase > select Ami project > project settings > select iOS app > App id. 
+        APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }} # found in 1password for Ami app
+        APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }} # found in 1password for Ami app
+        APP_STORE_CONNECT_API_KEY_CONTENT_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT_B64 }} # found in 1password for Ami app
+
+    # at this time, we do not send a slack notification for development builds to avoid being too noisy to the channel. 

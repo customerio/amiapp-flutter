@@ -1,0 +1,68 @@
+# Deploy the app to stable. Not builds for development/QA
+name: Manually build latest stable 
+on: 
+  workflow_dispatch: # manually run the action
+
+env:
+  XCODE_VERSION: "14.0"
+  GITHUB_CONTEXT: ${{ toJSON(github) }} # used by fastlane for deploying app 
+  FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 6 # increase timeout for xcodebuild settings. We have seen this command take a bit longer to do on CI server. 
+
+jobs:
+  deploy-app:
+    name: Re-release the latest stable build 
+    runs-on: macos-12
+    steps:
+      - name: Get latest git tag 
+        uses: octokit/request-action@v2.1.4
+        id: get_latest_release
+        with:
+          route: GET /repos/customerio/amiapp-flutter/releases/latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}                    
+      - run: echo "LATEST_GIT_TAG=${{ fromJson(steps.get_latest_release.outputs.data).tag_name }}" >> $GITHUB_ENV      
+
+      - uses: actions/checkout@v2 # checkout to be able to run CI config files below 
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11' # Robolectric requires v9, but we choose LTS: https://adoptopenjdk.net/
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - name: Setup environment for building and releasing app 
+        uses: ./.github/actions/prepare-for-app-build
+        with:
+          GOOGLE_SERVICES_BASE64: "${{ secrets.GOOGLE_SERVICES_BASE64 }}" # cat ios/SampleApp/Google-Services.plist | base64
+          ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}" # cat env.js | base64
+          FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }} # cat ami_app_ci_server-google_cloud_service_account.json | base64
+          MATCH_GOOGLE_CLOUD_KEYS_B64: ${{ secrets.MATCH_GOOGLE_CLOUD_KEYS_B64 }} # cat gc_keys.json | base64
+          GOOGLE_SERVICES_ANDROID_BASE64: ${{ secrets.GOOGLE_SERVICES_ANDROID_BASE64 }} # cat android/app/google-services.json | base64      
+
+      # Checkout the git tag right before building since older git tags might not have the necessary files 
+      # that the newer CI config asks for. Do all CI environment prep before checking out the git tag. 
+      - name: Checkout latest git tag 
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.LATEST_GIT_TAG }}
+          clean: false # to not delete the files created in environment setup step
+
+      - name: Build and re-release Android app
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'android deploy_app'
+          skip-tracking: true
+        env: 
+          FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }} # for firebase android app distribution 
+
+      - name: Build and re-release iOS app
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'ios deploy_app version:${{ env.LATEST_GIT_TAG }}'
+          skip-tracking: true
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }} # login to Firebase > select Ami project > project settings > select iOS app > App id. 
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }} # found in 1password for Ami app
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }} # found in 1password for Ami app
+          APP_STORE_CONNECT_API_KEY_CONTENT_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT_B64 }} # found in 1password for Ami app
+          
