@@ -11,6 +11,7 @@ class TextAttributeFormField extends StatelessWidget {
   final _attributeValueController = TextEditingController();
 
   String get name => _attributeNameController.text;
+
   String get value => _attributeValueController.text;
 
   @override
