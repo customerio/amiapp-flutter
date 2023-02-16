@@ -15,6 +15,9 @@ import FirebaseCore
         
         FirebaseApp.configure()
         
+        // Set FCM messaging delegate
+        Messaging.messaging().delegate = self
+
         let center  = UNUserNotificationCenter.current()
         center.delegate = self
         
@@ -29,9 +32,6 @@ import FirebaseCore
                 }
             }
         })
-        
-        // Set FCM messaging delegate
-        Messaging.messaging().delegate = self
         
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
