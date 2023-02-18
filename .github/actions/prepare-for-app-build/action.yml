@@ -54,6 +54,7 @@ runs:
     - name: Get Flutter dependencies
       run: flutter pub get
       working-directory: .
+      shell: bash 
 
     - name: pod install as Flutter project requires it
       working-directory: ios 
