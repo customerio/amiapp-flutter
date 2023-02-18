@@ -51,9 +51,9 @@ runs:
         lane: 'list' # give action a lane that doesn't perform an action to get fastlane installed on machine to use later. 
         skip-tracking: true
         
-    - name: npm install because Podfile requires files from it 
-      run: yarn --frozen-lockfile
-      shell: bash 
+    - name: Get Flutter dependencies
+      run: flutter pub get
+      working-directory: .
 
     - name: pod install as Flutter project requires it
       working-directory: ios 
