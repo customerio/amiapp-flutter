@@ -244,7 +244,7 @@ platform :android do
   # example for develoment builds (pull request, push): `bundle exec fastlane deploy_app`
   lane :deploy_app do |values|    
 
-    gradle_file_path = "android/app/build.gradle"
+#     gradle_file_path = "android/app/build.gradle"
     project_dir = "android"
 
     name_of_app = "Ami App"
@@ -307,8 +307,8 @@ platform :android do
     UI.important("New app version: #{new_app_version}")
     UI.important("Firebase App testing groups: #{groups}")
 
-    android_set_version_name(version_name: new_app_version, gradle_file: gradle_file_path)
-    android_set_version_code(version_code: new_build_number, gradle_file: gradle_file_path)
+    android_set_version_name(version_name: new_app_version)
+    android_set_version_code(version_code: new_build_number)
 
     build_android_app(
       task: 'assemble',

@@ -58,71 +58,71 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT_B64 }}
-          
-      - name: Notify team of success 
-        uses: slackapi/slack-github-action@v1.18.0
-        if: steps.semantic-release.outputs.new_release_published == 'true' # only run if a git tag was made. 
-        with:
-          # Use block kit for format of the JSON payloads: https://app.slack.com/block-kit-builder
-          payload: |
-            {
-              "text": "Flutter Ami app *stable build* ready for installing",
-              "blocks": [
-                  {
-                      "type": "section",
-                      "text": {
-                          "type": "mrkdwn",
-                          "text": "*Flutter Ami app stable build* ready for installing"
-                      }
-                  },
-                  {
-                      "type": "divider"
-                  },
-                  {
-                      "type": "section",
-                      "text": {
-                          "type": "mrkdwn",
-                          "text": "*Version ${{ steps.semantic-release.outputs.new_release_version }}* is ready for using!\n\nThis is a non-development build and therefore, is designed to be used by everyone in the company."
-                      }
-                  }
-              ]
-            }
-        env:
-          # Incoming webhook URL that sends message into the correct Slack channel. 
-          # Help on how to get the webhook URL: https://github.com/marketplace/actions/slack-send#setup-2
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK   
+#
+#       - name: Notify team of success
+#         uses: slackapi/slack-github-action@v1.18.0
+#         if: steps.semantic-release.outputs.new_release_published == 'true' # only run if a git tag was made.
+#         with:
+#           # Use block kit for format of the JSON payloads: https://app.slack.com/block-kit-builder
+#           payload: |
+#             {
+#               "text": "Flutter Ami app *stable build* ready for installing",
+#               "blocks": [
+#                   {
+#                       "type": "section",
+#                       "text": {
+#                           "type": "mrkdwn",
+#                           "text": "*Flutter Ami app stable build* ready for installing"
+#                       }
+#                   },
+#                   {
+#                       "type": "divider"
+#                   },
+#                   {
+#                       "type": "section",
+#                       "text": {
+#                           "type": "mrkdwn",
+#                           "text": "*Version ${{ steps.semantic-release.outputs.new_release_version }}* is ready for using!\n\nThis is a non-development build and therefore, is designed to be used by everyone in the company."
+#                       }
+#                   }
+#               ]
+#             }
+#         env:
+#           # Incoming webhook URL that sends message into the correct Slack channel.
+#           # Help on how to get the webhook URL: https://github.com/marketplace/actions/slack-send#setup-2
+#           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
+#           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
-      - name: Notify team of failure 
-        uses: slackapi/slack-github-action@v1.18.0
-        if: ${{ failure() }} # only run this if any previous step failed 
-        with:
-          # Use block kit for format of the JSON payloads: https://app.slack.com/block-kit-builder
-          payload: |
-            {
-              "text": "Flutter Ami app *stable build* failed to build",
-              "blocks": [
-                  {
-                      "type": "section",
-                      "text": {
-                          "type": "mrkdwn",
-                          "text": "*Flutter Ami app stable build* failed to build"
-                      }
-                  },
-                  {
-                      "type": "divider"
-                  },
-                  {
-                      "type": "section",
-                      "text": {
-                          "type": "mrkdwn",
-                          "text": "View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue."
-                      }
-                  }
-              ]
-            }
-        env:
-          # Incoming webhook URL that sends message into the correct Slack channel. 
-          # Help on how to get the webhook URL: https://github.com/marketplace/actions/slack-send#setup-2
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK   
+#       - name: Notify team of failure
+#         uses: slackapi/slack-github-action@v1.18.0
+#         if: ${{ failure() }} # only run this if any previous step failed
+#         with:
+#           # Use block kit for format of the JSON payloads: https://app.slack.com/block-kit-builder
+#           payload: |
+#             {
+#               "text": "Flutter Ami app *stable build* failed to build",
+#               "blocks": [
+#                   {
+#                       "type": "section",
+#                       "text": {
+#                           "type": "mrkdwn",
+#                           "text": "*Flutter Ami app stable build* failed to build"
+#                       }
+#                   },
+#                   {
+#                       "type": "divider"
+#                   },
+#                   {
+#                       "type": "section",
+#                       "text": {
+#                           "type": "mrkdwn",
+#                           "text": "View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue."
+#                       }
+#                   }
+#               ]
+#             }
+#         env:
+#           # Incoming webhook URL that sends message into the correct Slack channel.
+#           # Help on how to get the webhook URL: https://github.com/marketplace/actions/slack-send#setup-2
+#           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
+#           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
