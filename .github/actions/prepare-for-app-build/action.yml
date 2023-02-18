@@ -45,7 +45,7 @@ runs:
       run: |
         echo "${{ inputs.GOOGLE_SERVICES_BASE64 }}" | base64 -d > "ios/Runner/GoogleService-Info.plist"
         echo "${{ inputs.ENV_FILE_B64 }}" | base64 -d > ".env"
-        echo "${{ inputs.ENV_FILE_SWIFT_B64 }}" | base64 -d > "ios/Runner/Env.swift"
+        echo "${{ inputs.ENV_FILE_SWIFT_B64 }}" | base64 -d > "ios/Env.swift"
         echo "${{ inputs.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }}" | base64 -d > ami_app_ci_server-google_cloud_service_account.json
         echo "${{ inputs.MATCH_GOOGLE_CLOUD_KEYS_B64 }}" | base64 -d > gc_keys.json
         echo "${{ inputs.GOOGLE_SERVICES_ANDROID_BASE64 }}" | base64 -d > android/app/google-services.json
