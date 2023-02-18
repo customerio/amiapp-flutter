@@ -244,8 +244,8 @@ platform :android do
   # example for develoment builds (pull request, push): `bundle exec fastlane deploy_app`
   lane :deploy_app do |values|    
 
+    gradle_file_path = "android/app/build.gradle"
     project_dir = "android"
-    gradle_file_path = "app/build.gradle"
 
     name_of_app = "Ami App"
     new_app_version = values[:version] # pass in new app version as parameter because we can get it from new semantic version 
@@ -313,7 +313,7 @@ platform :android do
     build_android_app(
       task: 'assemble',
       build_type: 'Release',
-      project_dir: project_dir
+      gradle_file: gradle_file_path
     )
 
     firebase_app_distribution(
