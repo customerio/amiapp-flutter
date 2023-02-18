@@ -2,7 +2,7 @@
   "tagFormat": "${version}",
   "branches": [
     "main",
-    { "name": "shahroz/ci-cd-deployment", "prerelease": true }
+    "shahroz/ci-cd-deployment"
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
