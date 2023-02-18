@@ -36,6 +36,10 @@ runs:
       with:
         ruby-version: 2.7.2
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '3.7.3'
     - name: Prepare app for building and deploying 
       shell: bash 
       run: |
@@ -54,7 +58,7 @@ runs:
     - name: Get Flutter dependencies
       run: flutter pub get
       working-directory: .
-      shell: bash 
+      shell: bash
 
     - name: pod install as Flutter project requires it
       working-directory: ios 
