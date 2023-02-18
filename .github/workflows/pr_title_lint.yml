@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [opened, reopened, edited, synchronize, labeled]
 
+permissions:
+  pull-requests: write # Write access needed to create a comment.
+
 jobs:
   pr-help:
     name: Semantic PR helper 
@@ -12,5 +15,4 @@ jobs:
       - name: Semantic PR helper 
         uses: levibostian/action-semantic-pr@v2
         with:
-          readToken: ${{ secrets.READ_ONLY_BOT_TOKEN }}
-          writeToken: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}
+          readToken: ${{ secrets.GITHUB_TOKEN }}

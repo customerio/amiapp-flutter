@@ -18,8 +18,8 @@ require 'json'
 platform :ios do  
 
   is_enterprise_app = false
-  info_plist_file_path = "ios/SampleApp/Info.plist"
-  google_service_plist_file_path = "ios/SampleApp/GoogleService-Info.plist"
+  info_plist_file_path = "ios/Runner/Info.plist"
+  google_service_plist_file_path = "ios/Runner/GoogleService-Info.plist"
 
   before_all do |lane, options|
     if ENV['CI'] 

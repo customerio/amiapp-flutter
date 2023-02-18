@@ -2,7 +2,12 @@
 name: Deploy non-development builds 
 on:
   push:
-    branches: [main, beta, alpha]
+    branches: [shahroz/ci-cd-deployment]
+
+permissions:
+  contents: write # access to push the git tag
+  issues: write # Bot creates an issue if there is an issue during deployment process
+  pull-requests: write # allow bot to make comments on PRs after they get deployed
 
 env:
   XCODE_VERSION: "14.0"
@@ -14,7 +19,7 @@ jobs:
     name: Deploy app
     runs-on: macos-12
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
@@ -26,7 +31,8 @@ jobs:
         uses: ./.github/actions/prepare-for-app-build
         with:
           GOOGLE_SERVICES_BASE64: "${{ secrets.GOOGLE_SERVICES_BASE64 }}" # cat ios/SampleApp/Google-Services.plist | base64
-          ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}" # cat env.js | base64
+          ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}" # cat .env | base64
+          ENV_FILE_SWIFT_B64: "${{ secrets.ENV_FILE_SWIFT_B64 }}" # cat Env.swift | base64
           FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }} # cat ami_app_ci_server-google_cloud_service_account.json | base64
           MATCH_GOOGLE_CLOUD_KEYS_B64: ${{ secrets.MATCH_GOOGLE_CLOUD_KEYS_B64 }} # cat gc_keys.json | base64      
           GOOGLE_SERVICES_ANDROID_BASE64: ${{ secrets.GOOGLE_SERVICES_ANDROID_BASE64 }} # cat android/app/google-services.json | base64      
@@ -46,7 +52,7 @@ jobs:
           # Needs to push git commits to repo. Needs write access. 
           # github access token to Ami CI shared github account. 
           # token scoped to just public repositories and is added as a collaborator to the project so it can push code. 
-          GITHUB_TOKEN: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}           
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }} # for firebase ios app distribution 
           FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }} # for firebase android app distribution 
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}

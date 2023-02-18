@@ -18,7 +18,7 @@ jobs:
     runs-on: macos-12
     name: Deploy development builds 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
@@ -30,7 +30,8 @@ jobs:
       uses: ./.github/actions/prepare-for-app-build
       with:
         GOOGLE_SERVICES_BASE64: "${{ secrets.GOOGLE_SERVICES_BASE64 }}" # cat ios/Runner/GoogleService-Info.plist | base64
-        ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}" # cat env.js | base64
+        ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}" # cat .env | base64
+        ENV_FILE_SWIFT_B64: "${{ secrets.ENV_FILE_SWIFT_B64 }}" # cat Env.swift | base64
         FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }} # cat ami_app_ci_server-google_cloud_service_account.json | base64
         MATCH_GOOGLE_CLOUD_KEYS_B64: ${{ secrets.MATCH_GOOGLE_CLOUD_KEYS_B64 }} # cat gc_keys.json | base64                 
         GOOGLE_SERVICES_ANDROID_BASE64: ${{ secrets.GOOGLE_SERVICES_ANDROID_BASE64 }} # cat android/app/google-services.json | base64      

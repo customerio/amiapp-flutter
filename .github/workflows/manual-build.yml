@@ -22,7 +22,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}                    
       - run: echo "LATEST_GIT_TAG=${{ fromJson(steps.get_latest_release.outputs.data).tag_name }}" >> $GITHUB_ENV      
 
-      - uses: actions/checkout@v2 # checkout to be able to run CI config files below 
+      - uses: actions/checkout@v3 # checkout to be able to run CI config files below
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
@@ -35,6 +35,7 @@ jobs:
         with:
           GOOGLE_SERVICES_BASE64: "${{ secrets.GOOGLE_SERVICES_BASE64 }}" # cat ios/SampleApp/Google-Services.plist | base64
           ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}" # cat env.js | base64
+          ENV_FILE_SWIFT_B64: "${{ secrets.ENV_FILE_SWIFT_B64 }}" # cat Env.swift | base64
           FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }} # cat ami_app_ci_server-google_cloud_service_account.json | base64
           MATCH_GOOGLE_CLOUD_KEYS_B64: ${{ secrets.MATCH_GOOGLE_CLOUD_KEYS_B64 }} # cat gc_keys.json | base64
           GOOGLE_SERVICES_ANDROID_BASE64: ${{ secrets.GOOGLE_SERVICES_ANDROID_BASE64 }} # cat android/app/google-services.json | base64      
@@ -42,7 +43,7 @@ jobs:
       # Checkout the git tag right before building since older git tags might not have the necessary files 
       # that the newer CI config asks for. Do all CI environment prep before checking out the git tag. 
       - name: Checkout latest git tag 
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ env.LATEST_GIT_TAG }}
           clean: false # to not delete the files created in environment setup step
