@@ -4,15 +4,15 @@ on:
   push:
     branches: [shahroz/ci-cd-deployment]
 
+env:
+  XCODE_VERSION: "14.0"
+  GITHUB_CONTEXT: ${{ toJSON(github) }} # used by fastlane for deploying app
+  FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 6 # increase timeout for xcodebuild settings. We have seen this command take a bit longer to do on CI server.
+
 permissions:
   contents: write # access to push the git tag
   issues: write # Bot creates an issue if there is an issue during deployment process
   pull-requests: write # allow bot to make comments on PRs after they get deployed
-
-env:
-  XCODE_VERSION: "14.0"
-  GITHUB_CONTEXT: ${{ toJSON(github) }} # used by fastlane for deploying app 
-  FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 6 # increase timeout for xcodebuild settings. We have seen this command take a bit longer to do on CI server. 
 
 jobs:
   deploy-app:
