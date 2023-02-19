@@ -313,7 +313,7 @@ platform :android do
     build_android_app(
       tasks: ["clean", "assemble"],
       build_type: 'Release',
-      gradle_path: gradle_file_path
+      gradle_path: project_dir
     )
 
     firebase_app_distribution(
