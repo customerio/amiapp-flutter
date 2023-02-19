@@ -8,7 +8,7 @@
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     ["@semantic-release/exec", {
-      "prepareCmd": "bundle exec fastlane android deploy_app version:${nextRelease.version} --verbose"
+      "prepareCmd": "bundle exec fastlane android deploy_app version:${nextRelease.version} --trace"
     }],
     ["@semantic-release/changelog",{
       "changelogFile": "CHANGELOG.md"
