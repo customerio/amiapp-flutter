@@ -320,7 +320,7 @@ platform :android do
       service_credentials_file: './ami_app_ci_server-google_cloud_service_account.json',
       groups: groups,
       android_artifact_type: "APK",
-      android_artifact_path: "../build/app/outputs/bundle/release/app-release.apk",
+      android_artifact_path: "../build/app/outputs/apk/release/app-release.apk",
       release_notes: release_notes
     )
   end 
