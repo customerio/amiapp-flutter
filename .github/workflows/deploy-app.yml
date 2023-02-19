@@ -2,7 +2,7 @@
 name: Deploy non-development builds 
 on:
   push:
-    branches: [shahroz/ci-cd-deployment]
+    branches: [main]
 
 env:
   XCODE_VERSION: "14.0"
