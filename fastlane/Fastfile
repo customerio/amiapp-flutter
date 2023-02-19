@@ -319,6 +319,8 @@ platform :android do
       app: ENV["FIREBASE_ANDROID_APP_ID"],
       service_credentials_file: './ami_app_ci_server-google_cloud_service_account.json',
       groups: groups,
+      android_artifact_type: "APK",
+      android_artifact_path: "../build/app/outputs/bundle/release/app-release.apk",
       release_notes: release_notes
     )
   end 

@@ -33,6 +33,12 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'compressReleaseAssets') {
+            task.dependsOn 'copyFlutterAssetsRelease'
+        }
+    }
+
     defaultConfig {
         applicationId "io.customer.amiapp_flutter"
         minSdkVersion 21
