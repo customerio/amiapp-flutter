@@ -313,7 +313,6 @@ platform :android do
     build_android_app(
       tasks: 'assemble',
       build_type: 'Release',
-      gradle_path: 'android/gradlew',
       project_dir: project_dir
     )
 
