@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: [shahroz/ci-cd-deployment]
+    branches: [shahroz/ci-cd]
 
 env:
   XCODE_VERSION: "14.0"

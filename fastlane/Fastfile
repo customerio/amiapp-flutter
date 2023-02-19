@@ -161,10 +161,10 @@ platform :ios do
       end
     end 
 
-#     release_notes.append(
-#       "commit hash: #{github.commit_hash}",
-#       "build number: #{new_build_number}"
-#     )
+    release_notes.append(
+      "commit hash: #{github.commit_hash}",
+      "build number: #{new_build_number}"
+    )
 
     release_notes = release_notes.join("\n")
     groups = groups.join(", ")
@@ -295,10 +295,10 @@ platform :android do
       end 
     end 
 
-#     release_notes.append(
-#       "commit hash: #{github.commit_hash}",
-#       "build number: #{new_build_number}"
-#     )
+    release_notes.append(
+      "commit hash: #{github.commit_hash}",
+      "build number: #{new_build_number}"
+    )
 
     release_notes = release_notes.join("\n")
     groups = groups.join(", ")
@@ -314,8 +314,6 @@ platform :android do
       tasks: 'assembleRelease',
       project_dir: project_dir
     )
-
-    sh("pwd && ls -la")
 
     firebase_app_distribution(
       app: ENV["FIREBASE_ANDROID_APP_ID"],
