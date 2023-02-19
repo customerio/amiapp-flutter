@@ -1,12 +1,8 @@
 name: Tests
 
-on:  
-  # Uncomment this if build on every push is needed
+on:
   push:
-    branches-ignore: [shahroz/ci-cd-deployment] # skip for deployment branches.
-    tags-ignore: ['*']
-  pull_request:
-    branches: ['*']
+    branches: [shahroz/ci-cd-deployment]
 
 env:
   XCODE_VERSION: "14.0"
