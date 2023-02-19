@@ -311,7 +311,7 @@ platform :android do
     android_set_version_code(version_code: new_build_number, gradle_file: gradle_file_path)
 
     build_android_app(
-      tasks: 'assembleDebug',
+      tasks: 'assembleRelease'
       project_dir: project_dir
     )
 
