@@ -245,7 +245,7 @@ platform :android do
   lane :deploy_app do |values|    
 
     gradle_file_path = "android/app/build.gradle"
-    project_dir = "android"
+    project_dir = "android/gradlew"
 
     name_of_app = "Ami App"
     new_app_version = values[:version] # pass in new app version as parameter because we can get it from new semantic version 
