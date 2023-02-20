@@ -16,3 +16,4 @@ jobs:
         uses: levibostian/action-semantic-pr@v2
         with:
           readToken: ${{ secrets.GITHUB_TOKEN }}
+          writeToken: ${{ secrets.GITHUB_TOKEN }}
