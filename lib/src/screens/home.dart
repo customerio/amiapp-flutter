@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:amiapp_flutter/src/random.dart';
 import 'package:customer_io/customer_io.dart';
+import 'package:customer_io/customer_io_inapp.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,6 +24,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String? _email;
   String? _userAgent;
+  late StreamSubscription inAppMessageStreamSubscription;
+
+  @override
+  void dispose() {
+    /// Stop listening to streams
+    inAppMessageStreamSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -31,7 +42,51 @@ class _HomeScreenState extends State<HomeScreen> {
     customerIOSDK
         .getUserAgent()
         .then((value) => setState(() => _userAgent = value));
+
+    if (customerIOSDK.isInAppEnabled()) {
+      inAppMessageStreamSubscription =
+          CustomerIO.subscribeToInAppEventListener(handleInAppEvent);
+    }
     super.initState();
+  }
+
+  void handleInAppEvent(InAppEvent event) {
+    switch (event.eventType) {
+      case EventType.messageShown:
+        trackInAppEvent('message_shown', event.message);
+        debugPrint("messageShown: ${event.message}");
+        break;
+      case EventType.messageDismissed:
+        trackInAppEvent('message_dismissed', event.message);
+        debugPrint("messageDismissed: ${event.message}");
+        break;
+      case EventType.errorWithMessage:
+        trackInAppEvent('errorWithMessage', event.message);
+        debugPrint("errorWithMessage: ${event.message}");
+        break;
+      case EventType.messageActionTaken:
+        trackInAppEvent('messageActionTaken', event.message, arguments: {
+          'actionName': event.actionName,
+          'actionValue': event.actionValue,
+        });
+        debugPrint("messageActionTaken: ${event.message}");
+        break;
+    }
+  }
+
+  void trackInAppEvent(String eventName, InAppMessage message,
+      {Map<String, dynamic> arguments = const {}}) {
+    Map<String, dynamic> attributes = {
+      'event_name': eventName,
+      'message_id': message.messageId,
+      'delivery_id': message.deliveryId ?? 'NULL',
+    };
+    attributes.addAll(arguments);
+
+    CustomerIO.track(
+      name: 'In-App Event',
+      attributes: attributes,
+    );
   }
 
   @override
