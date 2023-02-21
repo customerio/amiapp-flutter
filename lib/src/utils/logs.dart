@@ -1,7 +1,9 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/foundation.dart';
 
-void debugPrint(String message) {
+void debugLog(String message) {
   if (kDebugMode) {
-    print(message);
+    developer.log(message);
   }
 }

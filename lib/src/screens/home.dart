@@ -12,6 +12,7 @@ import '../components/scroll_view.dart';
 import '../constants.dart';
 import '../customer_io.dart';
 import '../theme/sizes.dart';
+import '../utils/logs.dart';
 import '../widgets/app_footer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -54,22 +55,22 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (event.eventType) {
       case EventType.messageShown:
         trackInAppEvent('message_shown', event.message);
-        debugPrint("messageShown: ${event.message}");
+        debugLog("messageShown: ${event.message}");
         break;
       case EventType.messageDismissed:
         trackInAppEvent('message_dismissed', event.message);
-        debugPrint("messageDismissed: ${event.message}");
+        debugLog("messageDismissed: ${event.message}");
         break;
       case EventType.errorWithMessage:
         trackInAppEvent('errorWithMessage', event.message);
-        debugPrint("errorWithMessage: ${event.message}");
+        debugLog("errorWithMessage: ${event.message}");
         break;
       case EventType.messageActionTaken:
         trackInAppEvent('messageActionTaken', event.message, arguments: {
           'actionName': event.actionName,
           'actionValue': event.actionValue,
         });
-        debugPrint("messageActionTaken: ${event.message}");
+        debugLog("messageActionTaken: ${event.message}");
         break;
     }
   }
