@@ -15,7 +15,7 @@ env:
 jobs:
 
   deploy-android-app:
-    runs-on: ubuntu-latest
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v3 # checkout to be able to run CI config files below
       - name: Set up JDK
