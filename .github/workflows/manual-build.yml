@@ -19,7 +19,7 @@ jobs:
         uses: octokit/request-action@v2.1.4
         id: get_latest_release
         with:
-          route: GET /repos/customerio/amiapp-flutter/releases/latest
+          route: GET /repos/${{ github.repository }}/releases/latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Checkout the git tag right before building since older git tags might not have the necessary files
