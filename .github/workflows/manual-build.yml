@@ -32,7 +32,7 @@ jobs:
           clean: false # to not delete the files created in environment setup step
 
   deploy-android-app:
-    runs-on: ubuntu-latest
+    runs-on: macos-12
     needs: get-latest-git-tag
     steps:
       - uses: actions/checkout@v3 # checkout to be able to run CI config files below
