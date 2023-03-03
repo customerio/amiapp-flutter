@@ -12,6 +12,8 @@ jobs:
   get-latest-git-tag:
     name: Get latest git tag
     runs-on: ubuntu-latest
+    outputs:
+      latest-tag-name: ${{ fromJson(steps.get_latest_release.outputs.data).tag_name }}
     steps:
       - name: Get latest git tag
         uses: octokit/request-action@v2.1.4
@@ -30,10 +32,12 @@ jobs:
           clean: false # to not delete the files created in environment setup step
 
   deploy-android-app:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     needs: get-latest-git-tag
     steps:
       - uses: actions/checkout@v3 # checkout to be able to run CI config files below
+        with:
+          ref: ${{ needs.get-latest-git-tag.outputs.latest-tag-name }}
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
@@ -63,6 +67,8 @@ jobs:
     needs: get-latest-git-tag
     steps:
       - uses: actions/checkout@v3 # checkout to be able to run CI config files below
+        with:
+          ref: ${{ needs.get-latest-git-tag.outputs.latest-tag-name }}
       - name: Setup environment for building and releasing app
         uses: ./.github/actions/prepare-for-app-build
         with:

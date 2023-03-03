@@ -1,11 +1,6 @@
 name: Create test builds
 
-on:
-  # Uncomment this if build on every push is needed
-  # push:
-  #   branches-ignore: [main, beta, alpha] # skip for deployment branches.
-  #   tags-ignore: ['*']
-  pull_request:
+on: [pull_request]
 
 env:
   XCODE_VERSION: "14.0"
@@ -14,7 +9,7 @@ env:
 
 jobs:
   deploy-android-app:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3 # checkout to be able to run CI config files below
       - name: Set up JDK
