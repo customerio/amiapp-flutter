@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		28EF97E17CEA8AA8F34B77F4 /* Pods_NotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F682EA52D3CECA56F5B31766 /* Pods_NotificationServiceExtension.framework */; };
+		3006373429A1011F00D63963 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3006373329A1011F00D63963 /* Env.swift */; };
+		3006373529A1011F00D63963 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3006373329A1011F00D63963 /* Env.swift */; };
 		302D7E2C295BEC44005CBB29 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 302D7E2B295BEC44005CBB29 /* GoogleService-Info.plist */; };
 		302D7E34295BEE78005CBB29 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D7E33295BEE78005CBB29 /* NotificationService.swift */; };
 		302D7E38295BEE78005CBB29 /* NotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 302D7E31295BEE78005CBB29 /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -57,6 +59,7 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		3006373329A1011F00D63963 /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 		30095F29295BC58F00D3389F /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		302D7E2B295BEC44005CBB29 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		302D7E31295BEE78005CBB29 /* NotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +142,7 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				3006373329A1011F00D63963 /* Env.swift */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				302D7E32295BEE78005CBB29 /* NotificationServiceExtension */,
@@ -388,6 +392,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				302D7E34295BEE78005CBB29 /* NotificationService.swift in Sources */,
+				3006373529A1011F00D63963 /* Env.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,6 +400,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3006373429A1011F00D63963 /* Env.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);

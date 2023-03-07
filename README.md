@@ -1,6 +1,6 @@
 # amiapp_flutter
 
-Sample Ami app in Flutter
+Runner app in Flutter
 
 ## Getting Started
 

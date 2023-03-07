@@ -1,20 +1,20 @@
 PODS:
-  - customer_io (1.0.0-alpha.5):
-    - CustomerIOMessagingInApp (~> 2.1.0-beta.1)
-    - CustomerIOTracking (~> 2.1.0-beta.1)
+  - customer_io (1.0.0-alpha.8):
+    - CustomerIOMessagingInApp (~> 2.1.0-beta.2)
+    - CustomerIOTracking (~> 2.1.0-beta.2)
     - Flutter
-  - CustomerIO/MessagingPushFCM (2.1.0-beta.2):
-    - CustomerIOMessagingPushFCM (= 2.1.0-beta.2)
-  - CustomerIOCommon (2.1.0-beta.2)
-  - CustomerIOMessagingInApp (2.1.0-beta.2):
-    - CustomerIOTracking (= 2.1.0-beta.2)
+  - CustomerIO/MessagingPushFCM (2.1.0):
+    - CustomerIOMessagingPushFCM (= 2.1.0)
+  - CustomerIOCommon (2.1.0)
+  - CustomerIOMessagingInApp (2.1.0):
+    - CustomerIOTracking (= 2.1.0)
     - Gist (~> 3.0.4)
-  - CustomerIOMessagingPush (2.1.0-beta.2):
-    - CustomerIOTracking (= 2.1.0-beta.2)
-  - CustomerIOMessagingPushFCM (2.1.0-beta.2):
-    - CustomerIOMessagingPush (= 2.1.0-beta.2)
-  - CustomerIOTracking (2.1.0-beta.2):
-    - CustomerIOCommon (= 2.1.0-beta.2)
+  - CustomerIOMessagingPush (2.1.0):
+    - CustomerIOTracking (= 2.1.0)
+  - CustomerIOMessagingPushFCM (2.1.0):
+    - CustomerIOMessagingPush (= 2.1.0)
+  - CustomerIOTracking (2.1.0):
+    - CustomerIOCommon (= 2.1.0)
   - FirebaseCore (10.5.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
@@ -65,14 +65,14 @@ PODS:
   - nanopb/encode (2.30909.0)
   - permission_handler_apple (9.0.4):
     - Flutter
-  - PromisesObjC (2.1.1)
+  - PromisesObjC (2.2.0)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
 
 DEPENDENCIES:
   - customer_io (from `.symlinks/plugins/customer_io/ios`)
-  - CustomerIO/MessagingPushFCM (~> 2.1.0-beta.1)
+  - CustomerIO/MessagingPushFCM (~> 2.1.0)
   - FirebaseMessaging
   - Flutter (from `Flutter`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -107,13 +107,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/ios"
 
 SPEC CHECKSUMS:
-  customer_io: e1fb082971ec7e8d198c4e122a943ff7aa0e46be
-  CustomerIO: 12984963264bcfe4f16bb84934dbc81b85b7eccc
-  CustomerIOCommon: 26e771357e4add7bd95ba7f7754665a80f1175a0
-  CustomerIOMessagingInApp: b3d4981fb1b8802ac0b64028a2493ae8dcbeac64
-  CustomerIOMessagingPush: 58402854467375646496fb765e76ea55a1f40959
-  CustomerIOMessagingPushFCM: e8f2b3153aed08279eb03df70fe655b2c0704da8
-  CustomerIOTracking: fbb66324aa8a687585e29db377aa056a989e756b
+  customer_io: 7d5234cd5df54530adf5d46a8bf7b25fb5bf39fd
+  CustomerIO: 6c7899e4e02e81977ca7ceb85396a1ac2db33439
+  CustomerIOCommon: b0d7bb7668c12df97154bf70fe68e5c82f21f8ab
+  CustomerIOMessagingInApp: 9bd4cc9a85fdb81b403c4ee099fecb347f57a688
+  CustomerIOMessagingPush: 24f627c7d78fcb4fbd2477f92b483663ff113f4e
+  CustomerIOMessagingPushFCM: 7932db16007ef2cf8ebfbb23fb1755b26f7cfdec
+  CustomerIOTracking: 98b68ef6f96fd2e8fd099d58507bd60892300817
   FirebaseCore: 324b8d182d9ff7e3f6d1fa2f04b082d1c7a3e366
   FirebaseCoreInternal: e463f41bb935cd049505bf7e9a5bdd7dcea90df6
   FirebaseInstallations: 935bc4abb6f7a035cab7a0c31cb777b2be3dd254
@@ -124,9 +124,9 @@ SPEC CHECKSUMS:
   GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
-  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
+  PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   shared_preferences_foundation: 3d2c799fb2ff809e53f07a8517d24c441ad22e65
 
-PODFILE CHECKSUM: c64e8069f50ae172abb613b4a509d56c76e94ea7
+PODFILE CHECKSUM: d7457a6b91c61de60240cb2008cfed79d6aa0be4
 
 COCOAPODS: 1.11.3

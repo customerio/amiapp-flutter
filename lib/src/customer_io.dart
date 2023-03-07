@@ -22,8 +22,6 @@ extension CustomerIOStringExtensions on String {
           ? Region.us
           : null;
 
-  String? toGistEnvironment() => this;
-
   int? toIntOrNull() {
     if (isNotEmpty) {
       return int.tryParse(this);
@@ -225,6 +223,8 @@ class CustomerIOSDK extends ChangeNotifier {
       SharedPreferences.getInstance().then((prefs) {
         return prefs.getString(_profileIdentifier);
       });
+
+  bool isInAppEnabled() => _configurations?.enableInApp == true;
 
   Future<bool> clearProfileIdentifier() =>
       SharedPreferences.getInstance().then((prefs) {

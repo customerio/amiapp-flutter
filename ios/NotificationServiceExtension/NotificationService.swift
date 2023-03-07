@@ -14,7 +14,7 @@ class NotificationService: UNNotificationServiceExtension {
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         print("NotificationService didReceive called")
         
-        CustomerIO.initialize(siteId: "site_id", apiKey: "api_key", region: .US) { config in
+        CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
             config.autoTrackDeviceAttributes = true
             config.logLevel = .debug
         }

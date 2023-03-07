@@ -18,7 +18,7 @@ class TextFooter extends StatelessWidget {
       child: Center(
         child: Text(
           text,
-          style: Theme.of(context).textTheme.caption,
+          style: Theme.of(context).textTheme.bodySmall,
           textAlign: TextAlign.center,
         ),
       ),

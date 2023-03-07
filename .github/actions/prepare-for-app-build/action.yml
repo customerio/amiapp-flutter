@@ -1,0 +1,66 @@
+# Boilerplate github action code to setup CI environment for building and deploying app. 
+# use in github action like:
+# - name: Setup environment for building and releasing app 
+#   uses: ./.github/actions/prepare-for-app-build
+#   with:
+#     GOOGLE_SERVICES_BASE64: "${{ secrets.GOOGLE_SERVICES_BASE64 }}"
+#     ENV_FILE_B64: "${{ secrets.ENV_FILE_B64 }}"
+#     FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH: ${{ secrets.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }}
+#     MATCH_GOOGLE_CLOUD_KEYS_B64: ${{ secrets.MATCH_GOOGLE_CLOUD_KEYS_B64 }}  
+name: 'Prepare for building and releasing app'
+description: 'Do setup steps to setup the CI environment to be able to successfully build and deploy the app.'
+inputs:
+  GOOGLE_SERVICES_BASE64: 
+    description: 'GOOGLE_SERVICES_BASE64 from secrets'
+    required: true
+  ENV_FILE_B64: 
+    description: 'ENV_FILE_B64 from secrets'
+    required: true
+  ENV_FILE_SWIFT_B64:
+    description: 'ENV_FILE_SWIFT_B64 from secrets'
+    required: true
+  FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH: 
+    description: 'FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH from secrets'
+    required: true
+  MATCH_GOOGLE_CLOUD_KEYS_B64:
+    description: 'MATCH_GOOGLE_CLOUD_KEYS_B64 from secrets'
+    required: true
+  GOOGLE_SERVICES_ANDROID_BASE64:
+    description: 'GOOGLE_SERVICES_ANDROID_BASE64 from secrets'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Ruby to run Fastlane 
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.2
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '3.7.3'
+    - name: Prepare app for building and deploying 
+      shell: bash 
+      run: |
+        echo "${{ inputs.GOOGLE_SERVICES_BASE64 }}" | base64 -d > "ios/Runner/GoogleService-Info.plist"
+        echo "${{ inputs.ENV_FILE_B64 }}" | base64 -d > ".env"
+        echo "${{ inputs.ENV_FILE_SWIFT_B64 }}" | base64 -d > "ios/Env.swift"
+        echo "${{ inputs.FIREBASE_APP_DISTRIBUTION_GOOGLE_AUTH }}" | base64 -d > ami_app_ci_server-google_cloud_service_account.json
+        echo "${{ inputs.MATCH_GOOGLE_CLOUD_KEYS_B64 }}" | base64 -d > gc_keys.json
+        echo "${{ inputs.GOOGLE_SERVICES_ANDROID_BASE64 }}" | base64 -d > android/app/google-services.json
+    - name: Install Fastlane 
+      uses: maierj/fastlane-action@v2.0.1
+      with:
+        lane: 'list' # give action a lane that doesn't perform an action to get fastlane installed on machine to use later. 
+        skip-tracking: true
+        
+    - name: Get Flutter dependencies
+      run: flutter pub get
+      working-directory: .
+      shell: bash
+
+    - name: pod install as Flutter project requires it
+      working-directory: ios 
+      run: pod install --repo-update
+      shell: bash 

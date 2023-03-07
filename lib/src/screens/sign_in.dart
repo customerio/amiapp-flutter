@@ -68,7 +68,7 @@ class _SignInScreenState extends State<SignInScreen> {
             Center(
               child: Text(
                 'Flutter Ami App',
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
             const Spacer(),
