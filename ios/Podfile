@@ -39,7 +39,7 @@ end
 
 target 'NotificationServiceExtension' do
   use_frameworks!
-  pod 'CustomerIO/MessagingPushFCM', '~> 2.1.0'
+  pod 'CustomerIO/MessagingPushFCM', '~> 2.1.1'
 end
 
 
@@ -47,23 +47,4 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
   end
-
-  # start workaround
-  # can be removed after https://github.com/customerio/customerio-ios/pull/277 is merged
-  cio_target_names = [
-    'CustomerIOTracking',
-    'CustomerIOCommon',
-    'CustomerIOMessagingPushFCM',
-    'CustomerIOMessagingPush'
-  ]
-
-  installer.pods_project.targets.each do |target|
-    if cio_target_names.include? target.name
-      target.build_configurations.each do |config|
-        config.build_settings['APPLICATION_EXTENSION_API_ONLY'] ||= 'NO'
-      end
-    end
-  end
-  # end workaround
-
 end
