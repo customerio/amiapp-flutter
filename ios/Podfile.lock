@@ -125,8 +125,8 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
-  shared_preferences_foundation: 3d2c799fb2ff809e53f07a8517d24c441ad22e65
+  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
 
-PODFILE CHECKSUM: d7457a6b91c61de60240cb2008cfed79d6aa0be4
+PODFILE CHECKSUM: caca3f854cdf92173b1749e02f076a8449457c91
 
 COCOAPODS: 1.11.3

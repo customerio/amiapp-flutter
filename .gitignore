@@ -9,6 +9,7 @@
 .history
 .svn/
 migrate_working_dir/
+fastlane/report.xml
 
 # IntelliJ related
 *.iml
