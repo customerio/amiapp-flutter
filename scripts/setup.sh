@@ -96,7 +96,8 @@ Syntax depends on the version manager tool you are using.
 Some tools: fvm, asdf, rtx'
 
 	step 'Ensure environment is properly setup by running:
-	flutter doctor' run_flutter_doc
+	flutter doctor
+Note: command may display some errors that need to be fixed and this script will show optional steps next for common issues and fixes' run_flutter_doc
 
 	step 'Optional Fix - If you get the error
 
