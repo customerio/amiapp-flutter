@@ -44,7 +44,12 @@ dependencies:
   flutter_dotenv: ^5.0.2
 
 dev_dependencies:
+  test: any
   flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_driver:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to

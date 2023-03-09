@@ -1,29 +1,42 @@
-const wdio = require("webdriverio");
-const assert = require("assert");
+const { remote } = require('webdriverio');
 
-const opts = {
-    path: '/wd/hub',
-    port: 4723,
-    capabilities: {
-        platformName: "Android",
-        platformVersion: "11",
-        deviceName: "emulator-5554",
-        app: "/Users/mrehan/code/amiapp-flutter/build/app/outputs/apk/debug/app-debug.apk",
-        appPackage: "io.customer.amiapp_flutter",
-        appActivity: ".MainActivity",
-        automationName: "UiAutomator2"
-    }
+const appiumOS = process.env.APPIUM_OS ?? 'android';
+const osSpecificOps = appiumOS === 'android' ? {
+    'platformName': 'Android',
+    'appium:deviceName': 'emulator-5554',
+    'appium:app': __dirname + '/../build/app/outputs/apk/debug/app-debug.apk',
+} : process.env.APPIUM_OS === 'ios' ? {
+    'platformName': 'iOS',
+    'appium:platformVersion': '12.2',
+    'appium:deviceName': 'iPhone X',
+    'appium:noReset': true,
+    'appium:app': __dirname + '/../apps/Runner.zip',
+} : {};
+
+const capabilities = {
+    ...osSpecificOps,
+    'appium:automationName': 'Flutter',
+    'appium:appPackage': 'io.customer.amiapp_flutter',
+    'appium:appActivity': '.MainActivity',
+    'appium:retryBackoffTime': 500,
+    'appium:maxRetryCount': 3,
 };
 
-async function main() {
-    const client = await wdio.remote(opts);
+const wdOpts = {
+    host: process.env.APPIUM_HOST || 'localhost',
+    port: parseInt(process.env.APPIUM_PORT, 10) || 4723,
+    logLevel: 'info',
+    capabilities: capabilities,
+};
 
-    const field = await client.$("android.widget.EditText");
-    await field.setValue("Hello World!");
-    const value = await field.getText();
-    assert.strictEqual(value, "Hello World!");
-
-    await client.deleteSession();
+async function runTest() {
+    const driver = await remote(wdOpts);
+    try {
+        // Write test here
+    } finally {
+        await driver.pause(1000);
+        await driver.deleteSession();
+    }
 }
 
-main();
+runTest().catch(console.error);
