@@ -7,15 +7,16 @@ import 'package:permission_handler/permission_handler.dart';
 import 'src/app.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  try {
-    enableFlutterDriverExtension();
-  } catch (exception) {
-    if (kDebugMode) {
+  // Flutter dru=iver for UI automation in debug builds
+  if (kDebugMode) {
+    try {
+      enableFlutterDriverExtension();
+    } catch (exception) {
       print(exception);
     }
   }
 
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Permission.notification.isDenied.then((value) {
     if (value) {
