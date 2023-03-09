@@ -1,4 +1,5 @@
 const { remote } = require('webdriverio');
+const { identifyProfile } = require('./tests/IdentifyProfile.js');
 
 const appiumOS = process.env.APPIUM_OS ?? 'android';
 const osSpecificOps = appiumOS === 'android' ? {
@@ -15,7 +16,7 @@ const osSpecificOps = appiumOS === 'android' ? {
 
 const capabilities = {
     ...osSpecificOps,
-    'appium:automationName': 'Flutter',
+    'appium:automationName': 'UiAutomator2',
     'appium:appPackage': 'io.customer.amiapp_flutter',
     'appium:appActivity': '.MainActivity',
     'appium:retryBackoffTime': 500,
@@ -25,14 +26,14 @@ const capabilities = {
 const wdOpts = {
     host: process.env.APPIUM_HOST || 'localhost',
     port: parseInt(process.env.APPIUM_PORT, 10) || 4723,
-    logLevel: 'info',
+    logLevel: 'debug',
     capabilities: capabilities,
 };
 
 async function runTest() {
     const driver = await remote(wdOpts);
     try {
-        // Write test here
+        await identifyProfile(driver)
     } finally {
         await driver.pause(1000);
         await driver.deleteSession();
