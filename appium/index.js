@@ -1,10 +1,11 @@
 const { remote } = require('webdriverio');
 const { identifyProfile } = require('./tests/IdentifyProfile.js');
+const { backgroundQueue } = require('./tests/BackgroundQueue.js');
 
 const appiumOS = process.env.APPIUM_OS ?? 'android';
 const osSpecificOps = appiumOS === 'android' ? {
     'platformName': 'Android',
-    'appium:deviceName': 'emulator-5554',
+    'appium:deviceName': '23261FDF6007NH',
     'appium:app': __dirname + '/../build/app/outputs/apk/debug/app-debug.apk',
     'appium:logcatFormat': 'raw',
     'appium:logcatFilterSpecs': ['*:S', '[CIO]:D'],
@@ -43,7 +44,8 @@ const wdOpts = {
 async function runTest() {
     const driver = await remote(wdOpts);
     try {
-        await identifyProfile(driver)
+        //await identifyProfile(driver)
+        await backgroundQueue(driver);
     } finally {
         await driver.pause(1000);
         await driver.deleteSession();
