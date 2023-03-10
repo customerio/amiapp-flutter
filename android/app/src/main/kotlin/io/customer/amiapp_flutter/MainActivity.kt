@@ -16,9 +16,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     private val sdkStaticDIGraph: CustomerIOStaticComponent by lazy { CustomerIOStaticComponent() }
 
-    // Creating new instance of [CustomerIOStaticComponent] as logger is lazy and will not be
-    // overriden if accessed before from same instance
-    private val amiAppLogger: AmiAppLogger by lazy { AmiAppLogger(logger = CustomerIOStaticComponent().logger) }
+    private val amiAppLogger: AmiAppLogger = AmiAppLogger()
     private var deviceToken: String? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {

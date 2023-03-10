@@ -12,3 +12,5 @@
 
 - [Quick Start](https://appium.github.io/appium/docs/en/2.0/quickstart/install/)
 - [Capabilities](https://appium.github.io/appium/docs/en/2.0/guides/caps/)
+- [Webdriver.io Proxy](https://webdriver.io/docs/proxy/)
+- [Writing Running Appium](https://appium.io/docs/en/writing-running-appium/caps/)

@@ -6,6 +6,8 @@ const osSpecificOps = appiumOS === 'android' ? {
     'platformName': 'Android',
     'appium:deviceName': 'emulator-5554',
     'appium:app': __dirname + '/../build/app/outputs/apk/debug/app-debug.apk',
+    'appium:logcatFormat': 'raw',
+    'appium:logcatFilterSpecs': ['*:S', '[CIO]:D'],
 } : process.env.APPIUM_OS === 'ios' ? {
     'platformName': 'iOS',
     'appium:platformVersion': '12.2',
@@ -14,6 +16,12 @@ const osSpecificOps = appiumOS === 'android' ? {
     'appium:app': __dirname + '/../apps/Runner.zip',
 } : {};
 
+const proxy = {
+    proxyType: "manual",
+    httpProxy: "customer.io",
+    noProxy: "127.0.0.1,localhost"
+};
+
 const capabilities = {
     ...osSpecificOps,
     'appium:automationName': 'UiAutomator2',
@@ -21,6 +29,8 @@ const capabilities = {
     'appium:appActivity': '.MainActivity',
     'appium:retryBackoffTime': 500,
     'appium:maxRetryCount': 3,
+    'appium:autoGrantPermissions': true,
+    proxy: proxy,
 };
 
 const wdOpts = {
