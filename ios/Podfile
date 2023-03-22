@@ -39,8 +39,9 @@ end
 
 target 'NotificationServiceExtension' do
   use_frameworks!
-  pod 'CustomerIO/MessagingPushFCM', '~> 2.1.0'
+  pod 'CustomerIO/MessagingPushFCM', '~> 2.1'
 end
+
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
