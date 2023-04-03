@@ -5,6 +5,7 @@ import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.di.CustomerIOStaticComponent
 import io.customer.sdk.di.DiGraph
+import io.customer.sdk.util.CioLogLevel
 import io.customer.sdk.util.Logger
 import io.customer.messagingpush.provider.FCMTokenProviderImpl
 
@@ -16,9 +17,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     private val sdkStaticDIGraph: CustomerIOStaticComponent by lazy { CustomerIOStaticComponent() }
 
-    // Creating new instance of [CustomerIOStaticComponent] as logger is lazy and will not be
-    // overriden if accessed before from same instance
-    private val amiAppLogger: AmiAppLogger by lazy { AmiAppLogger(logger = CustomerIOStaticComponent().logger) }
+    private val amiAppLogger: AmiAppLogger = AmiAppLogger()
     private var deviceToken: String? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -50,6 +49,9 @@ class MainActivity : FlutterActivity() {
 
     private fun onSDKInitialized(): Any? {
         updateDeviceToken()
+        CustomerIO.instanceOrNull(context = this)?.let { sdk ->
+            amiAppLogger.setPreferredLogLevel(sdk.diGraph.sdkConfig.logLevel)
+        }
         return null
     }
 

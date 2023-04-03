@@ -1,6 +1,3 @@
-import 'dart:developer' as developer;
-
-import 'package:amiapp_flutter/src/screens/logs.dart';
 import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -11,9 +8,11 @@ import 'customer_io.dart';
 import 'screens/attributes.dart';
 import 'screens/events.dart';
 import 'screens/home.dart';
+import 'screens/logs.dart';
 import 'screens/settings.dart';
 import 'screens/sign_in.dart';
 import 'theme/sizes.dart';
+import 'utils/logs.dart';
 
 /// Main entry point of AmiApp
 class AmiApp extends StatefulWidget {
@@ -33,9 +32,9 @@ class _AmiAppState extends State<AmiApp> {
     _customerIOSDK
         .initialize()
         .whenComplete(
-            () => developer.log('Customer.io SDK initialization successful'))
+            () => debugLog('Customer.io SDK initialization successful'))
         .catchError((error) {
-      developer.log('Customer.io SDK could not be initialized:  $error');
+      debugLog('Customer.io SDK could not be initialized:  $error');
     });
   }
 

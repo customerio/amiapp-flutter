@@ -53,10 +53,10 @@ packages:
     dependency: "direct main"
     description:
       name: customer_io
-      sha256: c96ad50e78db73265d24427611abf03cb1b588ebabcc9913eb749e236757929b
+      sha256: "0b832c9d4276d80e1c2597d46c133eaf6c91a3b710db775c3c3a4a994b4bdcab"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0-alpha.9"
+    version: "1.0.0-beta.3"
   email_validator:
     dependency: "direct main"
     description:

@@ -7,3 +7,9 @@ void debugLog(String message) {
     developer.log(message);
   }
 }
+
+void debugError(String message, {Object? error, StackTrace? stackTrace}) {
+  if (kDebugMode) {
+    developer.log(message, error: error, stackTrace: stackTrace);
+  }
+}
