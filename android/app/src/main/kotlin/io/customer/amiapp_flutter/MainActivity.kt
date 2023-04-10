@@ -1,14 +1,11 @@
 package io.customer.amiapp_flutter
 
 import io.customer.base.internal.InternalCustomerIOApi
+import io.customer.messagingpush.provider.FCMTokenProviderImpl
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.di.CustomerIOStaticComponent
-import io.customer.sdk.di.DiGraph
-import io.customer.sdk.util.CioLogLevel
 import io.customer.sdk.util.Logger
-import io.customer.messagingpush.provider.FCMTokenProviderImpl
-
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -49,9 +46,7 @@ class MainActivity : FlutterActivity() {
 
     private fun onSDKInitialized(): Any? {
         updateDeviceToken()
-        CustomerIO.instanceOrNull(context = this)?.let { sdk ->
-            amiAppLogger.setPreferredLogLevel(sdk.diGraph.sdkConfig.logLevel)
-        }
+        amiAppLogger.setPreferredLogLevel(CustomerIO.instance().diGraph.sdkConfig.logLevel)
         return null
     }
 
