@@ -1,9 +1,8 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 
 import '../components/container.dart';
 import '../customer_io.dart';
+import '../utils/logs.dart';
 
 class ViewLogsScreen extends StatefulWidget {
   const ViewLogsScreen({super.key});
@@ -17,10 +16,14 @@ class _ViewLogsScreenState extends State<ViewLogsScreen> {
   bool isAscending = true;
 
   void _fetchLogs() {
-    developer.log('Fetching logs from SDK');
-    CustomerIOSDKInstance.get()
-        .getLogs()
-        .then((logs) => setState(() => _logs = logs ?? []));
+    debugLog('Fetching logs from SDK');
+    CustomerIOSDKInstance.get().getLogs().then((logs) => setState(() {
+          var result = logs ?? [];
+          if (!isAscending) {
+            result = result.reversed.toList(growable: false);
+          }
+          _logs = result;
+        }));
   }
 
   @override

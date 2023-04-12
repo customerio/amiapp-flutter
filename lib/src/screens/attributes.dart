@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../components/container.dart';
 import '../theme/sizes.dart';
+import '../utils/extensions.dart';
 import '../widgets/attribute_form_field.dart';
 
 class DeviceAttributesScreen extends StatefulWidget {
@@ -35,6 +36,12 @@ class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
     setState(() {
       _customAttributes.remove(formField);
     });
+  }
+
+  /// Shows success message and navigates up when event tracking is complete
+  void _onEventTracked() {
+    context.showSnackBar('Device attributes tracked successfully');
+    Navigator.pop(context);
   }
 
   @override
@@ -79,15 +86,19 @@ class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
                 style: ElevatedButton.styleFrom(
                   minimumSize: sizes.buttonDefault(),
                 ),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    var attributes = {
-                      for (var attribute in _customAttributes)
-                        attribute.name: attribute.value
-                    };
-                    CustomerIO.setDeviceAttributes(attributes: attributes);
-                  }
-                },
+                onPressed: _customAttributes.isEmpty
+                    ? null
+                    : () async {
+                        if (_formKey.currentState!.validate()) {
+                          var attributes = {
+                            for (var attribute in _customAttributes)
+                              attribute.name: attribute.value
+                          };
+                          CustomerIO.setDeviceAttributes(
+                              attributes: attributes);
+                          _onEventTracked();
+                        }
+                      },
                 child: const Text(
                   'Send Device Attributes',
                 ),
@@ -133,6 +144,12 @@ class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
     });
   }
 
+  /// Shows success message and navigates up when event tracking is complete
+  void _onEventTracked() {
+    context.showSnackBar('Profile attributes tracked successfully');
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final Sizes sizes = Theme.of(context).extension<Sizes>()!;
@@ -175,15 +192,19 @@ class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
                 style: ElevatedButton.styleFrom(
                   minimumSize: sizes.buttonDefault(),
                 ),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    var attributes = {
-                      for (var attribute in _customAttributes)
-                        attribute.name: attribute.value
-                    };
-                    CustomerIO.setProfileAttributes(attributes: attributes);
-                  }
-                },
+                onPressed: _customAttributes.isEmpty
+                    ? null
+                    : () async {
+                        if (_formKey.currentState!.validate()) {
+                          var attributes = {
+                            for (var attribute in _customAttributes)
+                              attribute.name: attribute.value
+                          };
+                          CustomerIO.setProfileAttributes(
+                              attributes: attributes);
+                          _onEventTracked();
+                        }
+                      },
                 child: const Text(
                   'Send Profile Attributes',
                 ),

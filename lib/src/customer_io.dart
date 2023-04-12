@@ -1,5 +1,4 @@
 import 'dart:async' show Future;
-import 'dart:developer' as developer;
 
 import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_config.dart';
@@ -8,6 +7,8 @@ import 'package:flutter/services.dart' show MethodChannel, PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'utils/logs.dart';
 
 /// This is only for sample app
 /// Please feel free to place sdk related code wherever suits best for your app architecture
@@ -97,11 +98,11 @@ class CustomerIOSDK extends ChangeNotifier {
       if (dotenv.env.isNotEmpty) {
         config = CustomerIOConfigurations.fromEnv();
       } else {
-        developer.log(
+        debugLog(
             'No env file found, dotenv initialization: ${dotenv.isInitialized}');
       }
     } catch (ex, s) {
-      developer.log(
+      debugError(
         'Unable to load Customer.io configurations from env',
         error: ex,
         stackTrace: s,
@@ -116,7 +117,7 @@ class CustomerIOSDK extends ChangeNotifier {
         return CustomerIOConfigurations.fromPrefs(prefs);
       } catch (ex) {
         if (ex is! ArgumentError) {
-          developer.log("Error loading configurations from preferences: '$ex'",
+          debugError("Error loading configurations from preferences: '$ex'",
               error: ex);
         }
         return null;
@@ -168,23 +169,23 @@ class CustomerIOSDK extends ChangeNotifier {
       final prefsConfig = await _loadConfigurationsFromPreferences();
       if (prefsConfig != null) {
         _configurations = prefsConfig;
-        developer.log(
+        debugLog(
             'Customer.io SDK configurations loaded from preferences successfully');
       } else {
         final envConfig = _getEnvironmentConfigurations();
         if (envConfig != null) {
           _configurations = envConfig;
-          developer.log(
+          debugLog(
               'Customer.io SDK configurations loaded from environment successfully');
         } else {
-          developer.log('Customer.io SDK configurations could not be fetched');
+          debugLog('Customer.io SDK configurations could not be fetched');
           return Future.error(Exception(
               'No values found for Customer.io SDK in preferences or environment'));
         }
       }
     } else {
       _platform.invokeMethod('clearLogs');
-      developer.log('Customer.io SDK configurations already initialized');
+      debugLog('Customer.io SDK configurations already initialized');
     }
 
     final CioLogLevel logLevel;
@@ -238,7 +239,7 @@ class CustomerIOSDK extends ChangeNotifier {
           .map((log) => log?.toString() ?? 'NULL')
           .toList(growable: false);
     } on PlatformException catch (ex) {
-      developer.log("Failed to get logs from SDK: '${ex.message}'", error: ex);
+      debugError("Failed to get logs from SDK: '${ex.message}'", error: ex);
       return null;
     }
   }
@@ -248,7 +249,7 @@ class CustomerIOSDK extends ChangeNotifier {
       final result = await _platform.invokeMethod('getUserAgent');
       return result?.toString();
     } on PlatformException catch (ex) {
-      developer.log("Failed to get user agent from SDK: '${ex.message}'",
+      debugError("Failed to get user agent from SDK: '${ex.message}'",
           error: ex);
       return null;
     }
@@ -259,7 +260,7 @@ class CustomerIOSDK extends ChangeNotifier {
       final result = await _platform.invokeMethod('getDeviceToken');
       return result?.toString();
     } on PlatformException catch (ex) {
-      developer.log("Failed to get device token from SDK: '${ex.message}'",
+      debugError("Failed to get device token from SDK: '${ex.message}'",
           error: ex);
       return null;
     }

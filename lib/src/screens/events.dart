@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../components/container.dart';
 import '../theme/sizes.dart';
+import '../utils/extensions.dart';
 import '../widgets/attribute_form_field.dart';
 import '../widgets/header.dart';
 
@@ -37,6 +38,12 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
     setState(() {
       _customAttributes.remove(formField);
     });
+  }
+
+  /// Shows success message and navigates up when event tracking is complete
+  void _onEventTracked() {
+    context.showSnackBar('Event tracked successfully');
+    Navigator.pop(context);
   }
 
   @override
@@ -114,6 +121,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                     CustomerIO.track(
                         name: _eventNameController.text,
                         attributes: attributes);
+                    _onEventTracked();
                   }
                 },
                 child: const Text(

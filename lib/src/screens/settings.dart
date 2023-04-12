@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../components/container.dart';
 import '../customer_io.dart';
 import '../theme/sizes.dart';
+import '../utils/extensions.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/header.dart';
 import '../widgets/settings_form_field.dart';
@@ -56,10 +57,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
   }
 
-  void _showSnackBar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
-  }
-
   void _saveSettings() {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -85,11 +82,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .saveConfigurationsToPreferences(newConfig)
         .then((success) {
       if (success) {
-        _showSnackBar(context, 'Settings saved successfully');
+        context.showSnackBar('Settings saved successfully');
         Navigator.of(context).pop();
         // Restart app here
       } else {
-        _showSnackBar(context, 'Could not save settings');
+        context.showSnackBar('Could not save settings');
       }
       return null;
     });
@@ -98,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _restoreDefaultSettings() {
     final defaultConfig = widget._customerIOSDK.getDefaultConfigurations();
     if (defaultConfig == null) {
-      _showSnackBar(context, 'No default values found');
+      context.showSnackBar('No default values found');
       return;
     }
 
@@ -116,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           defaultConfig.featureTrackDeviceAttributes;
       _featureDebugMode = defaultConfig.featureDebugMode;
     });
-    _showSnackBar(context, 'Restored default values');
+    context.showSnackBar('Restored default values');
   }
 
   @override
@@ -157,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               final clipboardData = ClipboardData(
                                   text: _deviceTokenValueController.text);
                               Clipboard.setData(clipboardData).then((_) =>
-                                  _showSnackBar(context,
+                                  context.showSnackBar(
                                       'Device Token copied to clipboard'));
                             },
                           ),
