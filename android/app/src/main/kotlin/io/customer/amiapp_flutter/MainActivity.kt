@@ -46,7 +46,7 @@ class MainActivity : FlutterActivity() {
 
     private fun onSDKInitialized(): Any? {
         updateDeviceToken()
-        amiAppLogger.setPreferredLogLevel(CustomerIO.instance().diGraph.sdkConfig.logLevel)
+        amiAppLogger.setUserDefinedLogLevel(CustomerIO.instance().diGraph.sdkConfig.logLevel)
         return null
     }
 
