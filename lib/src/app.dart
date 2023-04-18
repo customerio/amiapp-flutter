@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:customer_io/customer_io.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,6 +30,7 @@ class _AmiAppState extends State<AmiApp> {
   final CustomerIOSDK _customerIOSDK = CustomerIOSDKInstance.get();
   final AmiAppAuth _auth = AmiAppAuth();
   late final GoRouter _router;
+  late StreamSubscription firebaseMessagingStreamSubscription;
 
   void _initCustomerIO() async {
     _customerIOSDK
@@ -111,6 +115,24 @@ class _AmiAppState extends State<AmiApp> {
     _customerIOSDK.addListener(_handleSDKConfigurationsChanged);
 
     super.initState();
+
+    // Without requesting the token, FirebaseMessaging.onMessage.listen is not
+    // invoked. See https://github.com/firebase/flutterfire/issues/6011
+    // Getting the token makes everything work as expected
+    FirebaseMessaging.instance.getToken().then((String? token) {
+      assert(token != null);
+    });
+
+    // Firebase messaging listener
+    firebaseMessagingStreamSubscription = FirebaseMessaging.onMessage.listen(
+        (RemoteMessage message) => CustomerIO.messagingPush()
+                .onMessageReceived(message.toMap())
+                .then((handled) {
+              // handled is true if notification was handled by Customer.io SDK; false otherwise
+              debugLog(
+                  'Message received in foreground was handled by Customer.io SDK: $handled');
+              return handled;
+            }));
   }
 
   @override
@@ -213,6 +235,9 @@ class _AmiAppState extends State<AmiApp> {
     _auth.dispose();
     _customerIOSDK.dispose();
     _router.dispose();
+
+    /// Stop listening to streams
+    firebaseMessagingStreamSubscription.cancel();
 
     super.dispose();
   }
