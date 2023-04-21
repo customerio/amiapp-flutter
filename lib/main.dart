@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'src/app.dart';
 import 'src/utils/logs.dart';
 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // For any other Firebase services in the background, make sure to call
   // `initializeApp` before using other Firebase services.
