@@ -13,6 +13,65 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### delete_all_code_signing_files
+
+```sh
+[bundle exec] fastlane delete_all_code_signing_files
+```
+
+
+
+### create_all_code_signing_files
+
+```sh
+[bundle exec] fastlane create_all_code_signing_files
+```
+
+
+
+### register_new_ios_device
+
+```sh
+[bundle exec] fastlane register_new_ios_device
+```
+
+
+
+### download_development_code_signing
+
+```sh
+[bundle exec] fastlane download_development_code_signing
+```
+
+
+
+### download_ci_code_signing_files
+
+```sh
+[bundle exec] fastlane download_ci_code_signing_files
+```
+
+
+
+### setup_apple_account_write_access
+
+```sh
+[bundle exec] fastlane setup_apple_account_write_access
+```
+
+
+
+### setup_google_bucket_access
+
+```sh
+[bundle exec] fastlane setup_google_bucket_access
+```
+
+
+
+----
+
+
 ## iOS
 
 ### ios deploy_app
