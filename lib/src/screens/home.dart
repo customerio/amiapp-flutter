@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:amiapp_flutter/src/random.dart';
 import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_inapp.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,9 @@ import '../components/container.dart';
 import '../components/scroll_view.dart';
 import '../constants.dart';
 import '../customer_io.dart';
+import '../random.dart';
 import '../theme/sizes.dart';
+import '../utils/extensions.dart';
 import '../utils/logs.dart';
 import '../widgets/app_footer.dart';
 
@@ -138,16 +139,12 @@ class _HomeScreenState extends State<HomeScreen> {
 class _ActionList extends StatelessWidget {
   const _ActionList();
 
-  void _showSnackBar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
-  }
-
   void _sendRandomEvent(BuildContext context) {
     final randomValues = RandomValues();
     final eventName = randomValues.getEventName();
     CustomerIO.track(
         name: eventName, attributes: randomValues.getEventAttributes());
-    _showSnackBar(context, 'Event tracked with name: $eventName');
+    context.showSnackBar('Event tracked with name: $eventName');
   }
 
   @override
