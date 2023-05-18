@@ -85,7 +85,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     TextFormField(
                       controller: _fullNameController,
                       decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
+                        border: OutlineInputBorder(),
                         labelText: 'First Name',
                       ),
                       keyboardType: TextInputType.name,
@@ -100,7 +100,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
+                          border: OutlineInputBorder(),
                           labelText: 'Email',
                         ),
                         keyboardType: TextInputType.emailAddress,

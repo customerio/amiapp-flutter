@@ -2,9 +2,9 @@ import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
 
 import '../components/container.dart';
+import '../components/scroll_view.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
-import '../widgets/attribute_form_field.dart';
 
 class DeviceAttributesScreen extends StatefulWidget {
   const DeviceAttributesScreen({super.key});
@@ -15,28 +15,8 @@ class DeviceAttributesScreen extends StatefulWidget {
 
 class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _customAttributes = <TextAttributeFormField>[];
-
-  @override
-  void initState() {
-    // adds 1 attribute by default
-    _addNewAttribute();
-    super.initState();
-  }
-
-  void _addNewAttribute() {
-    setState(() {
-      _customAttributes.add(TextAttributeFormField(
-        onRemovePress: _removeAttribute,
-      ));
-    });
-  }
-
-  void _removeAttribute(TextAttributeFormField formField) {
-    setState(() {
-      _customAttributes.remove(formField);
-    });
-  }
+  final _attributeNameController = TextEditingController();
+  final _attributeValueController = TextEditingController();
 
   /// Shows success message and navigates up when event tracking is complete
   void _onEventTracked() {
@@ -52,58 +32,68 @@ class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
       appBar: AppBar(
         title: const Text('Device Attributes'),
         backgroundColor: null,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add New Attribute',
-            onPressed: () {
-              _addNewAttribute();
-            },
-          ),
-        ],
       ),
-      body: Form(
-        key: _formKey,
-        autovalidateMode: AutovalidateMode.disabled,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Flexible(
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: _customAttributes,
-                    ),
+      body: FullScreenScrollView(
+        child: Form(
+          key: _formKey,
+          autovalidateMode: AutovalidateMode.disabled,
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                const Spacer(),
+                TextFormField(
+                  controller: _attributeNameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Property Name',
+                  ),
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  textInputAction: TextInputAction.next,
+                  validator: (value) => value?.isNotEmpty == true
+                      ? null
+                      : 'Property name cannot be empty',
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _attributeValueController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Property Value',
+                  ),
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  textInputAction: TextInputAction.next,
+                  validator: (value) => value?.isNotEmpty == true
+                      ? null
+                      : 'Property value cannot be empty',
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: sizes.buttonDefault(),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      var attributes = {
+                        _attributeNameController.text:
+                            _attributeValueController.value,
+                      };
+                      CustomerIO.setDeviceAttributes(attributes: attributes);
+                      _onEventTracked();
+                    }
+                  },
+                  child: const Text(
+                    'Send Device Attributes',
                   ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: sizes.buttonDefault(),
-                ),
-                onPressed: _customAttributes.isEmpty
-                    ? null
-                    : () async {
-                        if (_formKey.currentState!.validate()) {
-                          var attributes = {
-                            for (var attribute in _customAttributes)
-                              attribute.name: attribute.value
-                          };
-                          CustomerIO.setDeviceAttributes(
-                              attributes: attributes);
-                          _onEventTracked();
-                        }
-                      },
-                child: const Text(
-                  'Send Device Attributes',
-                ),
-              ),
-            ],
+                const Spacer(),
+              ],
+            ),
           ),
         ),
       ),
@@ -121,28 +111,8 @@ class ProfileAttributesScreen extends StatefulWidget {
 
 class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _customAttributes = <TextAttributeFormField>[];
-
-  @override
-  void initState() {
-    // adds 1 attribute by default
-    _addNewAttribute();
-    super.initState();
-  }
-
-  void _addNewAttribute() {
-    setState(() {
-      _customAttributes.add(TextAttributeFormField(
-        onRemovePress: _removeAttribute,
-      ));
-    });
-  }
-
-  void _removeAttribute(TextAttributeFormField formField) {
-    setState(() {
-      _customAttributes.remove(formField);
-    });
-  }
+  final _attributeNameController = TextEditingController();
+  final _attributeValueController = TextEditingController();
 
   /// Shows success message and navigates up when event tracking is complete
   void _onEventTracked() {
@@ -155,64 +125,73 @@ class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
     final Sizes sizes = Theme.of(context).extension<Sizes>()!;
 
     return AppContainer(
-      appBar: AppBar(
-        title: const Text('Profile Attributes'),
-        backgroundColor: null,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add New Attribute',
-            onPressed: () {
-              _addNewAttribute();
-            },
-          ),
-        ],
-      ),
-      body: Form(
-        key: _formKey,
-        autovalidateMode: AutovalidateMode.disabled,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Flexible(
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: _customAttributes,
+        appBar: AppBar(
+          title: const Text('Profile Attributes'),
+          backgroundColor: null,
+        ),
+        body: FullScreenScrollView(
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.disabled,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const Spacer(),
+                  TextFormField(
+                    controller: _attributeNameController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Property Name',
+                    ),
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.none,
+                    textInputAction: TextInputAction.next,
+                    validator: (value) => value?.isNotEmpty == true
+                        ? null
+                        : 'Property name cannot be empty',
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _attributeValueController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Property Value',
+                    ),
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.none,
+                    textInputAction: TextInputAction.next,
+                    validator: (value) => value?.isNotEmpty == true
+                        ? null
+                        : 'Property value cannot be empty',
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: sizes.buttonDefault(),
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        var attributes = {
+                          _attributeNameController.text:
+                              _attributeValueController.value,
+                        };
+                        CustomerIO.setProfileAttributes(attributes: attributes);
+                        _onEventTracked();
+                      }
+                    },
+                    child: const Text(
+                      'Send Profile Attributes',
                     ),
                   ),
-                ),
+                  const Spacer(),
+                ],
               ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: sizes.buttonDefault(),
-                ),
-                onPressed: _customAttributes.isEmpty
-                    ? null
-                    : () async {
-                        if (_formKey.currentState!.validate()) {
-                          var attributes = {
-                            for (var attribute in _customAttributes)
-                              attribute.name: attribute.value
-                          };
-                          CustomerIO.setProfileAttributes(
-                              attributes: attributes);
-                          _onEventTracked();
-                        }
-                      },
-                child: const Text(
-                  'Send Profile Attributes',
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
