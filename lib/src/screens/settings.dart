@@ -231,8 +231,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
+            child: FilledButton.tonal(
+              style: FilledButton.styleFrom(
                 minimumSize: sizes.buttonDefault(),
               ),
               onPressed: () => _saveSettings(),
@@ -242,7 +242,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           TextButton(
-            style: ElevatedButton.styleFrom(
+            style: FilledButton.styleFrom(
               minimumSize: sizes.buttonDefault(),
             ),
             onPressed: () => _restoreDefaultSettings(),

@@ -73,8 +73,8 @@ class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
                       : 'Property value cannot be empty',
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
+                FilledButton.tonal(
+                  style: FilledButton.styleFrom(
                     minimumSize: sizes.buttonDefault(),
                   ),
                   onPressed: () async {
@@ -169,8 +169,8 @@ class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
                         : 'Property value cannot be empty',
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
+                  FilledButton.tonal(
+                    style: FilledButton.styleFrom(
                       minimumSize: sizes.buttonDefault(),
                     ),
                     onPressed: () async {

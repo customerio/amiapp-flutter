@@ -113,8 +113,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 48.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
+                      child: FilledButton.tonal(
+                        style: FilledButton.styleFrom(
                           minimumSize: sizes.buttonDefault(),
                         ),
                         onPressed: () async {
@@ -134,7 +134,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
                       child: TextButton(
-                        style: ElevatedButton.styleFrom(
+                        style: FilledButton.styleFrom(
                           minimumSize: sizes.buttonDefault(),
                         ),
                         onPressed: () async {

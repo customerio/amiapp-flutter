@@ -137,12 +137,23 @@ class _AmiAppState extends State<AmiApp> {
           routerConfig: _router,
           themeMode: ThemeMode.system,
           theme: ThemeData(
+            useMaterial3: true,
             // This is the base theme of our application in light mode.
-            primarySwatch: Colors.blueGrey,
+            colorSchemeSeed: Colors.blueGrey,
             appBarTheme: const AppBarTheme(
               backgroundColor: Colors.transparent,
               foregroundColor: Colors.black,
               elevation: 0,
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.onPrimary,
+              hintStyle: TextStyle(
+                color: Colors.blueGrey[700],
+              ),
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              foregroundColor: Colors.white,
             ),
             pageTransitionsTheme: pageTransitionsTheme,
             extensions: themeExtensions,

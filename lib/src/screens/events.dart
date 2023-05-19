@@ -88,8 +88,8 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                       : 'Property value cannot be empty',
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
+                FilledButton.tonal(
+                  style: FilledButton.styleFrom(
                     minimumSize: sizes.buttonDefault(),
                   ),
                   onPressed: () async {

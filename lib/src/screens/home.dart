@@ -160,8 +160,8 @@ class _ActionList extends StatelessWidget {
         children: actionItems
             .map((item) => Padding(
                   padding: const EdgeInsets.only(top: 16.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
+                  child: FilledButton.tonal(
+                    style: FilledButton.styleFrom(
                       minimumSize: sizes.buttonDefault(),
                     ),
                     onPressed: () {
