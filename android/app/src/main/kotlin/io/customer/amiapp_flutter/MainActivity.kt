@@ -59,8 +59,10 @@ class MainActivity : FlutterActivity() {
         return null
     }
 
-    private fun getUserAgent(): String? {
-        return "User agent will be shown here"
+    private fun getUserAgent(): String {
+        return "AmiApp (Flutter)" +
+                " - SDK v${CustomerIO.instance().sdkVersion}" +
+                " - App v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
     }
 
     private fun updateDeviceToken(): Any? {
