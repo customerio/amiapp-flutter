@@ -64,7 +64,7 @@ class TextSettingsFormField extends StatelessWidget {
               controller: valueController,
               readOnly: readOnly,
               decoration: InputDecoration(
-                border: const UnderlineInputBorder(),
+                border: const OutlineInputBorder(),
                 labelText: labelText,
                 hintText: hintText,
                 isDense: false,

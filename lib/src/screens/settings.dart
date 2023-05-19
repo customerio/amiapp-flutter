@@ -159,6 +159,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             },
                           ),
                         ),
+                        const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'Tracking URL',
                           valueController: _trackingURLValueController,
@@ -171,6 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ? null
                               : 'Site ID cannot be empty',
                         ),
+                        const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'API Key',
                           valueController: _apiKeyValueController,
@@ -182,12 +184,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TextSettingsFormField(
                           labelText: 'backgroundQueueSecondsDelay',
                           valueController: _bqSecondsDelayValueController,
+                          hintText: '30',
                           keyboardType: TextInputType.number,
                         ),
+                        const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'backgroundQueueMinNumberOfTasks',
-                          hintText: '10',
                           valueController: _bqMinNumberOfTasksValueController,
+                          hintText: '10',
+                          keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 32),
                         const TextSectionHeader(
