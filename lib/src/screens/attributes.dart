@@ -58,7 +58,7 @@ class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
                       ? null
                       : 'Property name cannot be empty',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _attributeValueController,
                   decoration: const InputDecoration(
@@ -68,9 +68,6 @@ class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
                   textInputAction: TextInputAction.next,
-                  validator: (value) => value?.isNotEmpty == true
-                      ? null
-                      : 'Property value cannot be empty',
                 ),
                 const SizedBox(height: 16),
                 FilledButton.tonal(
@@ -154,7 +151,7 @@ class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
                         ? null
                         : 'Property name cannot be empty',
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _attributeValueController,
                     decoration: const InputDecoration(
@@ -164,9 +161,6 @@ class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
                     keyboardType: TextInputType.text,
                     textCapitalization: TextCapitalization.none,
                     textInputAction: TextInputAction.next,
-                    validator: (value) => value?.isNotEmpty == true
-                        ? null
-                        : 'Property value cannot be empty',
                   ),
                   const SizedBox(height: 16),
                   FilledButton.tonal(

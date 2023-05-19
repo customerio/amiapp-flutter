@@ -59,7 +59,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                       ? null
                       : 'Event name cannot be empty',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _attributeNameController,
                   decoration: const InputDecoration(
@@ -73,7 +73,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                       ? null
                       : 'Property name cannot be empty',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _attributeValueController,
                   decoration: const InputDecoration(
@@ -83,9 +83,6 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
                   textInputAction: TextInputAction.next,
-                  validator: (value) => value?.isNotEmpty == true
-                      ? null
-                      : 'Property value cannot be empty',
                 ),
                 const SizedBox(height: 16),
                 FilledButton.tonal(
