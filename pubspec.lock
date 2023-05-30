@@ -52,11 +52,12 @@ packages:
   customer_io:
     dependency: "direct main"
     description:
-      name: customer_io
-      sha256: "999a39f869446cefdd224751a12cbaab576b2e05a662a598139f5dfc2d7bedb2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
+      path: "."
+      ref: "shahroz/in-app-dimiss"
+      resolved-ref: "25899afb6c53edca5b4d85ab43b17c8694736204"
+      url: "https://github.com/customerio/customerio-flutter.git"
+    source: git
+    version: "1.1.2"
   email_validator:
     dependency: "direct main"
     description:
