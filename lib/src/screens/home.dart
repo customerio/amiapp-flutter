@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
         debugLog("errorWithMessage: ${event.message}");
         break;
       case EventType.messageActionTaken:
+        CustomerIO.messagingInApp().dismissMessage();
         trackInAppEvent('messageActionTaken', event.message, arguments: {
           'actionName': event.actionName,
           'actionValue': event.actionValue,
