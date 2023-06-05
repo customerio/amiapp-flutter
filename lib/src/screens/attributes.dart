@@ -21,7 +21,7 @@ class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
   /// Shows success message and navigates up when event tracking is complete
   void _onEventTracked() {
     context.showSnackBar('Device attributes tracked successfully');
-    Navigator.pop(context);
+    _formKey.currentState?.reset();
   }
 
   @override
@@ -114,7 +114,7 @@ class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
   /// Shows success message and navigates up when event tracking is complete
   void _onEventTracked() {
     context.showSnackBar('Profile attributes tracked successfully');
-    Navigator.pop(context);
+    _formKey.currentState?.reset();
   }
 
   @override

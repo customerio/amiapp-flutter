@@ -22,7 +22,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
   /// Shows success message and navigates up when event tracking is complete
   void _onEventTracked() {
     context.showSnackBar('Event tracked successfully');
-    Navigator.pop(context);
+    _formKey.currentState?.reset();
   }
 
   @override
