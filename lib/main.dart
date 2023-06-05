@@ -6,13 +6,13 @@ import 'src/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  // Load SDK configurations
   await dotenv.load(fileName: ".env");
   await Permission.notification.isDenied.then((value) {
     if (value) {
       Permission.notification.request();
     }
   });
-
+  // Initialize and run app
   runApp(const AmiApp());
 }
