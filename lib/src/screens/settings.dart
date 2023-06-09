@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../components/container.dart';
 import '../customer_io.dart';
+import '../data/config.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
 import '../widgets/app_footer.dart';
@@ -29,7 +30,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController _bqMinNumberOfTasksValueController;
 
   late bool _featureTrackScreens;
-  late bool _featureEnableInApp;
   late bool _featureTrackDeviceAttributes;
   late bool _featureDebugMode;
 
@@ -47,12 +47,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _bqSecondsDelayValueController = TextEditingController(
         text: cioConfig?.backgroundQueueSecondsDelay?.toString());
     _bqMinNumberOfTasksValueController = TextEditingController(
-        text: cioConfig?.backgroundQueueMinNumberOfTasks?.toString());
-    _featureTrackScreens = cioConfig?.featureTrackScreens ?? true;
+        text: cioConfig?.backgroundQueueMinNumOfTasks?.toString());
+    _featureTrackScreens = cioConfig?.screenTrackingEnabled ?? true;
     _featureTrackDeviceAttributes =
-        cioConfig?.featureTrackDeviceAttributes ?? true;
-    _featureEnableInApp = cioConfig?.enableInApp ?? true;
-    _featureDebugMode = cioConfig?.featureDebugMode ?? true;
+        cioConfig?.deviceAttributesTrackingEnabled ?? true;
+    _featureDebugMode = cioConfig?.debugModeEnabled ?? true;
 
     super.initState();
   }
@@ -62,21 +61,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
 
-    final currentConfig = widget._customerIOSDK.configurations;
-    final newConfig = CustomerIOConfigurations(
+    final newConfig = CustomerIOSDKConfiguration(
       siteId: _siteIDValueController.text,
       apiKey: _apiKeyValueController.text,
-      enableInApp: _featureEnableInApp,
-      region: currentConfig?.region,
       trackingUrl: _trackingURLValueController.text,
-      gistEnvironment: currentConfig?.gistEnvironment,
       backgroundQueueSecondsDelay:
           _bqSecondsDelayValueController.text.toDoubleOrNull(),
-      backgroundQueueMinNumberOfTasks:
+      backgroundQueueMinNumOfTasks:
           _bqMinNumberOfTasksValueController.text.toIntOrNull(),
-      featureTrackScreens: _featureTrackScreens,
-      featureTrackDeviceAttributes: _featureTrackDeviceAttributes,
-      featureDebugMode: _featureDebugMode,
+      screenTrackingEnabled: _featureTrackScreens,
+      deviceAttributesTrackingEnabled: _featureTrackDeviceAttributes,
+      debugModeEnabled: _featureDebugMode,
     );
     widget._customerIOSDK
         .saveConfigurationsToPreferences(newConfig)
@@ -102,16 +97,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _siteIDValueController.text = defaultConfig.siteId;
       _apiKeyValueController.text = defaultConfig.apiKey;
-      _featureEnableInApp = defaultConfig.enableInApp;
       _trackingURLValueController.text = defaultConfig.trackingUrl ?? '';
       _bqSecondsDelayValueController.text =
           defaultConfig.backgroundQueueSecondsDelay?.toString() ?? '';
       _bqMinNumberOfTasksValueController.text =
-          defaultConfig.backgroundQueueMinNumberOfTasks?.toString() ?? '';
-      _featureTrackScreens = defaultConfig.featureTrackScreens;
+          defaultConfig.backgroundQueueMinNumOfTasks?.toString() ?? '';
+      _featureTrackScreens = defaultConfig.screenTrackingEnabled;
       _featureTrackDeviceAttributes =
-          defaultConfig.featureTrackDeviceAttributes;
-      _featureDebugMode = defaultConfig.featureDebugMode;
+          defaultConfig.deviceAttributesTrackingEnabled;
+      _featureDebugMode = defaultConfig.debugModeEnabled;
     });
     context.showSnackBar('Restored default values');
   }
@@ -197,12 +191,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         const SizedBox(height: 32),
                         const TextSectionHeader(
                           text: 'Features',
-                        ),
-                        SwitchSettingsFormField(
-                          labelText: 'Enable In-app',
-                          value: _featureEnableInApp,
-                          updateState: ((value) =>
-                              setState(() => _featureEnableInApp = value)),
                         ),
                         SwitchSettingsFormField(
                           labelText: 'Track Screens',

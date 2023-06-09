@@ -57,7 +57,7 @@ class _AmiAppState extends State<AmiApp> {
     // GoRouter configurations.
     _router = GoRouter(
       debugLogDiagnostics:
-          _customerIOSDK.configurations?.featureDebugMode != false,
+      _customerIOSDK.configurations?.debugModeEnabled != false,
       initialLocation: URLPath.home,
       refreshListenable: _auth,
       redirect: (BuildContext context, GoRouterState state) => _guard(state),
@@ -65,25 +65,22 @@ class _AmiAppState extends State<AmiApp> {
         GoRoute(
           name: 'SignIn',
           path: URLPath.signIn,
-          builder: (context, state) => SignInScreen(
-            onSignIn: (credentials) {
-              _auth
-                  .signIn(credentials.email, credentials.fullName)
-                  .then((signedIn) {
-                if (signedIn) {
-                  CustomerIO.identify(
-                      identifier: credentials.email,
-                      attributes: {
-                        "name": credentials.fullName,
-                        "email": credentials.email
+          builder: (context, state) =>
+              SignInScreen(
+                onSignIn: (user) {
+                  _auth.signIn(user).then((signedIn) {
+                    if (signedIn) {
+                      CustomerIO.identify(identifier: user.email, attributes: {
+                        "name": user.displayName,
+                        "email": user.email,
+                        "is_guest": user.isGuest,
                       });
-                  _customerIOSDK.saveProfileIdentifier(credentials.email);
-                  context.go(URLPath.home);
-                }
-                return signedIn;
-              });
-            },
-          ),
+                      context.go(URLPath.home);
+                    }
+                    return signedIn;
+                  });
+                },
+              ),
         ),
         GoRoute(
           name: 'Settings',
@@ -98,7 +95,7 @@ class _AmiAppState extends State<AmiApp> {
         GoRoute(
           name: 'Home',
           path: URLPath.home,
-          builder: (context, state) => const HomeScreen(),
+          builder: (context, state) => HomeScreen(auth: _auth),
         ),
         GoRoute(
           name: 'CustomEvent',
@@ -176,7 +173,7 @@ class _AmiAppState extends State<AmiApp> {
       return Future.value(URLPath.signIn);
     }
 
-    if (_customerIOSDK.configurations?.featureTrackScreens != false) {
+    if (_customerIOSDK.configurations?.screenTrackingEnabled != false) {
       final screenName = _getNameFromLocation(target);
       if (screenName?.isNotEmpty == true) {
         CustomerIO.screen(name: screenName!);
@@ -199,7 +196,7 @@ class _AmiAppState extends State<AmiApp> {
   void _handleAuthStateChanged() {
     if (_auth.signedIn == false) {
       CustomerIO.clearIdentify();
-      _customerIOSDK.clearProfileIdentifier();
+      _auth.clearUserState();
       _router.go(URLPath.signIn);
     }
   }

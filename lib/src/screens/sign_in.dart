@@ -6,19 +6,13 @@ import '../components/container.dart';
 import '../components/scroll_view.dart';
 import '../constants.dart';
 import '../customer_io.dart';
+import '../data/user.dart';
 import '../random.dart';
 import '../theme/sizes.dart';
 import '../widgets/app_footer.dart';
 
-class Credentials {
-  final String email;
-  final String fullName;
-
-  Credentials(this.email, this.fullName);
-}
-
 class SignInScreen extends StatefulWidget {
-  final ValueChanged<Credentials> onSignIn;
+  final ValueChanged<User> onSignIn;
 
   const SignInScreen({
     required this.onSignIn,
@@ -121,9 +115,11 @@ class _SignInScreenState extends State<SignInScreen> {
                           _autoValidateMode =
                               AutovalidateMode.onUserInteraction;
                           if (_formKey.currentState!.validate()) {
-                            widget.onSignIn(Credentials(
-                                _emailController.value.text,
-                                _fullNameController.value.text));
+                            widget.onSignIn(User(
+                              displayName: _fullNameController.value.text,
+                              email: _emailController.value.text,
+                              isGuest: false,
+                            ));
                           }
                         },
                         child: Text(
@@ -139,9 +135,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         onPressed: () async {
                           final randomValues = RandomValues();
-                          widget.onSignIn(Credentials(
-                            randomValues.getEmail(),
-                            randomValues.getFullName(),
+                          widget.onSignIn(User(
+                            displayName: randomValues.getFullName(),
+                            email: randomValues.getEmail(),
+                            isGuest: true,
                           ));
                         },
                         child: const Text(

@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'customer_io.dart';
+import 'data/user.dart';
+import 'utils/logs.dart';
 
 /// Dummy authentication service as we only need login details to identify user
 class AmiAppAuth extends ChangeNotifier {
@@ -15,8 +18,8 @@ class AmiAppAuth extends ChangeNotifier {
 
   // Validates current signed in state
   Future<bool> updateState() =>
-      CustomerIOSDKInstance.get().fetchProfileIdentifier().then((value) {
-        _signedIn = value != null && value.isNotEmpty;
+      fetchUserState().then((user) {
+        _signedIn = user.isLoggedIn;
         notifyListeners();
         return _signedIn == true;
       });
@@ -28,10 +31,10 @@ class AmiAppAuth extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> signIn(String emailAddress, String fullName) async {
+  Future<bool> signIn(User user) async {
     // Sign in after short delay
     await Future<void>.delayed(const Duration(milliseconds: 300));
-    _signedIn = true;
+    _signedIn = await saveUserState(user);
     notifyListeners();
     return _signedIn == true;
   }
@@ -53,4 +56,25 @@ class AmiAppAuthScope extends InheritedNotifier<AmiAppAuth> {
 
   static AmiAppAuth of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AmiAppAuthScope>()!.notifier!;
+}
+
+extension AmiAppAuthExtensions on AmiAppAuth {
+  Future<User?> fetchUserState() =>
+      SharedPreferences.getInstance().then((prefs) {
+        try {
+          return User.fromPrefs(prefs);
+        } catch (ex) {
+          if (ex is! ArgumentError) {
+            debugError("Error loading configurations from preferences: '$ex'",
+                error: ex);
+          }
+          return null;
+        }
+      });
+
+  Future<bool> saveUserState(User user) => SharedPreferences.getInstance()
+      .then((prefs) => prefs.saveUserState(user));
+
+  Future<bool> clearUserState() =>
+      SharedPreferences.getInstance().then((prefs) => prefs.clearUserState());
 }

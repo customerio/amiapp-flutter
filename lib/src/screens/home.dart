@@ -17,7 +17,12 @@ import '../utils/logs.dart';
 import '../widgets/app_footer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final AmiAppAuth auth;
+
+  const HomeScreen({
+    required this.auth,
+    super.key,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -38,17 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     final customerIOSDK = CustomerIOSDKInstance.get();
-    customerIOSDK
-        .fetchProfileIdentifier()
-        .then((value) => setState(() => _email = value));
+    widget.auth
+        .fetchUserState()
+        .then((value) => setState(() => _email = value?.email));
     customerIOSDK
         .getUserAgent()
         .then((value) => setState(() => _userAgent = value));
 
-    if (customerIOSDK.isInAppEnabled()) {
-      inAppMessageStreamSubscription =
-          CustomerIO.subscribeToInAppEventListener(handleInAppEvent);
-    }
+    inAppMessageStreamSubscription =
+        CustomerIO.subscribeToInAppEventListener(handleInAppEvent);
     super.initState();
   }
 
