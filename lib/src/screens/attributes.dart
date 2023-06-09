@@ -70,7 +70,7 @@ class _DeviceAttributesScreenState extends State<DeviceAttributesScreen> {
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
-                FilledButton.tonal(
+                FilledButton(
                   style: FilledButton.styleFrom(
                     minimumSize: sizes.buttonDefault(),
                   ),
@@ -163,7 +163,7 @@ class _ProfileAttributesScreenState extends State<ProfileAttributesScreen> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 16),
-                  FilledButton.tonal(
+                  FilledButton(
                     style: FilledButton.styleFrom(
                       minimumSize: sizes.buttonDefault(),
                     ),

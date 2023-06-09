@@ -85,7 +85,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
-                FilledButton.tonal(
+                FilledButton(
                   style: FilledButton.styleFrom(
                     minimumSize: sizes.buttonDefault(),
                   ),

@@ -231,7 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
-            child: FilledButton.tonal(
+            child: FilledButton(
               style: FilledButton.styleFrom(
                 minimumSize: sizes.buttonDefault(),
               ),

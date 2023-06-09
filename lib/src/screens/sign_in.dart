@@ -113,7 +113,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 48.0),
-                      child: FilledButton.tonal(
+                      child: FilledButton(
                         style: FilledButton.styleFrom(
                           minimumSize: sizes.buttonDefault(),
                         ),

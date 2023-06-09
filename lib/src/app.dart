@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'auth.dart';
+import 'color_schemes.g.dart';
 import 'constants.dart';
 import 'customer_io.dart';
 import 'screens/attributes.dart';
@@ -27,6 +28,19 @@ class _AmiAppState extends State<AmiApp> {
   final CustomerIOSDK _customerIOSDK = CustomerIOSDKInstance.get();
   final AmiAppAuth _auth = AmiAppAuth();
   late final GoRouter _router;
+
+  final PageTransitionsTheme _pageTransitionsTheme = const PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+      TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+      TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+    },
+  );
+  final List<ThemeExtension<dynamic>> _themeExtensions = [
+    const Sizes.defaults(),
+  ];
 
   void _initCustomerIO() async {
     _customerIOSDK
@@ -115,20 +129,6 @@ class _AmiAppState extends State<AmiApp> {
 
   @override
   Widget build(BuildContext context) {
-    const pageTransitionsTheme = PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
-        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
-      },
-    );
-    const themeExtensions = <ThemeExtension<dynamic>>[
-      Sizes.defaults(),
-    ];
-    ThemeData darkTheme = ThemeData.dark();
-
     return CustomerIOSDKScope(
       notifier: _customerIOSDK,
       child: AmiAppAuthScope(
@@ -136,38 +136,30 @@ class _AmiAppState extends State<AmiApp> {
         child: MaterialApp.router(
           routerConfig: _router,
           themeMode: ThemeMode.system,
-          theme: ThemeData(
-            useMaterial3: true,
-            // This is the base theme of our application in light mode.
-            colorSchemeSeed: Colors.blueGrey,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.transparent,
-              foregroundColor: Colors.black,
-              elevation: 0,
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              filled: true,
-              fillColor: Theme.of(context).colorScheme.onPrimary,
-              hintStyle: TextStyle(
-                color: Colors.blueGrey[700],
-              ),
-            ),
-            floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              foregroundColor: Colors.white,
-            ),
-            pageTransitionsTheme: pageTransitionsTheme,
-            extensions: themeExtensions,
-          ),
-          darkTheme: darkTheme.copyWith(
-            appBarTheme: darkTheme.appBarTheme.copyWith(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            pageTransitionsTheme: pageTransitionsTheme,
-            extensions: themeExtensions,
+          theme: _createTheme(ThemeData.light(), lightColorScheme),
+          darkTheme: _createTheme(ThemeData.dark(), darkColorScheme),
+        ),
+      ),
+    );
+  }
+
+  ThemeData _createTheme(ThemeData base, ColorScheme colorScheme) {
+    return base.copyWith(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
           ),
         ),
       ),
+      pageTransitionsTheme: _pageTransitionsTheme,
+      extensions: _themeExtensions,
     );
   }
 
