@@ -178,14 +178,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TextSettingsFormField(
                           labelText: 'backgroundQueueSecondsDelay',
                           valueController: _bqSecondsDelayValueController,
-                          hintText: '30',
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'backgroundQueueMinNumberOfTasks',
                           valueController: _bqMinNumberOfTasksValueController,
-                          hintText: '10',
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 32),

@@ -14,9 +14,9 @@ class CustomerIOSDKConfig {
   CustomerIOSDKConfig({
     required this.siteId,
     required this.apiKey,
-    this.trackingUrl,
-    this.backgroundQueueSecondsDelay,
-    this.backgroundQueueMinNumOfTasks,
+    this.trackingUrl = "https://track-sdk.customer.io/",
+    this.backgroundQueueSecondsDelay = 30.0,
+    this.backgroundQueueMinNumOfTasks = 10,
     this.screenTrackingEnabled = true,
     this.deviceAttributesTrackingEnabled = true,
     this.debugModeEnabled = true,
