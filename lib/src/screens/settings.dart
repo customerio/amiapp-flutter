@@ -38,7 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget._customerIOSDK.getDeviceToken().then((value) =>
         setState(() => _deviceTokenValueController.text = value ?? ''));
 
-    final cioConfig = widget._customerIOSDK.configurations;
+    final cioConfig = widget._customerIOSDK.sdkConfig;
     _deviceTokenValueController = TextEditingController();
     _trackingURLValueController =
         TextEditingController(text: cioConfig?.trackingUrl);
@@ -61,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
 
-    final newConfig = CustomerIOSDKConfiguration(
+    final newConfig = CustomerIOSDKConfig(
       siteId: _siteIDValueController.text,
       apiKey: _apiKeyValueController.text,
       trackingUrl: _trackingURLValueController.text,
@@ -74,7 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       debugModeEnabled: _featureDebugMode,
     );
     widget._customerIOSDK
-        .saveConfigurationsToPreferences(newConfig)
+        .saveConfigToPreferences(newConfig)
         .then((success) {
       if (success) {
         context.showSnackBar('Settings saved successfully');
@@ -88,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _restoreDefaultSettings() {
-    final defaultConfig = widget._customerIOSDK.getDefaultConfigurations();
+    final defaultConfig = widget._customerIOSDK.getDefaultConfig();
     if (defaultConfig == null) {
       context.showSnackBar('No default values found');
       return;

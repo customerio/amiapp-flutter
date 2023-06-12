@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CustomerIOSDKConfiguration {
+class CustomerIOSDKConfig {
   String siteId;
   String apiKey;
   String? trackingUrl;
@@ -11,7 +11,7 @@ class CustomerIOSDKConfiguration {
   bool deviceAttributesTrackingEnabled;
   bool debugModeEnabled;
 
-  CustomerIOSDKConfiguration({
+  CustomerIOSDKConfig({
     required this.siteId,
     required this.apiKey,
     this.trackingUrl,
@@ -22,11 +22,11 @@ class CustomerIOSDKConfiguration {
     this.debugModeEnabled = true,
   });
 
-  factory CustomerIOSDKConfiguration.fromEnv() => CustomerIOSDKConfiguration(
+  factory CustomerIOSDKConfig.fromEnv() => CustomerIOSDKConfig(
       siteId: dotenv.env[_PreferencesKey.siteId]!,
       apiKey: dotenv.env[_PreferencesKey.apiKey]!);
 
-  factory CustomerIOSDKConfiguration.fromPrefs(SharedPreferences prefs) {
+  factory CustomerIOSDKConfig.fromPrefs(SharedPreferences prefs) {
     final siteId = prefs.getString(_PreferencesKey.siteId);
     final apiKey = prefs.getString(_PreferencesKey.apiKey);
 
@@ -36,7 +36,7 @@ class CustomerIOSDKConfiguration {
       throw ArgumentError('apiKey cannot be null');
     }
 
-    return CustomerIOSDKConfiguration(
+    return CustomerIOSDKConfig(
       siteId: siteId,
       apiKey: apiKey,
       trackingUrl: prefs.getString(_PreferencesKey.trackingUrl),
@@ -74,7 +74,7 @@ extension ConfigurationPreferencesExtensions on SharedPreferences {
     return value != null ? setBool(key, value) : remove(key);
   }
 
-  Future<bool> saveConfigurationState(CustomerIOSDKConfiguration config) async {
+  Future<bool> saveSDKConfigState(CustomerIOSDKConfig config) async {
     bool result = true;
     result = result &&
         await setOrRemoveString(_PreferencesKey.siteId, config.siteId);
