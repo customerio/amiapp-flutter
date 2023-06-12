@@ -155,16 +155,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 16),
                         TextSettingsFormField(
-                          labelText: 'Tracking URL',
+                          labelText: 'CIO Track URL',
                           valueController: _trackingURLValueController,
                         ),
                         const SizedBox(height: 32),
                         TextSettingsFormField(
-                          labelText: 'Site ID',
+                          labelText: 'Site Id',
                           valueController: _siteIDValueController,
                           validator: (value) => value?.isNotEmpty == true
                               ? null
-                              : 'Site ID cannot be empty',
+                              : 'Site Id cannot be empty',
                         ),
                         const SizedBox(height: 16),
                         TextSettingsFormField(
@@ -238,7 +238,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 8),
           const TextFooter(
-              text: 'Please restart app after saving any modifications'),
+              text: 'Note: You must restart the app to apply these settings'),
           const SizedBox(height: 8),
         ],
       ),
