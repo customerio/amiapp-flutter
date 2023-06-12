@@ -73,9 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       deviceAttributesTrackingEnabled: _featureTrackDeviceAttributes,
       debugModeEnabled: _featureDebugMode,
     );
-    widget._customerIOSDK
-        .saveConfigToPreferences(newConfig)
-        .then((success) {
+    widget._customerIOSDK.saveConfigToPreferences(newConfig).then((success) {
       if (success) {
         context.showSnackBar('Settings saved successfully');
         Navigator.of(context).pop();
@@ -157,6 +155,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TextSettingsFormField(
                           labelText: 'CIO Track URL',
                           valueController: _trackingURLValueController,
+                          validator: (value) => value?.isValidUrl() != false
+                              ? null
+                              : 'Please enter formatted url e.g. https://tracking.cio/',
                         ),
                         const SizedBox(height: 32),
                         TextSettingsFormField(

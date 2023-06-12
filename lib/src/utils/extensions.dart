@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 extension AmiAppExtensions on BuildContext {
@@ -33,5 +35,21 @@ extension AmiAppStringExtensions on String {
     } else {
       return null;
     }
+  }
+
+  bool isValidUrl() {
+    // Currently only Android fails on URLs with empty host, so allow any URL
+    // on other platforms.
+    // Empty text is also considered valid.
+    if (!Platform.isAndroid || isEmpty) {
+      return true;
+    }
+
+    final Uri? uri = Uri.tryParse(this);
+    if (uri == null) {
+      return false;
+    }
+    // Valid URL with a host and http/https scheme
+    return uri.hasAuthority && (uri.scheme == 'http' || uri.scheme == 'https');
   }
 }
