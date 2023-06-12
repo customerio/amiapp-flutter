@@ -172,6 +172,9 @@ class _ActionList extends StatelessWidget {
                         case _ActionItem.randomEvent:
                           _sendRandomEvent(context);
                           break;
+                        case _ActionItem.showPushPrompt:
+                          authState.signOut();
+                          break;
                         case _ActionItem.signOut:
                           authState.signOut();
                           break;
@@ -200,7 +203,7 @@ enum _ActionItem {
   customEvent,
   deviceAttributes,
   profileAttributes,
-  viewLogs,
+  showPushPrompt,
   signOut,
 }
 
@@ -208,17 +211,17 @@ extension _ActionNames on _ActionItem {
   String buildText() {
     switch (this) {
       case _ActionItem.randomEvent:
-        return "Send Random Event";
+        return 'Send Random Event';
       case _ActionItem.customEvent:
-        return "Send Custom Event";
+        return 'Send Custom Event';
       case _ActionItem.deviceAttributes:
-        return "Set Device Attributes";
+        return 'Set Device Attribute';
       case _ActionItem.profileAttributes:
-        return "Set Profile Attributes";
-      case _ActionItem.viewLogs:
-        return "View Logs";
+        return 'Set Profile Attribute';
+      case _ActionItem.showPushPrompt:
+        return 'Show Push Prompt';
       case _ActionItem.signOut:
-        return "Log Out";
+        return 'Log Out';
     }
   }
 
@@ -232,8 +235,8 @@ extension _ActionNames on _ActionItem {
         return URLPath.deviceAttributes;
       case _ActionItem.profileAttributes:
         return URLPath.profileAttributes;
-      case _ActionItem.viewLogs:
-        return URLPath.viewLogs;
+      case _ActionItem.showPushPrompt:
+        return null;
       case _ActionItem.signOut:
         return null;
     }

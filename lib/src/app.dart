@@ -9,7 +9,6 @@ import 'customer_io.dart';
 import 'screens/attributes.dart';
 import 'screens/events.dart';
 import 'screens/home.dart';
-import 'screens/logs.dart';
 import 'screens/settings.dart';
 import 'screens/sign_in.dart';
 import 'theme/sizes.dart';
@@ -56,8 +55,7 @@ class _AmiAppState extends State<AmiApp> {
   void initState() {
     // GoRouter configurations.
     _router = GoRouter(
-      debugLogDiagnostics:
-      _customerIOSDK.sdkConfig?.debugModeEnabled != false,
+      debugLogDiagnostics: _customerIOSDK.sdkConfig?.debugModeEnabled != false,
       initialLocation: URLPath.home,
       refreshListenable: _auth,
       redirect: (BuildContext context, GoRouterState state) => _guard(state),
@@ -65,32 +63,26 @@ class _AmiAppState extends State<AmiApp> {
         GoRoute(
           name: 'SignIn',
           path: URLPath.signIn,
-          builder: (context, state) =>
-              SignInScreen(
-                onSignIn: (user) {
-                  _auth.signIn(user).then((signedIn) {
-                    if (signedIn) {
-                      CustomerIO.identify(identifier: user.email, attributes: {
-                        "name": user.displayName,
-                        "email": user.email,
-                        "is_guest": user.isGuest,
-                      });
-                      context.go(URLPath.home);
-                    }
-                    return signedIn;
+          builder: (context, state) => SignInScreen(
+            onSignIn: (user) {
+              _auth.signIn(user).then((signedIn) {
+                if (signedIn) {
+                  CustomerIO.identify(identifier: user.email, attributes: {
+                    "name": user.displayName,
+                    "email": user.email,
+                    "is_guest": user.isGuest,
                   });
-                },
-              ),
+                  context.go(URLPath.home);
+                }
+                return signedIn;
+              });
+            },
+          ),
         ),
         GoRoute(
           name: 'Settings',
           path: URLPath.settings,
           builder: (context, state) => const SettingsScreen(),
-        ),
-        GoRoute(
-          name: 'View Logs',
-          path: URLPath.viewLogs,
-          builder: (context, state) => const ViewLogsScreen(),
         ),
         GoRoute(
           name: 'Home',
@@ -168,8 +160,7 @@ class _AmiAppState extends State<AmiApp> {
       return Future.value(URLPath.home);
     } else if (!signedIn &&
         target != URLPath.signIn &&
-        target != URLPath.settings &&
-        target != URLPath.viewLogs) {
+        target != URLPath.settings) {
       return Future.value(URLPath.signIn);
     }
 
