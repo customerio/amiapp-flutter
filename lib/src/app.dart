@@ -105,12 +105,12 @@ class _AmiAppState extends State<AmiApp> {
         GoRoute(
           name: 'DeviceAttributes',
           path: URLPath.deviceAttributes,
-          builder: (context, state) => const DeviceAttributesScreen(),
+          builder: (context, state) => AttributesScreen.device(),
         ),
         GoRoute(
           name: 'ProfileAttributes',
           path: URLPath.profileAttributes,
-          builder: (context, state) => const ProfileAttributesScreen(),
+          builder: (context, state) => AttributesScreen.profile(),
         ),
       ],
     );

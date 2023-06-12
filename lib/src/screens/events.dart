@@ -21,8 +21,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
 
   /// Shows success message and navigates up when event tracking is complete
   void _onEventTracked() {
-    context.showSnackBar('Event tracked successfully');
-    _formKey.currentState?.reset();
+    context.showSnackBar('Event sent successfully');
   }
 
   @override
@@ -69,9 +68,6 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
                   textInputAction: TextInputAction.next,
-                  validator: (value) => value?.isNotEmpty == true
-                      ? null
-                      : 'Property name cannot be empty',
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
