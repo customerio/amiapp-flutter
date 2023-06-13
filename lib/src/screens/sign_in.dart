@@ -34,7 +34,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     CustomerIOSDKInstance.get()
-        .getUserAgent()
+        .getBuildInfo()
         .then((value) => setState(() => _userAgent = value));
     super.initState();
   }

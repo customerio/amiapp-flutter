@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .fetchUserState()
         .then((value) => setState(() => _email = value?.email));
     customerIOSDK
-        .getUserAgent()
+        .getBuildInfo()
         .then((value) => setState(() => _userAgent = value));
 
     inAppMessageStreamSubscription =

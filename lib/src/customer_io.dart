@@ -6,6 +6,7 @@ import 'package:customer_io/customer_io_enums.dart';
 import 'package:flutter/services.dart' show MethodChannel, PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/config.dart';
@@ -118,6 +119,16 @@ extension AmiAppSDKExtensions on CustomerIOSDK {
     } on PlatformException catch (ex) {
       debugError("Failed to get user agent from SDK: '${ex.message}'",
           error: ex);
+      return null;
+    }
+  }
+
+  Future<String?> getBuildInfo() async {
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      return 'Customer.io Flutter SDK 1.2.1 ${packageInfo.appName} ${packageInfo.version} (${packageInfo.buildNumber})';
+    } on PlatformException catch (ex) {
+      debugError("Failed to get build info: '${ex.message}'", error: ex);
       return null;
     }
   }
