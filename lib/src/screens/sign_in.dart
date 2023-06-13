@@ -136,7 +136,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         onPressed: () async {
                           final randomValues = RandomValues();
                           widget.onSignIn(User(
-                            displayName: randomValues.getFullName(),
+                            displayName: '',
                             email: randomValues.getEmail(),
                             isGuest: true,
                           ));

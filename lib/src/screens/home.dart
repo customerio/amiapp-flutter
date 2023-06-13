@@ -147,10 +147,15 @@ class _ActionList extends StatelessWidget {
 
   void _sendRandomEvent(BuildContext context) {
     final randomValues = RandomValues();
-    final eventName = randomValues.getEventName();
-    CustomerIO.track(
-        name: eventName, attributes: randomValues.getEventAttributes());
-    context.showSnackBar('Event tracked with name: $eventName');
+    final event = randomValues.trackingEvent();
+    final eventName = event.key;
+    final attributes = event.value;
+    if (attributes == null) {
+      CustomerIO.track(name: eventName);
+    } else {
+      CustomerIO.track(name: eventName, attributes: attributes);
+    }
+    context.showSnackBar('Event sent successfully');
   }
 
   void _showPushPrompt(BuildContext context) {
