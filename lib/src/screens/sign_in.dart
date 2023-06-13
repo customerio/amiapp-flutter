@@ -28,14 +28,14 @@ class _SignInScreenState extends State<SignInScreen> {
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
 
-  String? _userAgent;
+  String? _buildInfo;
   AutovalidateMode? _autoValidateMode;
 
   @override
   void initState() {
     CustomerIOSDKInstance.get()
         .getBuildInfo()
-        .then((value) => setState(() => _userAgent = value));
+        .then((value) => setState(() => _buildInfo = value));
     super.initState();
   }
 
@@ -155,7 +155,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
             const SizedBox(height: 72),
             const Spacer(),
-            TextFooter(text: _userAgent ?? ''),
+            TextFooter(text: _buildInfo ?? ''),
           ],
         ),
       ),

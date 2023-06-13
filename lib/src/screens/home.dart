@@ -31,7 +31,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? _email;
-  String? _userAgent;
+  String? _buildInfo;
   late StreamSubscription inAppMessageStreamSubscription;
 
   @override
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .then((value) => setState(() => _email = value?.email));
     customerIOSDK
         .getBuildInfo()
-        .then((value) => setState(() => _userAgent = value));
+        .then((value) => setState(() => _buildInfo = value));
 
     inAppMessageStreamSubscription =
         CustomerIO.subscribeToInAppEventListener(handleInAppEvent);
@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const _ActionList(),
             const Spacer(),
-            TextFooter(text: _userAgent ?? ''),
+            TextFooter(text: _buildInfo ?? ''),
           ],
         ),
       ),
