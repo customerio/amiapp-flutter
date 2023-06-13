@@ -59,10 +59,13 @@ class _SignInScreenState extends State<SignInScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Center(
-              child: Text(
-                'Flutter Ami App',
-                style: Theme.of(context).textTheme.headlineMedium,
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 32.0),
+              child: Center(
+                child: Text(
+                  'Flutter FCM Ami App',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
             ),
             const Spacer(),
@@ -150,6 +153,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 72),
             const Spacer(),
             TextFooter(text: _userAgent ?? ''),
           ],
