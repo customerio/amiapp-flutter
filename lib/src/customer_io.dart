@@ -111,19 +111,6 @@ class CustomerIOSDKInstance {
 /// This is only for testing using sample apps and may not be required by most
 /// of the customer apps.
 extension AmiAppSDKExtensions on CustomerIOSDK {
-  Future<List<String>?> getLogs() async {
-    try {
-      final List<Object?> result =
-          await CustomerIOSDK._platform.invokeMethod('getLogs');
-      return result
-          .map((log) => log?.toString() ?? 'NULL')
-          .toList(growable: false);
-    } on PlatformException catch (ex) {
-      debugError("Failed to get logs from SDK: '${ex.message}'", error: ex);
-      return null;
-    }
-  }
-
   Future<String?> getUserAgent() async {
     try {
       final result = await CustomerIOSDK._platform.invokeMethod('getUserAgent');
@@ -136,15 +123,7 @@ extension AmiAppSDKExtensions on CustomerIOSDK {
   }
 
   Future<String?> getDeviceToken() async {
-    try {
-      final result =
-          await CustomerIOSDK._platform.invokeMethod('getDeviceToken');
-      return result?.toString();
-    } on PlatformException catch (ex) {
-      debugError("Failed to get device token from SDK: '${ex.message}'",
-          error: ex);
-      return null;
-    }
+    return null;
   }
 }
 
