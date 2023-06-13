@@ -17,12 +17,8 @@ import 'utils/logs.dart';
 /// But please make sure to initialize Customer.io SDK only once from your app for
 /// better performance and to avoid any unexpected behavior
 
-const _customerIOChannelName = 'io.customer.amiapp_flutter/customer_io';
-
 /// Customer.io SDK repository class to communicate with the SDK.
 class CustomerIOSDK extends ChangeNotifier {
-  static const _platform = MethodChannel(_customerIOChannelName);
-
   CustomerIOSDKConfig? _sdkConfig;
 
   CustomerIOSDKConfig? get sdkConfig => _sdkConfig;
@@ -71,7 +67,7 @@ class CustomerIOSDK extends ChangeNotifier {
               _sdkConfig?.backgroundQueueSecondsDelay ?? 30.0,
           logLevel: logLevel,
         ),
-      ).then((value) => _platform.invokeMethod('onSDKInitialized'));
+      );
     } catch (ex) {
       return Future.error(ex);
     }
@@ -112,17 +108,6 @@ class CustomerIOSDKInstance {
 /// This is only for testing using sample apps and may not be required by most
 /// of the customer apps.
 extension AmiAppSDKExtensions on CustomerIOSDK {
-  Future<String?> getUserAgent() async {
-    try {
-      final result = await CustomerIOSDK._platform.invokeMethod('getUserAgent');
-      return result?.toString();
-    } on PlatformException catch (ex) {
-      debugError("Failed to get user agent from SDK: '${ex.message}'",
-          error: ex);
-      return null;
-    }
-  }
-
   Future<String?> getBuildInfo() async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
