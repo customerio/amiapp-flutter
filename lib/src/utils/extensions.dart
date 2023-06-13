@@ -6,6 +6,28 @@ extension AmiAppExtensions on BuildContext {
   void showSnackBar(String text) {
     ScaffoldMessenger.of(this).showSnackBar(SnackBar(content: Text(text)));
   }
+
+  Future<void> showMessageDialog(String title, String message,
+      {List<Widget>? actions, bool barrierDismissible = true}) {
+    List<Widget> actionWidgets = actions ??
+        [
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () => Navigator.of(this).pop(),
+          ),
+        ];
+    return showDialog<void>(
+      context: this,
+      barrierDismissible: barrierDismissible,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: actionWidgets,
+        );
+      },
+    );
+  }
 }
 
 extension AmiAppStringExtensions on String {

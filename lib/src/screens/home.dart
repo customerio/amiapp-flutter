@@ -4,6 +4,7 @@ import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_inapp.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../auth.dart';
 import '../components/container.dart';
@@ -142,12 +143,58 @@ class _HomeScreenState extends State<HomeScreen> {
 class _ActionList extends StatelessWidget {
   const _ActionList();
 
+  final String _pushPermissionAlertTitle = 'Push Permission';
+
   void _sendRandomEvent(BuildContext context) {
     final randomValues = RandomValues();
     final eventName = randomValues.getEventName();
     CustomerIO.track(
         name: eventName, attributes: randomValues.getEventAttributes());
     context.showSnackBar('Event tracked with name: $eventName');
+  }
+
+  void _showPushPrompt(BuildContext context) {
+    Permission.notification.status.then((status) {
+      if (status.isGranted) {
+        context.showMessageDialog(_pushPermissionAlertTitle,
+            'Push notifications are enabled on this device');
+      } else if (status.isDenied) {
+        _requestPushPermission(context);
+      } else {
+        _onPushPermissionPermanentlyDenied(context);
+      }
+    });
+  }
+
+  void _requestPushPermission(BuildContext context) {
+    Permission.notification.request().then((status) {
+      if (status.isGranted) {
+        context.showSnackBar('Push notifications are enabled on this device');
+      } else if (status.isPermanentlyDenied) {
+        _onPushPermissionPermanentlyDenied(context);
+      } else {
+        context.showMessageDialog(_pushPermissionAlertTitle,
+            'Push notifications are disabled on this device');
+      }
+    });
+  }
+
+  void _onPushPermissionPermanentlyDenied(BuildContext context) {
+    context.showMessageDialog(_pushPermissionAlertTitle,
+        'Push notifications are denied on this device. Please allow notification permission from settings to receive push on this device.',
+        actions: [
+          TextButton(
+            child: const Text('Open Settings'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              openAppSettings();
+            },
+          ),
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ]);
   }
 
   @override
@@ -173,7 +220,7 @@ class _ActionList extends StatelessWidget {
                           _sendRandomEvent(context);
                           break;
                         case _ActionItem.showPushPrompt:
-                          authState.signOut();
+                          _showPushPrompt(context);
                           break;
                         case _ActionItem.signOut:
                           authState.signOut();
