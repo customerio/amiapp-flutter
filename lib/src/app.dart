@@ -41,15 +41,13 @@ class _AmiAppState extends State<AmiApp> {
     const Sizes.defaults(),
   ];
 
-  void _initCustomerIO() async {
-    _customerIOSDK
-        .initialize()
-        .whenComplete(
-            () => debugLog('Customer.io SDK initialization successful'))
-        .catchError((error) {
-      debugLog('Customer.io SDK could not be initialized:  $error');
-    });
-  }
+  Future<void> _initCustomerIO() => _customerIOSDK
+          .initialize()
+          .whenComplete(
+              () => debugLog('Customer.io SDK initialization successful'))
+          .catchError((error) {
+        debugLog('Customer.io SDK could not be initialized:  $error');
+      });
 
   @override
   void initState() {
@@ -164,7 +162,7 @@ class _AmiAppState extends State<AmiApp> {
       return Future.value(URLPath.signIn);
     }
 
-    if (_customerIOSDK.sdkConfig?.screenTrackingEnabled != false) {
+    if (_customerIOSDK.sdkConfig?.screenTrackingEnabled == true) {
       final screenName = _getNameFromLocation(target);
       if (screenName?.isNotEmpty == true) {
         CustomerIO.screen(name: screenName!);
