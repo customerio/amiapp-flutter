@@ -113,21 +113,18 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Hi, $_email',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-            ),
             const Spacer(),
             Center(
               child: Text(
+                _email ?? '',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
                 'What would you like to test?',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             const _ActionList(),
@@ -209,7 +206,7 @@ class _ActionList extends StatelessWidget {
     const actionItems = _ActionItem.values;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 32.0),
+      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: actionItems
