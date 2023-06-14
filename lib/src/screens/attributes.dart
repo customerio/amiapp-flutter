@@ -78,7 +78,6 @@ class _AttributesScreenState extends State<AttributesScreen> {
 
     return AppContainer(
       appBar: AppBar(
-        title: Text(widget.screenTitle),
         backgroundColor: null,
       ),
       body: FullScreenScrollView(
@@ -93,6 +92,15 @@ class _AttributesScreenState extends State<AttributesScreen> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 const Spacer(),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    widget.screenTitle,
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 32),
                 TextFormField(
                   controller: _attributeNameController,
                   decoration: const InputDecoration(
@@ -120,7 +128,7 @@ class _AttributesScreenState extends State<AttributesScreen> {
                       ? null
                       : 'Attribute value cannot be empty',
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 32),
                 FilledButton(
                   style: FilledButton.styleFrom(
                     minimumSize: sizes.buttonDefault(),

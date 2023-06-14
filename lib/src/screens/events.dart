@@ -30,7 +30,6 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
 
     return AppContainer(
       appBar: AppBar(
-        title: const Text('Custom Event'),
         backgroundColor: null,
       ),
       body: FullScreenScrollView(
@@ -45,6 +44,15 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 const Spacer(),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Send Custom Event',
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 32),
                 TextFormField(
                   controller: _eventNameController,
                   decoration: const InputDecoration(
@@ -80,7 +88,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   textCapitalization: TextCapitalization.none,
                   textInputAction: TextInputAction.next,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 32),
                 FilledButton(
                   style: FilledButton.styleFrom(
                     minimumSize: sizes.buttonDefault(),
