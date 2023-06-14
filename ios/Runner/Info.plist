@@ -67,5 +67,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>PermissionGroupNotification</key>
+	<string>Required to send push notifications</string>
 </dict>
 </plist>
