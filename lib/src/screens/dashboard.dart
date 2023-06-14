@@ -17,19 +17,19 @@ import '../utils/extensions.dart';
 import '../utils/logs.dart';
 import '../widgets/app_footer.dart';
 
-class HomeScreen extends StatefulWidget {
+class DashboardScreen extends StatefulWidget {
   final AmiAppAuth auth;
 
-  const HomeScreen({
+  const DashboardScreen({
     required this.auth,
     super.key,
   });
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DashboardScreenState extends State<DashboardScreen> {
   String? _email;
   String? _buildInfo;
   late StreamSubscription inAppMessageStreamSubscription;

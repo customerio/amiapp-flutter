@@ -7,10 +7,10 @@ import 'color_schemes.g.dart';
 import 'constants.dart';
 import 'customer_io.dart';
 import 'screens/attributes.dart';
+import 'screens/dashboard.dart';
 import 'screens/events.dart';
-import 'screens/home.dart';
-import 'screens/settings.dart';
 import 'screens/login.dart';
+import 'screens/settings.dart';
 import 'theme/sizes.dart';
 import 'utils/logs.dart';
 
@@ -85,11 +85,11 @@ class _AmiAppState extends State<AmiApp> {
         GoRoute(
           name: 'Dashboard',
           path: URLPath.root,
-          builder: (context, state) => HomeScreen(auth: _auth),
+          builder: (context, state) => DashboardScreen(auth: _auth),
           routes: [
             GoRoute(
               path: URLPath.dashboard,
-              builder: (context, state) => HomeScreen(auth: _auth),
+              builder: (context, state) => DashboardScreen(auth: _auth),
             ),
           ],
         ),
