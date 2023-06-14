@@ -10,7 +10,7 @@ import 'screens/attributes.dart';
 import 'screens/events.dart';
 import 'screens/home.dart';
 import 'screens/settings.dart';
-import 'screens/sign_in.dart';
+import 'screens/login.dart';
 import 'theme/sizes.dart';
 import 'utils/logs.dart';
 
@@ -61,9 +61,9 @@ class _AmiAppState extends State<AmiApp> {
         GoRoute(
           name: 'Login',
           path: URLPath.login,
-          builder: (context, state) => SignInScreen(
-            onSignIn: (user) {
-              _auth.signIn(user).then((signedIn) {
+          builder: (context, state) => LoginScreen(
+            onLogin: (user) {
+              _auth.login(user).then((signedIn) {
                 if (signedIn) {
                   CustomerIO.identify(identifier: user.email, attributes: {
                     "first_name": user.displayName,

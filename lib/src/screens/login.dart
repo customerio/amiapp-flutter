@@ -11,19 +11,19 @@ import '../random.dart';
 import '../theme/sizes.dart';
 import '../widgets/app_footer.dart';
 
-class SignInScreen extends StatefulWidget {
-  final ValueChanged<User> onSignIn;
+class LoginScreen extends StatefulWidget {
+  final ValueChanged<User> onLogin;
 
-  const SignInScreen({
-    required this.onSignIn,
+  const LoginScreen({
+    required this.onLogin,
     super.key,
   });
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -120,7 +120,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           _autoValidateMode =
                               AutovalidateMode.onUserInteraction;
                           if (_formKey.currentState!.validate()) {
-                            widget.onSignIn(User(
+                            widget.onLogin(User(
                               displayName: _fullNameController.value.text,
                               email: _emailController.value.text,
                               isGuest: false,
@@ -140,7 +140,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         onPressed: () async {
                           final randomValues = RandomValues();
-                          widget.onSignIn(User(
+                          widget.onLogin(User(
                             displayName: '',
                             email: randomValues.getEmail(),
                             isGuest: true,

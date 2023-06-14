@@ -31,7 +31,7 @@ class AmiAppAuth extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> signIn(User user) async {
+  Future<bool> login(User user) async {
     // Sign in after short delay
     await Future<void>.delayed(const Duration(milliseconds: 300));
     _signedIn = await saveUserState(user);
