@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import 'auth.dart';
 import 'color_schemes.g.dart';
-import 'constants.dart';
 import 'customer_io.dart';
+import 'data/screen.dart';
 import 'screens/attributes.dart';
 import 'screens/dashboard.dart';
 import 'screens/events.dart';
@@ -54,13 +54,13 @@ class _AmiAppState extends State<AmiApp> {
     // GoRouter configurations.
     _router = GoRouter(
       debugLogDiagnostics: _customerIOSDK.sdkConfig?.debugModeEnabled != false,
-      initialLocation: URLPath.root,
+      initialLocation: Screen.dashboard.routerPath,
       refreshListenable: _auth,
       redirect: (BuildContext context, GoRouterState state) => _guard(state),
       routes: [
         GoRoute(
-          name: 'Login',
-          path: URLPath.login,
+          name: Screen.login.name,
+          path: Screen.login.routerPath,
           builder: (context, state) => LoginScreen(
             onLogin: (user) {
               _auth.login(user).then((signedIn) {
@@ -70,7 +70,6 @@ class _AmiAppState extends State<AmiApp> {
                     "email": user.email,
                     "is_guest": user.isGuest,
                   });
-                  context.go(URLPath.root);
                 }
                 return signedIn;
               });
@@ -78,38 +77,34 @@ class _AmiAppState extends State<AmiApp> {
           ),
         ),
         GoRoute(
-          name: 'Settings',
-          path: URLPath.settings,
-          builder: (context, state) => SettingsScreen(
-            siteIdInitialValue: state.queryParameters['site_id'],
-            apiKeyInitialValue: state.queryParameters['api_key'],
-          ),
-        ),
-        GoRoute(
-          name: 'Dashboard',
-          path: URLPath.root,
+          name: Screen.dashboard.name,
+          path: Screen.dashboard.routerPath,
           builder: (context, state) => DashboardScreen(auth: _auth),
           routes: [
             GoRoute(
-              path: URLPath.dashboard,
-              builder: (context, state) => DashboardScreen(auth: _auth),
+              name: Screen.settings.name,
+              path: Screen.settings.routerPath,
+              builder: (context, state) => SettingsScreen(
+                siteIdInitialValue: state.queryParameters['site_id'],
+                apiKeyInitialValue: state.queryParameters['api_key'],
+              ),
+            ),
+            GoRoute(
+              name: Screen.customEvents.name,
+              path: Screen.customEvents.routerPath,
+              builder: (context, state) => const CustomEventScreen(),
+            ),
+            GoRoute(
+              name: Screen.deviceAttributes.name,
+              path: Screen.deviceAttributes.routerPath,
+              builder: (context, state) => AttributesScreen.device(),
+            ),
+            GoRoute(
+              name: Screen.profileAttributes.name,
+              path: Screen.profileAttributes.routerPath,
+              builder: (context, state) => AttributesScreen.profile(),
             ),
           ],
-        ),
-        GoRoute(
-          name: 'CustomEvent',
-          path: URLPath.customEvents,
-          builder: (context, state) => const CustomEventScreen(),
-        ),
-        GoRoute(
-          name: 'DeviceAttributes',
-          path: URLPath.deviceAttributes,
-          builder: (context, state) => AttributesScreen.device(),
-        ),
-        GoRoute(
-          name: 'ProfileAttributes',
-          path: URLPath.profileAttributes,
-          builder: (context, state) => AttributesScreen.profile(),
         ),
       ],
     );
@@ -163,12 +158,14 @@ class _AmiAppState extends State<AmiApp> {
     final signedIn = _auth.signedIn ?? await _auth.updateState();
 
     final target = state.path ?? state.location;
-    if (signedIn && target == URLPath.login) {
-      return Future.value(URLPath.root);
+    if (signedIn && target == Screen.login.location) {
+      return Future.value(Screen.dashboard.location);
     } else if (!signedIn &&
-        target != URLPath.login &&
-        target != URLPath.settings) {
-      return Future.value(URLPath.login);
+        target != Screen.login.location &&
+        target != Screen.settings.location) {
+      return Future.value(Screen.login.location);
+    } else if (target == Screen.dashboard.urlPath) {
+      return Future.value(Screen.dashboard.location);
     }
 
     if (_customerIOSDK.sdkConfig?.screenTrackingEnabled == true) {
@@ -195,7 +192,7 @@ class _AmiAppState extends State<AmiApp> {
     if (_auth.signedIn == false) {
       CustomerIO.clearIdentify();
       _auth.clearUserState();
-      _router.go(URLPath.login);
+      _router.go(Screen.login.location);
     }
   }
 

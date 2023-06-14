@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../components/container.dart';
 import '../components/scroll_view.dart';
-import '../constants.dart';
 import '../customer_io.dart';
+import '../data/screen.dart';
 import '../data/user.dart';
 import '../random.dart';
 import '../theme/sizes.dart';
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Open SDK Configurations',
             onPressed: () {
-              context.push(URLPath.settings);
+              context.push(Screen.settings.location);
             },
           ),
         ],

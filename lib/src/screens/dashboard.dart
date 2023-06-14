@@ -9,8 +9,8 @@ import 'package:permission_handler/permission_handler.dart';
 import '../auth.dart';
 import '../components/container.dart';
 import '../components/scroll_view.dart';
-import '../constants.dart';
 import '../customer_io.dart';
+import '../data/screen.dart';
 import '../random.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
@@ -104,7 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Open SDK Configurations',
             onPressed: () {
-              context.push(URLPath.settings);
+              context.push(Screen.settings.location);
             },
           ),
         ],
@@ -228,9 +228,9 @@ class _ActionList extends StatelessWidget {
                           authState.signOut();
                           break;
                         default:
-                          final String? location = item.targetLocation();
-                          if (location != null) {
-                            context.push(location);
+                          final Screen? screen = item.targetScreen();
+                          if (screen != null) {
+                            context.push(screen.location);
                           }
                           break;
                       }
@@ -274,16 +274,16 @@ extension _ActionNames on _ActionItem {
     }
   }
 
-  String? targetLocation() {
+  Screen? targetScreen() {
     switch (this) {
       case _ActionItem.randomEvent:
         return null;
       case _ActionItem.customEvent:
-        return URLPath.customEvents;
+        return Screen.customEvents;
       case _ActionItem.deviceAttributes:
-        return URLPath.deviceAttributes;
+        return Screen.deviceAttributes;
       case _ActionItem.profileAttributes:
-        return URLPath.profileAttributes;
+        return Screen.profileAttributes;
       case _ActionItem.showPushPrompt:
         return null;
       case _ActionItem.signOut:
