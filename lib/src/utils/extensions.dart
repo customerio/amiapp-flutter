@@ -75,3 +75,12 @@ extension AmiAppStringExtensions on String {
     return uri.hasAuthority && (uri.scheme == 'http' || uri.scheme == 'https');
   }
 }
+
+extension AmiAppDoubleExtensions on double {
+  String? toTrimmedString() {
+    if (this % 1.0 != 0.0) {
+      return toString();
+    }
+    return toStringAsFixed(0);
+  }
+}

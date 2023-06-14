@@ -45,7 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _siteIDValueController = TextEditingController(text: cioConfig?.siteId);
     _apiKeyValueController = TextEditingController(text: cioConfig?.apiKey);
     _bqSecondsDelayValueController = TextEditingController(
-        text: cioConfig?.backgroundQueueSecondsDelay?.toString());
+        text: cioConfig?.backgroundQueueSecondsDelay?.toTrimmedString());
     _bqMinNumberOfTasksValueController = TextEditingController(
         text: cioConfig?.backgroundQueueMinNumOfTasks?.toString());
     _featureTrackScreens = cioConfig?.screenTrackingEnabled ?? true;
