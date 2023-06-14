@@ -41,19 +41,7 @@ class TextSettingsFormField extends StatelessWidget {
     } else {
       floatingLabelBehavior = null;
     }
-    Widget? textFieldSuffixIcon;
-    if (valueController.text.isEmpty) {
-      textFieldSuffixIcon = null;
-    } else {
-      textFieldSuffixIcon = suffixIcon ??
-          IconButton(
-            icon: const Icon(Icons.clear),
-            tooltip: 'Clear Text',
-            onPressed: () {
-              valueController.clear();
-            },
-          );
-    }
+
     return UnmanagedRestorationScope(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -67,8 +55,7 @@ class TextSettingsFormField extends StatelessWidget {
                 border: const OutlineInputBorder(),
                 labelText: labelText,
                 hintText: hintText,
-                isDense: false,
-                suffixIcon: textFieldSuffixIcon,
+                isDense: true,
                 floatingLabelBehavior: floatingLabelBehavior,
               ),
               keyboardType: keyboardType,
