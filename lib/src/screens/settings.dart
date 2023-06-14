@@ -11,7 +11,11 @@ import '../widgets/header.dart';
 import '../widgets/settings_form_field.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final String? siteIdInitialValue;
+  final String? apiKeyInitialValue;
+
+  const SettingsScreen(
+      {super.key, this.siteIdInitialValue, this.apiKeyInitialValue});
 
   CustomerIOSDK get _customerIOSDK => CustomerIOSDKInstance.get();
 
@@ -42,8 +46,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _deviceTokenValueController = TextEditingController();
     _trackingURLValueController =
         TextEditingController(text: cioConfig?.trackingUrl);
-    _siteIDValueController = TextEditingController(text: cioConfig?.siteId);
-    _apiKeyValueController = TextEditingController(text: cioConfig?.apiKey);
+    _siteIDValueController = TextEditingController(
+        text: widget.siteIdInitialValue ?? cioConfig?.siteId);
+    _apiKeyValueController = TextEditingController(
+        text: widget.apiKeyInitialValue ?? cioConfig?.apiKey);
     _bqSecondsDelayValueController = TextEditingController(
         text: cioConfig?.backgroundQueueSecondsDelay?.toTrimmedString());
     _bqMinNumberOfTasksValueController = TextEditingController(
@@ -179,7 +185,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TextSettingsFormField(
                           labelText: 'backgroundQueueSecondsDelay',
                           valueController: _bqSecondsDelayValueController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                         ),
                         const SizedBox(height: 16),
                         TextSettingsFormField(

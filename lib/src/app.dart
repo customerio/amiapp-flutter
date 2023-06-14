@@ -80,7 +80,10 @@ class _AmiAppState extends State<AmiApp> {
         GoRoute(
           name: 'Settings',
           path: URLPath.settings,
-          builder: (context, state) => const SettingsScreen(),
+          builder: (context, state) => SettingsScreen(
+            siteIdInitialValue: state.queryParameters['site_id'],
+            apiKeyInitialValue: state.queryParameters['api_key'],
+          ),
         ),
         GoRoute(
           name: 'Dashboard',
