@@ -57,6 +57,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   controller: _eventNameController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
+                    isDense: true,
                     labelText: 'Event Name',
                   ),
                   keyboardType: TextInputType.text,
@@ -71,6 +72,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   controller: _attributeNameController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
+                    isDense: true,
                     labelText: 'Property Name',
                   ),
                   keyboardType: TextInputType.text,
@@ -82,6 +84,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   controller: _attributeValueController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
+                    isDense: true,
                     labelText: 'Property Value',
                   ),
                   keyboardType: TextInputType.text,

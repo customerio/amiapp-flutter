@@ -83,6 +83,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       controller: _fullNameController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
+                        isDense: true,
                         labelText: 'First Name',
                       ),
                       keyboardType: TextInputType.name,
@@ -98,6 +99,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         controller: _emailController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
+                          isDense: true,
                           labelText: 'Email',
                         ),
                         keyboardType: TextInputType.emailAddress,

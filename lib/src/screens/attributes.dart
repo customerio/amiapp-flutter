@@ -105,6 +105,7 @@ class _AttributesScreenState extends State<AttributesScreen> {
                   controller: _attributeNameController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
+                    isDense: true,
                     labelText: 'Attribute Name',
                   ),
                   keyboardType: TextInputType.text,
@@ -119,6 +120,7 @@ class _AttributesScreenState extends State<AttributesScreen> {
                   controller: _attributeValueController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
+                    isDense: true,
                     labelText: 'Attribute Value',
                   ),
                   keyboardType: TextInputType.text,
