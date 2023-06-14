@@ -3,7 +3,7 @@ import 'dart:async' show Future;
 import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_config.dart';
 import 'package:customer_io/customer_io_enums.dart';
-import 'package:flutter/services.dart' show MethodChannel, PlatformException;
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -36,14 +36,14 @@ class CustomerIOSDK extends ChangeNotifier {
     super.dispose();
   }
 
-  void onConfigStateChanged() {
-    _sdkConfig = null;
+  void onConfigStateChanged(CustomerIOSDKConfig config) {
+    _sdkConfig = config;
     notifyListeners();
   }
 
   Future<void> initialize() async {
     try {
-      _loadSDKConfig();
+      await _loadSDKConfig();
 
       final CioLogLevel logLevel;
       if (_sdkConfig?.debugModeEnabled == false) {
@@ -131,7 +131,7 @@ extension CustomerIOSDKExtensions on CustomerIOSDK {
       SharedPreferences.getInstance()
           .then((prefs) => prefs.saveSDKConfigState(config))
           .then((value) {
-        onConfigStateChanged();
+        onConfigStateChanged(config);
         return value;
       });
 

@@ -66,7 +66,7 @@ class _AmiAppState extends State<AmiApp> {
               _auth.signIn(user).then((signedIn) {
                 if (signedIn) {
                   CustomerIO.identify(identifier: user.email, attributes: {
-                    "name": user.displayName,
+                    "first_name": user.displayName,
                     "email": user.email,
                     "is_guest": user.isGuest,
                   });
