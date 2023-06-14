@@ -129,7 +129,7 @@ class _AttributesScreenState extends State<AttributesScreen> {
                     if (_formKey.currentState!.validate()) {
                       var attributes = {
                         _attributeNameController.text:
-                            _attributeValueController.value,
+                            _attributeValueController.text,
                       };
                       switch (widget._attributeType) {
                         case _attributeTypeDevice:

@@ -89,7 +89,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                     if (_formKey.currentState!.validate()) {
                       var attributes = {
                         _attributeNameController.text:
-                            _attributeValueController.value,
+                            _attributeValueController.text,
                       };
                       CustomerIO.track(
                           name: _eventNameController.text,
