@@ -54,13 +54,13 @@ class _AmiAppState extends State<AmiApp> {
     // GoRouter configurations.
     _router = GoRouter(
       debugLogDiagnostics: _customerIOSDK.sdkConfig?.debugModeEnabled != false,
-      initialLocation: URLPath.home,
+      initialLocation: URLPath.root,
       refreshListenable: _auth,
       redirect: (BuildContext context, GoRouterState state) => _guard(state),
       routes: [
         GoRoute(
-          name: 'SignIn',
-          path: URLPath.signIn,
+          name: 'Login',
+          path: URLPath.login,
           builder: (context, state) => SignInScreen(
             onSignIn: (user) {
               _auth.signIn(user).then((signedIn) {
@@ -70,7 +70,7 @@ class _AmiAppState extends State<AmiApp> {
                     "email": user.email,
                     "is_guest": user.isGuest,
                   });
-                  context.go(URLPath.home);
+                  context.go(URLPath.root);
                 }
                 return signedIn;
               });
@@ -83,9 +83,15 @@ class _AmiAppState extends State<AmiApp> {
           builder: (context, state) => const SettingsScreen(),
         ),
         GoRoute(
-          name: 'Home',
-          path: URLPath.home,
+          name: 'Dashboard',
+          path: URLPath.root,
           builder: (context, state) => HomeScreen(auth: _auth),
+          routes: [
+            GoRoute(
+              path: URLPath.dashboard,
+              builder: (context, state) => HomeScreen(auth: _auth),
+            ),
+          ],
         ),
         GoRoute(
           name: 'CustomEvent',
@@ -154,12 +160,12 @@ class _AmiAppState extends State<AmiApp> {
     final signedIn = _auth.signedIn ?? await _auth.updateState();
 
     final target = state.path ?? state.location;
-    if (signedIn && target == URLPath.signIn) {
-      return Future.value(URLPath.home);
+    if (signedIn && target == URLPath.login) {
+      return Future.value(URLPath.root);
     } else if (!signedIn &&
-        target != URLPath.signIn &&
+        target != URLPath.login &&
         target != URLPath.settings) {
-      return Future.value(URLPath.signIn);
+      return Future.value(URLPath.login);
     }
 
     if (_customerIOSDK.sdkConfig?.screenTrackingEnabled == true) {
@@ -186,7 +192,7 @@ class _AmiAppState extends State<AmiApp> {
     if (_auth.signedIn == false) {
       CustomerIO.clearIdentify();
       _auth.clearUserState();
-      _router.go(URLPath.signIn);
+      _router.go(URLPath.login);
     }
   }
 

@@ -1,7 +1,8 @@
 /// URL constants to keep at one place
 class URLPath {
-  static const home = '/';
-  static const signIn = '/signin';
+  static const root = '/';
+  static const dashboard = 'dashboard';
+  static const login = '/login';
   static const settings = '/settings';
   static const customEvents = '/events/custom';
   static const deviceAttributes = '/attributes/device';

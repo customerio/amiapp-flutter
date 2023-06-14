@@ -30,10 +30,41 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>amiapp</string>
+			<string>www.amiapp-flutter.com</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>amiapp</string>
+				<string>http</string>
+				<string>https</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>login</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>amiapp-flutter</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>dashboard</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>amiapp-flutter</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>settings</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>amiapp-flutter</string>
 			</array>
 		</dict>
 	</array>
