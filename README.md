@@ -1,4 +1,4 @@
-# amiapp_flutter
+# Ami App Flutter
 
 Runner app in Flutter
 
