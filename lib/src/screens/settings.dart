@@ -97,7 +97,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _apiKeyValueController.text = defaultConfig.apiKey;
       _trackingURLValueController.text = defaultConfig.trackingUrl ?? '';
       _bqSecondsDelayValueController.text =
-          defaultConfig.backgroundQueueSecondsDelay?.toString() ?? '';
+          defaultConfig.backgroundQueueSecondsDelay?.toTrimmedString() ?? '';
       _bqMinNumberOfTasksValueController.text =
           defaultConfig.backgroundQueueMinNumOfTasks?.toString() ?? '';
       _featureTrackScreens = defaultConfig.screenTrackingEnabled;
@@ -179,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TextSettingsFormField(
                           labelText: 'backgroundQueueSecondsDelay',
                           valueController: _bqSecondsDelayValueController,
-                          keyboardType: TextInputType.number,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         ),
                         const SizedBox(height: 16),
                         TextSettingsFormField(
