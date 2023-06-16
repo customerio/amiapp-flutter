@@ -65,7 +65,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   textInputAction: TextInputAction.next,
                   validator: (value) => value?.isNotEmpty == true
                       ? null
-                      : 'Event name cannot be empty',
+                      : 'This field cannot be empty',
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

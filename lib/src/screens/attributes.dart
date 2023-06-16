@@ -113,7 +113,7 @@ class _AttributesScreenState extends State<AttributesScreen> {
                   textInputAction: TextInputAction.next,
                   validator: (value) => value?.isNotEmpty == true
                       ? null
-                      : 'Attribute name cannot be empty',
+                      : 'This field cannot be empty',
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -128,7 +128,7 @@ class _AttributesScreenState extends State<AttributesScreen> {
                   textInputAction: TextInputAction.done,
                   validator: (value) => value?.isNotEmpty == true
                       ? null
-                      : 'Attribute value cannot be empty',
+                      : 'This field cannot be empty',
                 ),
                 const SizedBox(height: 32),
                 FilledButton(

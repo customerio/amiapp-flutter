@@ -89,9 +89,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       keyboardType: TextInputType.name,
                       textCapitalization: TextCapitalization.words,
                       textInputAction: TextInputAction.next,
-                      validator: (value) => value?.isNotEmpty == true
-                          ? null
-                          : 'Name cannot be empty',
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
