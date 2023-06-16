@@ -68,13 +68,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     final newConfig = CustomerIOSDKConfig(
-      siteId: _siteIDValueController.text,
-      apiKey: _apiKeyValueController.text,
-      trackingUrl: _trackingURLValueController.text,
+      siteId: _siteIDValueController.text.trim(),
+      apiKey: _apiKeyValueController.text.trim(),
+      trackingUrl: _trackingURLValueController.text.trim(),
       backgroundQueueSecondsDelay:
-          _bqSecondsDelayValueController.text.toDoubleOrNull(),
+          _bqSecondsDelayValueController.text.trim().toDoubleOrNull(),
       backgroundQueueMinNumOfTasks:
-          _bqMinNumberOfTasksValueController.text.toIntOrNull(),
+          _bqMinNumberOfTasksValueController.text.trim().toIntOrNull(),
       screenTrackingEnabled: _featureTrackScreens,
       deviceAttributesTrackingEnabled: _featureTrackDeviceAttributes,
       debugModeEnabled: _featureDebugMode,
@@ -169,17 +169,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TextSettingsFormField(
                           labelText: 'Site Id',
                           valueController: _siteIDValueController,
-                          validator: (value) => value?.isNotEmpty == true
+                          validator: (value) => value?.trim().isNotEmpty == true
                               ? null
-                              : 'Site Id cannot be empty',
+                              : 'This field cannot be blank',
                         ),
                         const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'API Key',
                           valueController: _apiKeyValueController,
-                          validator: (value) => value?.isNotEmpty == true
+                          validator: (value) => value?.trim().isNotEmpty == true
                               ? null
-                              : 'API Key cannot be empty',
+                              : 'This field cannot be blank',
                         ),
                         const SizedBox(height: 32),
                         TextSettingsFormField(
@@ -187,12 +187,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           valueController: _bqSecondsDelayValueController,
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
+                          validator: (value) => value?.trim().isNotEmpty == true
+                              ? null
+                              : 'This field cannot be blank',
                         ),
                         const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'backgroundQueueMinNumberOfTasks',
                           valueController: _bqMinNumberOfTasksValueController,
                           keyboardType: TextInputType.number,
+                          validator: (value) => value?.trim().isNotEmpty == true
+                              ? null
+                              : 'This field cannot be blank',
                         ),
                         const SizedBox(height: 32),
                         const TextSectionHeader(

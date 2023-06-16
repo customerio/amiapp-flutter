@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 extension AmiAppExtensions on BuildContext {
@@ -60,14 +58,15 @@ extension AmiAppStringExtensions on String {
   }
 
   bool isValidUrl() {
-    // Currently only Android fails on URLs with empty host, so allow any URL
-    // on other platforms.
-    // Empty text is also considered valid.
-    if (!Platform.isAndroid || isEmpty) {
-      return true;
+    String url = trim();
+    // Empty text is not considered valid.
+    if (url.isEmpty) {
+      return false;
     }
 
-    final Uri? uri = Uri.tryParse(this);
+    // Currently only Android fails on URLs with empty host, still adding
+    // validation for all platforms to keep it consistent for app users
+    final Uri? uri = Uri.tryParse(url);
     if (uri == null) {
       return false;
     }
