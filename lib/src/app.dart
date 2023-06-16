@@ -194,12 +194,31 @@ class _AmiAppState extends State<AmiApp> {
   }
 
   String? _getNameFromLocation(String location) {
+    GoRoute? targetRoute;
     for (final route in _router.routeInformationParser.configuration.routes) {
-      final goRoute = route as GoRoute;
-      if (goRoute.path == location) {
-        return goRoute.name;
+      targetRoute = _matchLocationRoute(route as GoRoute, location);
+      if (targetRoute != null) {
+        return targetRoute.name;
+      } else if (route.routes.isNotEmpty) {
+        for (final subRoute in route.routes) {
+          targetRoute = _matchLocationRoute(subRoute as GoRoute, location);
+          if (targetRoute != null) {
+            return targetRoute.name;
+          }
+        }
       }
     }
+
+    return null;
+  }
+
+  GoRoute? _matchLocationRoute(GoRoute route, String location) {
+    // Matching with last part because all our screens (other than login) are
+    // sub-routes for dashboard and will have dashboard path appended to them
+    if (location.endsWith(route.path)) {
+      return route;
+    }
+
     return null;
   }
 
