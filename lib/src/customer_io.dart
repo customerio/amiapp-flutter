@@ -111,7 +111,9 @@ extension AmiAppSDKExtensions on CustomerIOSDK {
   Future<String?> getBuildInfo() async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      return 'Customer.io Flutter SDK 1.2.1 ${packageInfo.appName} ${packageInfo.version} (${packageInfo.buildNumber})';
+      // TODO Fetch version from the SDK
+      String sdkVersion = '1.2.1';
+      return 'Customer.io Flutter SDK $sdkVersion ${packageInfo.appName} ${packageInfo.version} (${packageInfo.buildNumber})';
     } on PlatformException catch (ex) {
       debugError("Failed to get build info: '${ex.message}'", error: ex);
       return null;
