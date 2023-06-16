@@ -1,5 +1,6 @@
 import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'auth.dart';
@@ -138,7 +139,11 @@ class _AmiAppState extends State<AmiApp> {
     return base.copyWith(
       useMaterial3: true,
       colorScheme: colorScheme,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: base.appBarTheme.copyWith(
+        systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
