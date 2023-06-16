@@ -116,6 +116,16 @@ class _AmiAppState extends State<AmiApp> {
     _initCustomerIO();
     _customerIOSDK.addListener(_handleSDKConfigurationsChanged);
 
+    // Listen to screen changes for observing screens
+    _router.addListener(() {
+      _onRouteChanged();
+    });
+    // Initial route will not be tracked if user is logged in as there is no
+    // route change, so tracking initial screen manually for this case
+    if (_router.location == Screen.dashboard.location) {
+      _onRouteChanged();
+    }
+
     super.initState();
   }
 
@@ -183,14 +193,17 @@ class _AmiAppState extends State<AmiApp> {
       return Future.value(Screen.dashboard.location);
     }
 
+    return null;
+  }
+
+  void _onRouteChanged() {
+    String location = _router.location;
     if (_customerIOSDK.sdkConfig?.screenTrackingEnabled == true) {
-      final screenName = _getNameFromLocation(target);
+      final screenName = _getNameFromLocation(location);
       if (screenName?.isNotEmpty == true) {
         CustomerIO.screen(name: screenName!);
       }
     }
-
-    return null;
   }
 
   String? _getNameFromLocation(String location) {
