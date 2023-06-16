@@ -128,22 +128,32 @@ class _AmiAppState extends State<AmiApp> {
         child: MaterialApp.router(
           routerConfig: _router,
           themeMode: ThemeMode.system,
-          theme: _createTheme(ThemeData.light(), lightColorScheme),
-          darkTheme: _createTheme(ThemeData.dark(), darkColorScheme),
+          theme: _createTheme(false),
+          darkTheme: _createTheme(true),
         ),
       ),
     );
   }
 
-  ThemeData _createTheme(ThemeData base, ColorScheme colorScheme) {
-    return base.copyWith(
+  ThemeData _createTheme(bool isDark) {
+    final ThemeData theme;
+    final ColorScheme colorScheme;
+    final SystemUiOverlayStyle systemOverlayStyle;
+    if (isDark) {
+      theme = ThemeData.dark();
+      colorScheme = darkColorScheme;
+      systemOverlayStyle = SystemUiOverlayStyle.light;
+    } else {
+      theme = ThemeData.light();
+      colorScheme = lightColorScheme;
+      systemOverlayStyle = SystemUiOverlayStyle.dark;
+    }
+
+    return theme.copyWith(
       useMaterial3: true,
       colorScheme: colorScheme,
-      appBarTheme: base.appBarTheme.copyWith(
-        systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
-          statusBarIconBrightness: Brightness.light,
-          statusBarBrightness: Brightness.dark,
-        ),
+      appBarTheme: theme.appBarTheme.copyWith(
+        systemOverlayStyle: systemOverlayStyle,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
