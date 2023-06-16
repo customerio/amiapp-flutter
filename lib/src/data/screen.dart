@@ -3,10 +3,11 @@ enum Screen {
   // For GoRouter, initial path must be `/`
   dashboard(name: 'Dashboard', routerPath: '/', urlPath: 'dashboard'),
   settings(name: 'Settings', routerPath: 'settings'),
-  customEvents(name: 'CustomEvent', routerPath: 'events/custom'),
-  deviceAttributes(name: 'DeviceAttributes', routerPath: 'attributes/device'),
+  customEvents(name: 'Custom Event', routerPath: 'events/custom'),
+  deviceAttributes(
+      name: 'Custom Device Attribute', routerPath: 'attributes/device'),
   profileAttributes(
-      name: 'ProfileAttributes', routerPath: 'attributes/profile');
+      name: 'Custom Profile Attribute', routerPath: 'attributes/profile');
 
   const Screen({
     required this.name,
