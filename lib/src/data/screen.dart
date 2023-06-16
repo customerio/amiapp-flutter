@@ -32,4 +32,10 @@ enum Screen {
       return '${dashboard.routerPath}$routerPath';
     }
   }
+
+  // Static map to get screen using location without looping everytime
+  // Helps tracking screens without delays
+  static Map<String, Screen> locationToScreenMap = {
+    for (final screen in Screen.values) screen.location: screen
+  };
 }

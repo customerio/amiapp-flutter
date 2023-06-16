@@ -200,22 +200,11 @@ class _AmiAppState extends State<AmiApp> {
   void _onRouteChanged() {
     String location = _router.location;
     if (_customerIOSDK.sdkConfig?.screenTrackingEnabled == true) {
-      final screen = _getNameFromLocation(location);
+      final screen = Screen.locationToScreenMap[location];
       if (screen != null) {
         CustomerIO.screen(name: screen.name);
       }
     }
-  }
-
-  Screen? _getNameFromLocation(String location) {
-    for (final screen in Screen.values) {
-      if (screen.location == location) {
-        return screen;
-      }
-    }
-
-    // No screen matched (unlikely to happen in this app)
-    return null;
   }
 
   void _handleAuthStateChanged() {
