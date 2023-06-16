@@ -199,39 +199,21 @@ class _AmiAppState extends State<AmiApp> {
   void _onRouteChanged() {
     String location = _router.location;
     if (_customerIOSDK.sdkConfig?.screenTrackingEnabled == true) {
-      final screenName = _getNameFromLocation(location);
-      if (screenName?.isNotEmpty == true) {
-        CustomerIO.screen(name: screenName!);
+      final screen = _getNameFromLocation(location);
+      if (screen != null) {
+        CustomerIO.screen(name: screen.name);
       }
     }
   }
 
-  String? _getNameFromLocation(String location) {
-    GoRoute? targetRoute;
-    for (final route in _router.routeInformationParser.configuration.routes) {
-      targetRoute = _matchLocationRoute(route as GoRoute, location);
-      if (targetRoute != null) {
-        return targetRoute.name;
-      } else if (route.routes.isNotEmpty) {
-        for (final subRoute in route.routes) {
-          targetRoute = _matchLocationRoute(subRoute as GoRoute, location);
-          if (targetRoute != null) {
-            return targetRoute.name;
-          }
-        }
+  Screen? _getNameFromLocation(String location) {
+    for (final screen in Screen.values) {
+      if (screen.location == location) {
+        return screen;
       }
     }
 
-    return null;
-  }
-
-  GoRoute? _matchLocationRoute(GoRoute route, String location) {
-    // Matching with last part because all our screens (other than login) are
-    // sub-routes for dashboard and will have dashboard path appended to them
-    if (location.endsWith(route.path)) {
-      return route;
-    }
-
+    // No screen matched (unlikely to happen in this app)
     return null;
   }
 
