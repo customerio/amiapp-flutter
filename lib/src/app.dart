@@ -113,18 +113,19 @@ class _AmiAppState extends State<AmiApp> {
     // Listen for user login state and display the sign in screen when logged out.
     _auth.addListener(_handleAuthStateChanged);
     // Initialize Customer.io SDK once when app modules are initialized.
-    _initCustomerIO();
+    _initCustomerIO().then((value) {
+      // Initial route will not be tracked if user is logged in as there is no
+      // route change, tracking initial screen manually for this case.
+      // Events/screens can only be tracked after SDK has been initialized.
+      if (_router.location == Screen.dashboard.location) {
+        _onRouteChanged();
+      }
+      return value;
+    });
     _customerIOSDK.addListener(_handleSDKConfigurationsChanged);
 
     // Listen to screen changes for observing screens
-    _router.addListener(() {
-      _onRouteChanged();
-    });
-    // Initial route will not be tracked if user is logged in as there is no
-    // route change, so tracking initial screen manually for this case
-    if (_router.location == Screen.dashboard.location) {
-      _onRouteChanged();
-    }
+    _router.addListener(() => _onRouteChanged());
 
     super.initState();
   }
