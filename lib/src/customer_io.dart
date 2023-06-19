@@ -3,6 +3,8 @@ import 'dart:async' show Future;
 import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_config.dart';
 import 'package:customer_io/customer_io_enums.dart';
+import 'package:customer_io/customer_io_plugin_version.dart'
+    as customer_io_plugin_version;
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -111,9 +113,10 @@ extension AmiAppSDKExtensions on CustomerIOSDK {
   Future<String?> getBuildInfo() async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      // TODO Fetch version from the SDK
-      String sdkVersion = '1.2.1';
-      return 'Customer.io Flutter SDK $sdkVersion ${packageInfo.appName} ${packageInfo.version} (${packageInfo.buildNumber})';
+      return 'Customer.io'
+          ' Flutter SDK ${customer_io_plugin_version.version}'
+          ' ${packageInfo.appName}'
+          ' ${packageInfo.version} (${packageInfo.buildNumber})';
     } on PlatformException catch (ex) {
       debugError("Failed to get build info: '${ex.message}'", error: ex);
       return null;
