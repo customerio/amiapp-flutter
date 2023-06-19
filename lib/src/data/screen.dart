@@ -1,33 +1,34 @@
 enum Screen {
-  login(name: 'Login', routerPath: '/login'),
+  login(name: 'Login', path: '/login'),
   // For GoRouter, initial path must be `/`
-  dashboard(name: 'Dashboard', routerPath: '/'),
+  dashboard(name: 'Dashboard', path: '/'),
   // Used for supporting dashboard path in deep links
-  // Redirects to `dashboard` directly
-  dashboardRedirect(name: 'DashboardRedirect', routerPath: 'dashboard'),
-  settings(name: 'Settings', routerPath: 'settings'),
-  customEvents(name: 'Custom Event', routerPath: 'events/custom'),
-  deviceAttributes(
-      name: 'Custom Device Attribute', routerPath: 'attributes/device'),
+  dashboardRedirect(name: 'DashboardRedirect', path: 'dashboard'),
+  settings(name: 'Settings', path: 'settings'),
+  customEvents(name: 'Custom Event', path: 'events/custom'),
+  deviceAttributes(name: 'Custom Device Attribute', path: 'attributes/device'),
   profileAttributes(
-      name: 'Custom Profile Attribute', routerPath: 'attributes/profile');
+      name: 'Custom Profile Attribute', path: 'attributes/profile');
 
   const Screen({
     required this.name,
-    required this.routerPath,
+    required this.path,
   });
 
+  // Required by GoRouter, should be unique and non-empty
   final String name;
-  final String routerPath;
+
+  // Required by GoRouter, should be unique and non-empty
+  final String path;
 
   String get location {
     // Since login is not configured inside dashboard, we not need to modify its path
     if (this == Screen.dashboard || this == Screen.login) {
-      return routerPath;
+      return path;
     } else {
       // Since all other screens are configured inside dashboard, we need to
       // prepend dashboard path to them
-      return '${dashboard.routerPath}$routerPath';
+      return '${dashboard.path}$path';
     }
   }
 

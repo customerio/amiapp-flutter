@@ -55,13 +55,13 @@ class _AmiAppState extends State<AmiApp> {
     // GoRouter configurations.
     _router = GoRouter(
       debugLogDiagnostics: _customerIOSDK.sdkConfig?.debugModeEnabled != false,
-      initialLocation: Screen.dashboard.routerPath,
+      initialLocation: Screen.dashboard.path,
       refreshListenable: _auth,
       redirect: (BuildContext context, GoRouterState state) => _guard(state),
       routes: [
         GoRoute(
           name: Screen.login.name,
-          path: Screen.login.routerPath,
+          path: Screen.login.path,
           builder: (context, state) => LoginScreen(
             onLogin: (user) {
               _auth.login(user).then((signedIn) {
@@ -79,17 +79,18 @@ class _AmiAppState extends State<AmiApp> {
         ),
         GoRoute(
           name: Screen.dashboard.name,
-          path: Screen.dashboard.routerPath,
+          path: Screen.dashboard.path,
           builder: (context, state) => DashboardScreen(auth: _auth),
           routes: [
             GoRoute(
               name: Screen.dashboardRedirect.name,
-              path: Screen.dashboardRedirect.routerPath,
-              redirect: (context, state) => Screen.dashboard.routerPath,
+              path: Screen.dashboardRedirect.path,
+              // Redirect to dashboard directly
+              redirect: (context, state) => Screen.dashboard.path,
             ),
             GoRoute(
               name: Screen.settings.name,
-              path: Screen.settings.routerPath,
+              path: Screen.settings.path,
               builder: (context, state) => SettingsScreen(
                 siteIdInitialValue: state.queryParameters['site_id'],
                 apiKeyInitialValue: state.queryParameters['api_key'],
@@ -97,17 +98,17 @@ class _AmiAppState extends State<AmiApp> {
             ),
             GoRoute(
               name: Screen.customEvents.name,
-              path: Screen.customEvents.routerPath,
+              path: Screen.customEvents.path,
               builder: (context, state) => const CustomEventScreen(),
             ),
             GoRoute(
               name: Screen.deviceAttributes.name,
-              path: Screen.deviceAttributes.routerPath,
+              path: Screen.deviceAttributes.path,
               builder: (context, state) => AttributesScreen.device(),
             ),
             GoRoute(
               name: Screen.profileAttributes.name,
-              path: Screen.profileAttributes.routerPath,
+              path: Screen.profileAttributes.path,
               builder: (context, state) => AttributesScreen.profile(),
             ),
           ],
