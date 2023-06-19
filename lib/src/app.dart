@@ -83,6 +83,11 @@ class _AmiAppState extends State<AmiApp> {
           builder: (context, state) => DashboardScreen(auth: _auth),
           routes: [
             GoRoute(
+              name: Screen.dashboardRedirect.name,
+              path: Screen.dashboardRedirect.routerPath,
+              redirect: (context, state) => Screen.dashboard.routerPath,
+            ),
+            GoRoute(
               name: Screen.settings.name,
               path: Screen.settings.routerPath,
               builder: (context, state) => SettingsScreen(
@@ -190,8 +195,6 @@ class _AmiAppState extends State<AmiApp> {
         target != Screen.login.location &&
         target != Screen.settings.location) {
       return Future.value(Screen.login.location);
-    } else if (target == Screen.dashboard.urlPath) {
-      return Future.value(Screen.dashboard.location);
     }
 
     return null;
