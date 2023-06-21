@@ -15,6 +15,18 @@ import FirebaseCore
         
         FirebaseApp.configure()
         
+        var modifiedLaunchOptions = launchOptions
+        
+        if let remoteNotification = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any],
+           let cioMap = remoteNotification["CIO"] as? [String: Any],
+           let pushMap = cioMap["push"] as? [String: Any],
+           let initialUrl = pushMap["link"] as? String {
+            if let url = launchOptions?[UIApplication.LaunchOptionsKey.url] as? String {
+                UIPasteboard.general.string = url
+            }
+            modifiedLaunchOptions![UIApplication.LaunchOptionsKey.url] = NSURL(string: initialUrl)
+        }
+
         // Set FCM messaging delegate
         Messaging.messaging().delegate = self
 
@@ -22,11 +34,9 @@ import FirebaseCore
         center.delegate = self
         
         // Register for push notification
-        DispatchQueue.main.async {
-            UIApplication.shared.registerForRemoteNotifications()
-        }
+        UIApplication.shared.registerForRemoteNotifications()
 
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+        return super.application(application, didFinishLaunchingWithOptions: modifiedLaunchOptions)
     }
     
     func application(application: UIApplication,
