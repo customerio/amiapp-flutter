@@ -21,9 +21,6 @@ import FirebaseCore
            let cioMap = remoteNotification["CIO"] as? [String: Any],
            let pushMap = cioMap["push"] as? [String: Any],
            let deepLinkURL = pushMap["link"] as? String {
-            if let url = launchOptions?[UIApplication.LaunchOptionsKey.url] as? String {
-                UIPasteboard.general.string = url
-            }
             if let url = URL(string: deepLinkURL) {
                 let path = url.path
                 let flutterViewController = window?.rootViewController as! FlutterViewController
@@ -32,7 +29,7 @@ import FirebaseCore
             }
             modifiedLaunchOptions![UIApplication.LaunchOptionsKey.url] = NSURL(string: deepLinkURL)
         }
-
+        
         // Set FCM messaging delegate
         Messaging.messaging().delegate = self
 
