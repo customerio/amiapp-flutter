@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../components/container.dart';
 import '../customer_io.dart';
+import '../data/config.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
 import '../widgets/app_footer.dart';
@@ -10,7 +11,11 @@ import '../widgets/header.dart';
 import '../widgets/settings_form_field.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final String? siteIdInitialValue;
+  final String? apiKeyInitialValue;
+
+  const SettingsScreen(
+      {super.key, this.siteIdInitialValue, this.apiKeyInitialValue});
 
   CustomerIOSDK get _customerIOSDK => CustomerIOSDKInstance.get();
 
@@ -29,7 +34,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController _bqMinNumberOfTasksValueController;
 
   late bool _featureTrackScreens;
-  late bool _featureEnableInApp;
   late bool _featureTrackDeviceAttributes;
   late bool _featureDebugMode;
 
@@ -38,21 +42,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     widget._customerIOSDK.getDeviceToken().then((value) =>
         setState(() => _deviceTokenValueController.text = value ?? ''));
 
-    final cioConfig = widget._customerIOSDK.configurations;
+    final cioConfig = widget._customerIOSDK.sdkConfig;
     _deviceTokenValueController = TextEditingController();
     _trackingURLValueController =
         TextEditingController(text: cioConfig?.trackingUrl);
-    _siteIDValueController = TextEditingController(text: cioConfig?.siteId);
-    _apiKeyValueController = TextEditingController(text: cioConfig?.apiKey);
+    _siteIDValueController = TextEditingController(
+        text: widget.siteIdInitialValue ?? cioConfig?.siteId);
+    _apiKeyValueController = TextEditingController(
+        text: widget.apiKeyInitialValue ?? cioConfig?.apiKey);
     _bqSecondsDelayValueController = TextEditingController(
-        text: cioConfig?.backgroundQueueSecondsDelay?.toString());
+        text: cioConfig?.backgroundQueueSecondsDelay?.toTrimmedString());
     _bqMinNumberOfTasksValueController = TextEditingController(
-        text: cioConfig?.backgroundQueueMinNumberOfTasks?.toString());
-    _featureTrackScreens = cioConfig?.featureTrackScreens ?? true;
+        text: cioConfig?.backgroundQueueMinNumOfTasks?.toString());
+    _featureTrackScreens = cioConfig?.screenTrackingEnabled ?? true;
     _featureTrackDeviceAttributes =
-        cioConfig?.featureTrackDeviceAttributes ?? true;
-    _featureEnableInApp = cioConfig?.enableInApp ?? true;
-    _featureDebugMode = cioConfig?.featureDebugMode ?? true;
+        cioConfig?.deviceAttributesTrackingEnabled ?? true;
+    _featureDebugMode = cioConfig?.debugModeEnabled ?? true;
 
     super.initState();
   }
@@ -62,25 +67,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
 
-    final currentConfig = widget._customerIOSDK.configurations;
-    final newConfig = CustomerIOConfigurations(
-      siteId: _siteIDValueController.text,
-      apiKey: _apiKeyValueController.text,
-      enableInApp: _featureEnableInApp,
-      region: currentConfig?.region,
-      trackingUrl: _trackingURLValueController.text,
-      gistEnvironment: currentConfig?.gistEnvironment,
+    final newConfig = CustomerIOSDKConfig(
+      siteId: _siteIDValueController.text.trim(),
+      apiKey: _apiKeyValueController.text.trim(),
+      trackingUrl: _trackingURLValueController.text.trim(),
       backgroundQueueSecondsDelay:
-          _bqSecondsDelayValueController.text.toDoubleOrNull(),
-      backgroundQueueMinNumberOfTasks:
-          _bqMinNumberOfTasksValueController.text.toIntOrNull(),
-      featureTrackScreens: _featureTrackScreens,
-      featureTrackDeviceAttributes: _featureTrackDeviceAttributes,
-      featureDebugMode: _featureDebugMode,
+          _bqSecondsDelayValueController.text.trim().toDoubleOrNull(),
+      backgroundQueueMinNumOfTasks:
+          _bqMinNumberOfTasksValueController.text.trim().toIntOrNull(),
+      screenTrackingEnabled: _featureTrackScreens,
+      deviceAttributesTrackingEnabled: _featureTrackDeviceAttributes,
+      debugModeEnabled: _featureDebugMode,
     );
-    widget._customerIOSDK
-        .saveConfigurationsToPreferences(newConfig)
-        .then((success) {
+    widget._customerIOSDK.saveConfigToPreferences(newConfig).then((success) {
       if (success) {
         context.showSnackBar('Settings saved successfully');
         Navigator.of(context).pop();
@@ -93,7 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _restoreDefaultSettings() {
-    final defaultConfig = widget._customerIOSDK.getDefaultConfigurations();
+    final defaultConfig = widget._customerIOSDK.getDefaultConfig();
     if (defaultConfig == null) {
       context.showSnackBar('No default values found');
       return;
@@ -102,16 +101,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _siteIDValueController.text = defaultConfig.siteId;
       _apiKeyValueController.text = defaultConfig.apiKey;
-      _featureEnableInApp = defaultConfig.enableInApp;
       _trackingURLValueController.text = defaultConfig.trackingUrl ?? '';
       _bqSecondsDelayValueController.text =
-          defaultConfig.backgroundQueueSecondsDelay?.toString() ?? '';
+          defaultConfig.backgroundQueueSecondsDelay?.toTrimmedString() ?? '';
       _bqMinNumberOfTasksValueController.text =
-          defaultConfig.backgroundQueueMinNumberOfTasks?.toString() ?? '';
-      _featureTrackScreens = defaultConfig.featureTrackScreens;
+          defaultConfig.backgroundQueueMinNumOfTasks?.toString() ?? '';
+      _featureTrackScreens = defaultConfig.screenTrackingEnabled;
       _featureTrackDeviceAttributes =
-          defaultConfig.featureTrackDeviceAttributes;
-      _featureDebugMode = defaultConfig.featureDebugMode;
+          defaultConfig.deviceAttributesTrackingEnabled;
+      _featureDebugMode = defaultConfig.debugModeEnabled;
     });
     context.showSnackBar('Restored default values');
   }
@@ -159,45 +157,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             },
                           ),
                         ),
+                        const SizedBox(height: 16),
                         TextSettingsFormField(
-                          labelText: 'Tracking URL',
+                          labelText: 'CIO Track URL',
                           valueController: _trackingURLValueController,
+                          validator: (value) => value?.isValidUrl() != false
+                              ? null
+                              : 'Please enter formatted url e.g. https://tracking.cio/',
                         ),
                         const SizedBox(height: 32),
                         TextSettingsFormField(
-                          labelText: 'Site ID',
+                          labelText: 'Site Id',
                           valueController: _siteIDValueController,
-                          validator: (value) => value?.isNotEmpty == true
+                          validator: (value) => value?.trim().isNotEmpty == true
                               ? null
-                              : 'Site ID cannot be empty',
+                              : 'This field cannot be blank',
                         ),
+                        const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'API Key',
                           valueController: _apiKeyValueController,
-                          validator: (value) => value?.isNotEmpty == true
+                          validator: (value) => value?.trim().isNotEmpty == true
                               ? null
-                              : 'API Key cannot be empty',
+                              : 'This field cannot be blank',
                         ),
                         const SizedBox(height: 32),
                         TextSettingsFormField(
                           labelText: 'backgroundQueueSecondsDelay',
                           valueController: _bqSecondsDelayValueController,
-                          keyboardType: TextInputType.number,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          validator: (value) => value?.trim().isNotEmpty == true
+                              ? null
+                              : 'This field cannot be blank',
                         ),
+                        const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'backgroundQueueMinNumberOfTasks',
-                          hintText: '10',
                           valueController: _bqMinNumberOfTasksValueController,
+                          keyboardType: TextInputType.number,
+                          validator: (value) => value?.trim().isNotEmpty == true
+                              ? null
+                              : 'This field cannot be blank',
                         ),
                         const SizedBox(height: 32),
                         const TextSectionHeader(
                           text: 'Features',
-                        ),
-                        SwitchSettingsFormField(
-                          labelText: 'Enable In-app',
-                          value: _featureEnableInApp,
-                          updateState: ((value) =>
-                              setState(() => _featureEnableInApp = value)),
                         ),
                         SwitchSettingsFormField(
                           labelText: 'Track Screens',
@@ -226,8 +231,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
+            child: FilledButton(
+              style: FilledButton.styleFrom(
                 minimumSize: sizes.buttonDefault(),
               ),
               onPressed: () => _saveSettings(),
@@ -237,7 +242,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           TextButton(
-            style: ElevatedButton.styleFrom(
+            style: FilledButton.styleFrom(
               minimumSize: sizes.buttonDefault(),
             ),
             onPressed: () => _restoreDefaultSettings(),
@@ -247,7 +252,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 8),
           const TextFooter(
-              text: 'Please restart app after saving any modifications'),
+              text: 'Note: You must restart the app to apply these settings'),
           const SizedBox(height: 8),
         ],
       ),

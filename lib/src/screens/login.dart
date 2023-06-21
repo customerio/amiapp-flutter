@@ -4,44 +4,38 @@ import 'package:go_router/go_router.dart';
 
 import '../components/container.dart';
 import '../components/scroll_view.dart';
-import '../constants.dart';
 import '../customer_io.dart';
+import '../data/screen.dart';
+import '../data/user.dart';
 import '../random.dart';
 import '../theme/sizes.dart';
 import '../widgets/app_footer.dart';
 
-class Credentials {
-  final String email;
-  final String fullName;
+class LoginScreen extends StatefulWidget {
+  final ValueChanged<User> onLogin;
 
-  Credentials(this.email, this.fullName);
-}
-
-class SignInScreen extends StatefulWidget {
-  final ValueChanged<Credentials> onSignIn;
-
-  const SignInScreen({
-    required this.onSignIn,
+  const LoginScreen({
+    required this.onLogin,
     super.key,
   });
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
 
-  String? _userAgent;
+  String? _buildInfo;
   AutovalidateMode? _autoValidateMode;
 
   @override
   void initState() {
     CustomerIOSDKInstance.get()
-        .getUserAgent()
-        .then((value) => setState(() => _userAgent = value));
+        .getBuildInfo()
+        .then((value) => setState(() => _buildInfo = value));
     super.initState();
   }
 
@@ -56,7 +50,7 @@ class _SignInScreenState extends State<SignInScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Open SDK Configurations',
             onPressed: () {
-              context.push(URLPath.settings);
+              context.push(Screen.settings.location);
             },
           ),
         ],
@@ -65,10 +59,13 @@ class _SignInScreenState extends State<SignInScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Center(
-              child: Text(
-                'Flutter Ami App',
-                style: Theme.of(context).textTheme.headlineMedium,
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 32.0),
+              child: Center(
+                child: Text(
+                  'Flutter FCM Ami App',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
             ),
             const Spacer(),
@@ -85,22 +82,21 @@ class _SignInScreenState extends State<SignInScreen> {
                     TextFormField(
                       controller: _fullNameController,
                       decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
+                        border: OutlineInputBorder(),
+                        isDense: true,
                         labelText: 'First Name',
                       ),
                       keyboardType: TextInputType.name,
                       textCapitalization: TextCapitalization.words,
                       textInputAction: TextInputAction.next,
-                      validator: (value) => value?.isNotEmpty == true
-                          ? null
-                          : 'Name cannot be empty',
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
                       child: TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
+                          border: OutlineInputBorder(),
+                          isDense: true,
                           labelText: 'Email',
                         ),
                         keyboardType: TextInputType.emailAddress,
@@ -113,17 +109,19 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 48.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
                           minimumSize: sizes.buttonDefault(),
                         ),
                         onPressed: () async {
                           _autoValidateMode =
                               AutovalidateMode.onUserInteraction;
                           if (_formKey.currentState!.validate()) {
-                            widget.onSignIn(Credentials(
-                                _emailController.value.text,
-                                _fullNameController.value.text));
+                            widget.onLogin(User(
+                              displayName: _fullNameController.value.text,
+                              email: _emailController.value.text,
+                              isGuest: false,
+                            ));
                           }
                         },
                         child: Text(
@@ -134,14 +132,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
                       child: TextButton(
-                        style: ElevatedButton.styleFrom(
+                        style: FilledButton.styleFrom(
                           minimumSize: sizes.buttonDefault(),
                         ),
                         onPressed: () async {
                           final randomValues = RandomValues();
-                          widget.onSignIn(Credentials(
-                            randomValues.getEmail(),
-                            randomValues.getFullName(),
+                          widget.onLogin(User(
+                            displayName: '',
+                            email: randomValues.getEmail(),
+                            isGuest: true,
                           ));
                         },
                         child: const Text(
@@ -153,8 +152,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 72),
             const Spacer(),
-            TextFooter(text: _userAgent ?? ''),
+            TextFooter(text: _buildInfo ?? ''),
           ],
         ),
       ),

@@ -1,4 +1,4 @@
-# amiapp_flutter
+# Flutter Sample App (FCM)
 
 Runner app in Flutter
 

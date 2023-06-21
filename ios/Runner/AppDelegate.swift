@@ -21,18 +21,11 @@ import FirebaseCore
         let center  = UNUserNotificationCenter.current()
         center.delegate = self
         
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound] // Options: .alert, .badge, .sound
-        center.requestAuthorization(options: authOptions, completionHandler: {
-            (granted, error) in
-            
-            if granted {
-                // Register after we get the permissions.
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            }
-        })
-        
+        // Register for push notification
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     

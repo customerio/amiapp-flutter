@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Amiapp Flutter</string>
+	<string>Flutter Sample</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -30,10 +30,41 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>amiapp</string>
+			<string>www.amiapp-flutter.com</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>amiapp</string>
+				<string>http</string>
+				<string>https</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>login</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>amiapp-flutter</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>dashboard</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>amiapp-flutter</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>settings</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>amiapp-flutter</string>
 			</array>
 		</dict>
 	</array>
@@ -67,5 +98,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>PermissionGroupNotification</key>
+	<string>Required to send push notifications</string>
 </dict>
 </plist>

@@ -2,10 +2,9 @@ import 'package:customer_io/customer_io.dart';
 import 'package:flutter/material.dart';
 
 import '../components/container.dart';
+import '../components/scroll_view.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
-import '../widgets/attribute_form_field.dart';
-import '../widgets/header.dart';
 
 class CustomEventScreen extends StatefulWidget {
   const CustomEventScreen({super.key});
@@ -17,33 +16,12 @@ class CustomEventScreen extends StatefulWidget {
 class _CustomEventScreenState extends State<CustomEventScreen> {
   final _formKey = GlobalKey<FormState>();
   final _eventNameController = TextEditingController();
-  final _customAttributes = <TextAttributeFormField>[];
-
-  @override
-  void initState() {
-    // adds 1 attribute by default
-    _addNewAttribute();
-    super.initState();
-  }
-
-  void _addNewAttribute() {
-    setState(() {
-      _customAttributes.add(TextAttributeFormField(
-        onRemovePress: _removeAttribute,
-      ));
-    });
-  }
-
-  void _removeAttribute(TextAttributeFormField formField) {
-    setState(() {
-      _customAttributes.remove(formField);
-    });
-  }
+  final _attributeNameController = TextEditingController();
+  final _attributeValueController = TextEditingController();
 
   /// Shows success message and navigates up when event tracking is complete
   void _onEventTracked() {
-    context.showSnackBar('Event tracked successfully');
-    Navigator.pop(context);
+    context.showSnackBar('Event sent successfully');
   }
 
   @override
@@ -52,83 +30,91 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
 
     return AppContainer(
       appBar: AppBar(
-        title: const Text('Custom Event'),
         backgroundColor: null,
       ),
-      body: Form(
-        key: _formKey,
-        autovalidateMode: AutovalidateMode.disabled,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              TextFormField(
-                controller: _eventNameController,
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Event Name',
-                ),
-                keyboardType: TextInputType.text,
-                textCapitalization: TextCapitalization.none,
-                textInputAction: TextInputAction.next,
-                validator: (value) => value?.isNotEmpty == true
-                    ? null
-                    : 'Event name cannot be empty',
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Expanded(
-                    child: TextSectionHeader(
-                      text: 'Properties',
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    tooltip: 'Add New Property',
-                    onPressed: () {
-                      _addNewAttribute();
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Flexible(
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: _customAttributes,
-                    ),
+      body: FullScreenScrollView(
+        child: Form(
+          key: _formKey,
+          autovalidateMode: AutovalidateMode.disabled,
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                const Spacer(),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Send Custom Event',
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: sizes.buttonDefault(),
+                const SizedBox(height: 32),
+                TextFormField(
+                  controller: _eventNameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                    labelText: 'Event Name',
+                  ),
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  textInputAction: TextInputAction.next,
+                  validator: (value) => value?.isNotEmpty == true
+                      ? null
+                      : 'This field cannot be empty',
                 ),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    var attributes = {
-                      for (var attribute in _customAttributes)
-                        attribute.name: attribute.value
-                    };
-                    CustomerIO.track(
-                        name: _eventNameController.text,
-                        attributes: attributes);
-                    _onEventTracked();
-                  }
-                },
-                child: const Text(
-                  'Send Event',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _attributeNameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                    labelText: 'Property Name',
+                  ),
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  textInputAction: TextInputAction.next,
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _attributeValueController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                    labelText: 'Property Value',
+                  ),
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 32),
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    minimumSize: sizes.buttonDefault(),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      var attributes = {
+                        _attributeNameController.text:
+                            _attributeValueController.text,
+                      };
+                      CustomerIO.track(
+                          name: _eventNameController.text,
+                          attributes: attributes);
+                      _onEventTracked();
+                    }
+                  },
+                  child: const Text(
+                    'Send Event',
+                  ),
+                ),
+                const Spacer(),
+              ],
+            ),
           ),
         ),
       ),

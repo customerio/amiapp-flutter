@@ -4,28 +4,34 @@ import 'package:customer_io/customer_io.dart';
 import 'package:customer_io/customer_io_inapp.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../auth.dart';
 import '../components/container.dart';
 import '../components/scroll_view.dart';
-import '../constants.dart';
 import '../customer_io.dart';
+import '../data/screen.dart';
 import '../random.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
 import '../utils/logs.dart';
 import '../widgets/app_footer.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class DashboardScreen extends StatefulWidget {
+  final AmiAppAuth auth;
+
+  const DashboardScreen({
+    required this.auth,
+    super.key,
+  });
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DashboardScreenState extends State<DashboardScreen> {
   String? _email;
-  String? _userAgent;
+  String? _buildInfo;
   late StreamSubscription inAppMessageStreamSubscription;
 
   @override
@@ -38,17 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     final customerIOSDK = CustomerIOSDKInstance.get();
+    widget.auth
+        .fetchUserState()
+        .then((value) => setState(() => _email = value?.email));
     customerIOSDK
-        .fetchProfileIdentifier()
-        .then((value) => setState(() => _email = value));
-    customerIOSDK
-        .getUserAgent()
-        .then((value) => setState(() => _userAgent = value));
+        .getBuildInfo()
+        .then((value) => setState(() => _buildInfo = value));
 
-    if (customerIOSDK.isInAppEnabled()) {
-      inAppMessageStreamSubscription =
-          CustomerIO.subscribeToInAppEventListener(handleInAppEvent);
-    }
+    inAppMessageStreamSubscription =
+        CustomerIO.subscribeToInAppEventListener(handleInAppEvent);
     super.initState();
   }
 
@@ -100,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Open SDK Configurations',
             onPressed: () {
-              context.push(URLPath.settings);
+              context.push(Screen.settings.location);
             },
           ),
         ],
@@ -109,26 +113,23 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Hi, $_email',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-            ),
             const Spacer(),
             Center(
               child: Text(
+                _email ?? '',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
                 'What would you like to test?',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             const _ActionList(),
             const Spacer(),
-            TextFooter(text: _userAgent ?? ''),
+            TextFooter(text: _buildInfo ?? ''),
           ],
         ),
       ),
@@ -139,12 +140,63 @@ class _HomeScreenState extends State<HomeScreen> {
 class _ActionList extends StatelessWidget {
   const _ActionList();
 
+  final String _pushPermissionAlertTitle = 'Push Permission';
+
   void _sendRandomEvent(BuildContext context) {
     final randomValues = RandomValues();
-    final eventName = randomValues.getEventName();
-    CustomerIO.track(
-        name: eventName, attributes: randomValues.getEventAttributes());
-    context.showSnackBar('Event tracked with name: $eventName');
+    final event = randomValues.trackingEvent();
+    final eventName = event.key;
+    final attributes = event.value;
+    if (attributes == null) {
+      CustomerIO.track(name: eventName);
+    } else {
+      CustomerIO.track(name: eventName, attributes: attributes);
+    }
+    context.showSnackBar('Event sent successfully');
+  }
+
+  void _showPushPrompt(BuildContext context) {
+    Permission.notification.status.then((status) {
+      if (status.isGranted) {
+        context.showMessageDialog(_pushPermissionAlertTitle,
+            'Push notifications are enabled on this device');
+      } else if (status.isDenied) {
+        _requestPushPermission(context);
+      } else {
+        _onPushPermissionPermanentlyDenied(context);
+      }
+    });
+  }
+
+  void _requestPushPermission(BuildContext context) {
+    Permission.notification.request().then((status) {
+      if (status.isGranted) {
+        context.showSnackBar('Push notifications are enabled on this device');
+      } else if (status.isPermanentlyDenied) {
+        _onPushPermissionPermanentlyDenied(context);
+      } else {
+        context.showMessageDialog(_pushPermissionAlertTitle,
+            'Push notifications are disabled on this device');
+      }
+    });
+  }
+
+  void _onPushPermissionPermanentlyDenied(BuildContext context) {
+    context.showMessageDialog(_pushPermissionAlertTitle,
+        'Push notifications are denied on this device. Please allow notification permission from settings to receive push on this device.',
+        actions: [
+          TextButton(
+            child: const Text('Open Settings'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              openAppSettings();
+            },
+          ),
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ]);
   }
 
   @override
@@ -154,14 +206,14 @@ class _ActionList extends StatelessWidget {
     const actionItems = _ActionItem.values;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 32.0),
+      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: actionItems
             .map((item) => Padding(
                   padding: const EdgeInsets.only(top: 16.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
                       minimumSize: sizes.buttonDefault(),
                     ),
                     onPressed: () {
@@ -169,13 +221,16 @@ class _ActionList extends StatelessWidget {
                         case _ActionItem.randomEvent:
                           _sendRandomEvent(context);
                           break;
+                        case _ActionItem.showPushPrompt:
+                          _showPushPrompt(context);
+                          break;
                         case _ActionItem.signOut:
                           authState.signOut();
                           break;
                         default:
-                          final String? location = item.targetLocation();
-                          if (location != null) {
-                            context.push(location);
+                          final Screen? screen = item.targetScreen();
+                          if (screen != null) {
+                            context.push(screen.location);
                           }
                           break;
                       }
@@ -197,7 +252,7 @@ enum _ActionItem {
   customEvent,
   deviceAttributes,
   profileAttributes,
-  viewLogs,
+  showPushPrompt,
   signOut,
 }
 
@@ -205,32 +260,32 @@ extension _ActionNames on _ActionItem {
   String buildText() {
     switch (this) {
       case _ActionItem.randomEvent:
-        return "Send Random Event";
+        return 'Send Random Event';
       case _ActionItem.customEvent:
-        return "Send Custom Event";
+        return 'Send Custom Event';
       case _ActionItem.deviceAttributes:
-        return "Set Device Attributes";
+        return 'Set Device Attribute';
       case _ActionItem.profileAttributes:
-        return "Set Profile Attributes";
-      case _ActionItem.viewLogs:
-        return "View Logs";
+        return 'Set Profile Attribute';
+      case _ActionItem.showPushPrompt:
+        return 'Show Push Prompt';
       case _ActionItem.signOut:
-        return "Log Out";
+        return 'Log Out';
     }
   }
 
-  String? targetLocation() {
+  Screen? targetScreen() {
     switch (this) {
       case _ActionItem.randomEvent:
         return null;
       case _ActionItem.customEvent:
-        return URLPath.customEvents;
+        return Screen.customEvents;
       case _ActionItem.deviceAttributes:
-        return URLPath.deviceAttributes;
+        return Screen.deviceAttributes;
       case _ActionItem.profileAttributes:
-        return URLPath.profileAttributes;
-      case _ActionItem.viewLogs:
-        return URLPath.viewLogs;
+        return Screen.profileAttributes;
+      case _ActionItem.showPushPrompt:
+        return null;
       case _ActionItem.signOut:
         return null;
     }
