@@ -20,11 +20,17 @@ import FirebaseCore
         if let remoteNotification = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any],
            let cioMap = remoteNotification["CIO"] as? [String: Any],
            let pushMap = cioMap["push"] as? [String: Any],
-           let initialUrl = pushMap["link"] as? String {
+           let deepLinkURL = pushMap["link"] as? String {
             if let url = launchOptions?[UIApplication.LaunchOptionsKey.url] as? String {
                 UIPasteboard.general.string = url
             }
-            modifiedLaunchOptions![UIApplication.LaunchOptionsKey.url] = NSURL(string: initialUrl)
+            if let url = URL(string: deepLinkURL) {
+                let path = url.path
+                let flutterViewController = window?.rootViewController as! FlutterViewController
+                // Sets path for Flutter router
+                flutterViewController.setInitialRoute(path)
+            }
+            modifiedLaunchOptions![UIApplication.LaunchOptionsKey.url] = NSURL(string: deepLinkURL)
         }
 
         // Set FCM messaging delegate
