@@ -15,6 +15,11 @@ import FirebaseCore
         
         FirebaseApp.configure()
         
+        CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
+            config.autoTrackDeviceAttributes = true
+            config.logLevel = .debug
+        }
+        
         // Set FCM messaging delegate
         Messaging.messaging().delegate = self
 
@@ -22,9 +27,7 @@ import FirebaseCore
         center.delegate = self
         
         // Register for push notification
-        DispatchQueue.main.async {
-            UIApplication.shared.registerForRemoteNotifications()
-        }
+        UIApplication.shared.registerForRemoteNotifications()
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
