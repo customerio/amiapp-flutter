@@ -15,19 +15,9 @@ import FirebaseCore
         
         FirebaseApp.configure()
         
-        var modifiedLaunchOptions = launchOptions
-        
-        if let remoteNotification = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any],
-           let cioMap = remoteNotification["CIO"] as? [String: Any],
-           let pushMap = cioMap["push"] as? [String: Any],
-           let deepLinkURL = pushMap["link"] as? String {
-            if let url = URL(string: deepLinkURL) {
-                let path = url.path
-                let flutterViewController = window?.rootViewController as! FlutterViewController
-                // Sets path for Flutter router
-                flutterViewController.setInitialRoute(path)
-            }
-            modifiedLaunchOptions![UIApplication.LaunchOptionsKey.url] = NSURL(string: deepLinkURL)
+        CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
+            config.autoTrackDeviceAttributes = true
+            config.logLevel = .debug
         }
         
         // Set FCM messaging delegate
@@ -39,7 +29,7 @@ import FirebaseCore
         // Register for push notification
         UIApplication.shared.registerForRemoteNotifications()
 
-        return super.application(application, didFinishLaunchingWithOptions: modifiedLaunchOptions)
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
     func application(application: UIApplication,
