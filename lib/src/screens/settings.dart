@@ -110,8 +110,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _featureTrackDeviceAttributes =
           defaultConfig.deviceAttributesTrackingEnabled;
       _featureDebugMode = defaultConfig.debugModeEnabled;
+      _saveSettings();
     });
-    context.showSnackBar('Restored default values');
   }
 
   @override
