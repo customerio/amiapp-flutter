@@ -73,6 +73,16 @@ extension AmiAppStringExtensions on String {
     // Valid URL with a host and http/https scheme
     return uri.hasAuthority && (uri.scheme == 'http' || uri.scheme == 'https');
   }
+
+  bool isValidInt({int? min, int? max}) {
+    int? value = trim().toIntOrNull();
+    return value != null && (min == null || value >= min) && (max == null || value <= max);
+  }
+
+  bool isValidDouble({double? min, double? max}) {
+    double? value = trim().toDoubleOrNull();
+    return value != null && (min == null || value >= min) && (max == null || value <= max);
+  }
 }
 
 extension AmiAppDoubleExtensions on double {

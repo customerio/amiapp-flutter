@@ -187,18 +187,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           valueController: _bqSecondsDelayValueController,
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
-                          validator: (value) => value?.trim().isNotEmpty == true
-                              ? null
-                              : 'This field cannot be blank',
+                          validator: (value) {
+                            bool isBlank = value?.trim().isNotEmpty != true;
+                            if (isBlank) {
+                              return 'This field cannot be blank';
+                            }
+
+                            double minValue = 1.0;
+                            bool isInvalid = value?.isValidDouble(min: minValue) != true;
+                            if (isInvalid) {
+                              return 'Value must be greater than $minValue';
+                            }
+
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
                         TextSettingsFormField(
                           labelText: 'backgroundQueueMinNumberOfTasks',
                           valueController: _bqMinNumberOfTasksValueController,
                           keyboardType: TextInputType.number,
-                          validator: (value) => value?.trim().isNotEmpty == true
-                              ? null
-                              : 'This field cannot be blank',
+                          validator: (value) {
+                            bool isBlank = value?.trim().isNotEmpty != true;
+                            if (isBlank) {
+                              return 'This field cannot be blank';
+                            }
+
+                            int minValue = 1;
+                            bool isInvalid = value?.isValidInt(min: minValue) != true;
+                            if (isInvalid) {
+                              return 'Value must be greater than $minValue';
+                            }
+
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 32),
                         const TextSectionHeader(
