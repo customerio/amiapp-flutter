@@ -16,8 +16,8 @@ class CustomEventScreen extends StatefulWidget {
 class _CustomEventScreenState extends State<CustomEventScreen> {
   final _formKey = GlobalKey<FormState>();
   final _eventNameController = TextEditingController();
-  final _attributeNameController = TextEditingController();
-  final _attributeValueController = TextEditingController();
+  final _propertyNameController = TextEditingController();
+  final _propertyValueController = TextEditingController();
 
   /// Shows success message and navigates up when event tracking is complete
   void _onEventTracked() {
@@ -69,7 +69,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _attributeNameController,
+                  controller: _propertyNameController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     isDense: true,
@@ -81,7 +81,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _attributeValueController,
+                  controller: _propertyValueController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     isDense: true,
@@ -98,10 +98,11 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      var attributes = {
-                        _attributeNameController.text:
-                            _attributeValueController.text,
-                      };
+                      String propertyName = _propertyNameController.text;
+                      Map<String, String> attributes;
+                      attributes = propertyName.isNotEmpty
+                          ? {}
+                          : {propertyName: _propertyValueController.text};
                       CustomerIO.track(
                           name: _eventNameController.text,
                           attributes: attributes);
