@@ -71,17 +71,23 @@ extension AmiAppStringExtensions on String {
       return false;
     }
     // Valid URL with a host and http/https scheme
-    return uri.hasAuthority && (uri.scheme == 'http' || uri.scheme == 'https');
+    return uri.hasAuthority &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.path.endsWith("/");
   }
 
   bool isValidInt({int? min, int? max}) {
     int? value = trim().toIntOrNull();
-    return value != null && (min == null || value >= min) && (max == null || value <= max);
+    return value != null &&
+        (min == null || value >= min) &&
+        (max == null || value <= max);
   }
 
   bool isValidDouble({double? min, double? max}) {
     double? value = trim().toDoubleOrNull();
-    return value != null && (min == null || value >= min) && (max == null || value <= max);
+    return value != null &&
+        (min == null || value >= min) &&
+        (max == null || value <= max);
   }
 }
 
