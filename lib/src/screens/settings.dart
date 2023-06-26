@@ -196,7 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             double minValue = 1.0;
                             bool isInvalid = value?.isValidDouble(min: minValue) != true;
                             if (isInvalid) {
-                              return 'Value must be greater than $minValue';
+                              return 'The value must be greater than $minValue';
                             }
 
                             return null;
@@ -216,7 +216,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             int minValue = 1;
                             bool isInvalid = value?.isValidInt(min: minValue) != true;
                             if (isInvalid) {
-                              return 'Value must be greater than $minValue';
+                              return 'The value must be greater than $minValue';
                             }
 
                             return null;
