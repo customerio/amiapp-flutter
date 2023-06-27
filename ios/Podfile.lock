@@ -1,5 +1,5 @@
 PODS:
-  - customer_io (1.2.1):
+  - customer_io (1.2.2):
     - CustomerIO/MessagingInApp (~> 2)
     - CustomerIO/Tracking (~> 2)
     - Flutter
@@ -122,7 +122,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
-  customer_io: 59487348e26344e57191590ee3fe74d245e0b321
+  customer_io: e8bbaf535f3d897c469c907e84c29ae18cf74dd9
   CustomerIO: de7c1a1e4728d764914d0f3b43fff6bef25d0a66
   CustomerIOCommon: 5807e52a781e7246cf31dccc462d74a07910ee26
   CustomerIOMessagingInApp: ea0042e30403f79dbb7f15bfb279f0e99bcc9388
