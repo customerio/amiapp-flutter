@@ -100,7 +100,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                     if (_formKey.currentState!.validate()) {
                       String propertyName = _propertyNameController.text;
                       Map<String, String> attributes;
-                      attributes = propertyName.isNotEmpty
+                      attributes = propertyName.isEmpty
                           ? {}
                           : {propertyName: _propertyValueController.text};
                       CustomerIO.track(
