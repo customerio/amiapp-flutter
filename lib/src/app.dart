@@ -54,7 +54,7 @@ class _AmiAppState extends State<AmiApp> {
   void initState() {
     // GoRouter configurations.
     _router = GoRouter(
-      debugLogDiagnostics: _customerIOSDK.sdkConfig?.debugModeEnabled != false,
+      debugLogDiagnostics: true,
       initialLocation: Screen.dashboard.path,
       refreshListenable: _auth,
       redirect: (BuildContext context, GoRouterState state) => _guard(state),
