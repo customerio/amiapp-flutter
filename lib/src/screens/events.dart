@@ -63,9 +63,6 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
                   textInputAction: TextInputAction.next,
-                  validator: (value) => value?.isNotEmpty == true
-                      ? null
-                      : 'This field cannot be empty',
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
