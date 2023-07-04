@@ -1,28 +1,29 @@
 PODS:
-  - customer_io (1.2.1):
+  - customer_io (1.2.2):
     - CustomerIO/MessagingInApp (~> 2)
     - CustomerIO/Tracking (~> 2)
     - Flutter
-  - CustomerIO/MessagingInApp (2.6.1):
-    - CustomerIOMessagingInApp (= 2.6.1)
-  - CustomerIO/MessagingPushAPN (2.6.1):
-    - CustomerIOMessagingPushAPN (= 2.6.1)
-  - CustomerIO/MessagingPushFCM (2.6.1):
-    - CustomerIOMessagingPushFCM (= 2.6.1)
-  - CustomerIO/Tracking (2.6.1):
-    - CustomerIOTracking (= 2.6.1)
-  - CustomerIOCommon (2.6.1)
-  - CustomerIOMessagingInApp (2.6.1):
-    - CustomerIOTracking (= 2.6.1)
+  - CustomerIO/MessagingInApp (2.7.1):
+    - CustomerIOMessagingInApp (= 2.7.1)
+  - CustomerIO/MessagingPushAPN (2.7.1):
+    - CustomerIOMessagingPushAPN (= 2.7.1)
+  - CustomerIO/MessagingPushFCM (2.7.1):
+    - CustomerIOMessagingPushFCM (= 2.7.1)
+  - CustomerIO/Tracking (2.7.1):
+    - CustomerIOTracking (= 2.7.1)
+  - CustomerIOCommon (2.7.1)
+  - CustomerIOMessagingInApp (2.7.1):
+    - CustomerIOTracking (= 2.7.1)
     - Gist (= 3.2.2)
-  - CustomerIOMessagingPush (2.6.1):
-    - CustomerIOTracking (= 2.6.1)
-  - CustomerIOMessagingPushAPN (2.6.1):
-    - CustomerIOMessagingPush (= 2.6.1)
-  - CustomerIOMessagingPushFCM (2.6.1):
-    - CustomerIOMessagingPush (= 2.6.1)
-  - CustomerIOTracking (2.6.1):
-    - CustomerIOCommon (= 2.6.1)
+  - CustomerIOMessagingPush (2.7.1):
+    - CustomerIOTracking (= 2.7.1)
+  - CustomerIOMessagingPushAPN (2.7.1):
+    - CustomerIOMessagingPush (= 2.7.1)
+  - CustomerIOMessagingPushFCM (2.7.1):
+    - CustomerIOMessagingPush (= 2.7.1)
+    - FirebaseMessaging (< 11, >= 8.7.0)
+  - CustomerIOTracking (2.7.1):
+    - CustomerIOCommon (= 2.7.1)
   - FirebaseCore (10.11.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
@@ -73,7 +74,7 @@ PODS:
   - nanopb/encode (2.30909.0)
   - package_info_plus (0.4.5):
     - Flutter
-  - permission_handler_apple (9.1.0):
+  - permission_handler_apple (9.1.1):
     - Flutter
   - PromisesObjC (2.2.0)
   - shared_preferences_foundation (0.0.1):
@@ -122,14 +123,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
-  customer_io: 59487348e26344e57191590ee3fe74d245e0b321
-  CustomerIO: de7c1a1e4728d764914d0f3b43fff6bef25d0a66
-  CustomerIOCommon: 5807e52a781e7246cf31dccc462d74a07910ee26
-  CustomerIOMessagingInApp: ea0042e30403f79dbb7f15bfb279f0e99bcc9388
-  CustomerIOMessagingPush: f8e7b7133836c0d8d05a38c18c90870cfab6845a
-  CustomerIOMessagingPushAPN: 3966f1a7618976e393e07521ba5542d6a1a7a8a4
-  CustomerIOMessagingPushFCM: f719a7d1426b2f4c6fa3b29b4180399e813eafac
-  CustomerIOTracking: 48ea93a09ebadb42fd09fd3294a1172efc355ffd
+  customer_io: e8bbaf535f3d897c469c907e84c29ae18cf74dd9
+  CustomerIO: caa340d59eda17116e4f04504d1d7a8a095486d9
+  CustomerIOCommon: 045c0c13e903ab724edaa3f19b143e75d7a6c1b6
+  CustomerIOMessagingInApp: e40f18745c4421cd4d7206f5d4ce4ca7bda06f58
+  CustomerIOMessagingPush: a1d19ae27538b677a0e4626989522bc8083aa3de
+  CustomerIOMessagingPushAPN: dc8267289d9109311058e659e43980d228a81210
+  CustomerIOMessagingPushFCM: 30f82a5e18447f070dc4dd61d7c4c0e7095dcf8e
+  CustomerIOTracking: f4b698a751c5d4e8e108156002f973550b481e3c
   FirebaseCore: 62fd4d549f5e3f3bd52b7998721c5fa0557fb355
   FirebaseCoreInternal: 9e46c82a14a3b3a25be4e1e151ce6d21536b89c0
   FirebaseInstallations: 2a2c6859354cbec0a228a863d4daf6de7c74ced4
@@ -140,9 +141,9 @@ SPEC CHECKSUMS:
   GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   package_info_plus: fd030dabf36271f146f1f3beacd48f564b0f17f7
-  permission_handler_apple: 8f116445eff3c0e7c65ad60f5fef5490aa94b4e4
+  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
-  shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
+  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
 
 PODFILE CHECKSUM: b36822ac9786f9a1bcbe4b23178b3af52e3488c6
 

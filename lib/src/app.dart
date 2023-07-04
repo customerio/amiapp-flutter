@@ -17,7 +17,9 @@ import 'utils/logs.dart';
 
 /// Main entry point of AmiApp
 class AmiApp extends StatefulWidget {
-  const AmiApp({Key? key}) : super(key: key);
+  final AmiAppAuth auth;
+
+  const AmiApp({required this.auth, Key? key}) : super(key: key);
 
   @override
   State<AmiApp> createState() => _AmiAppState();
@@ -26,8 +28,9 @@ class AmiApp extends StatefulWidget {
 /// App state that holds states for authentication, navigation and Customer.io SDK
 class _AmiAppState extends State<AmiApp> {
   final CustomerIOSDK _customerIOSDK = CustomerIOSDKInstance.get();
-  final AmiAppAuth _auth = AmiAppAuth();
   late final GoRouter _router;
+
+  AmiAppAuth get _auth => widget.auth;
 
   final PageTransitionsTheme _pageTransitionsTheme = const PageTransitionsTheme(
     builders: {
@@ -57,11 +60,20 @@ class _AmiAppState extends State<AmiApp> {
       debugLogDiagnostics: true,
       initialLocation: Screen.dashboard.path,
       refreshListenable: _auth,
-      redirect: (BuildContext context, GoRouterState state) => _guard(state),
       routes: [
         GoRoute(
           name: Screen.login.name,
           path: Screen.login.path,
+          redirect: (context, state) async {
+            // Auth state is updated in main before the corresponding widget is built.
+            final signedIn = _auth.signedIn ?? false;
+            // If user is already signed in, redirect to dashboard
+            if (signedIn) {
+              return Screen.dashboard.location;
+            }
+
+            return null;
+          },
           builder: (context, state) => LoginScreen(
             onLogin: (user) {
               _auth.login(user).then((signedIn) {
@@ -80,6 +92,19 @@ class _AmiAppState extends State<AmiApp> {
         GoRoute(
           name: Screen.dashboard.name,
           path: Screen.dashboard.path,
+          redirect: (context, state) async {
+            // Auth state is updated in main before the corresponding widget is built.
+            final signedIn = _auth.signedIn ?? false;
+            // If user is not signed in and public view is not allowed, redirect
+            // to login screen
+            final isPublicViewAllowed =
+                state.location.toAppScreen()?.isPublicViewAllowed == true;
+            if (!signedIn && !isPublicViewAllowed) {
+              return Screen.login.location;
+            }
+
+            return null;
+          },
           builder: (context, state) => DashboardScreen(auth: _auth),
           routes: [
             GoRoute(
@@ -92,6 +117,7 @@ class _AmiAppState extends State<AmiApp> {
               name: Screen.settings.name,
               path: Screen.settings.path,
               builder: (context, state) => SettingsScreen(
+                auth: _auth,
                 siteIdInitialValue: state.queryParameters['site_id'],
                 apiKeyInitialValue: state.queryParameters['api_key'],
               ),
@@ -123,7 +149,7 @@ class _AmiAppState extends State<AmiApp> {
       // Initial route will not be tracked if user is logged in as there is no
       // route change, tracking initial screen manually for this case.
       // Events/screens can only be tracked after SDK has been initialized.
-      if (_router.location == Screen.dashboard.location) {
+      if (_router.location.toAppScreen() != Screen.dashboard) {
         _onRouteChanged();
       }
       return value;
@@ -186,25 +212,9 @@ class _AmiAppState extends State<AmiApp> {
     );
   }
 
-  Future<String?> _guard(GoRouterState state) async {
-    final signedIn = _auth.signedIn ?? await _auth.updateState();
-
-    final target = state.path ?? state.location;
-    if (signedIn && target == Screen.login.location) {
-      return Future.value(Screen.dashboard.location);
-    } else if (!signedIn &&
-        target != Screen.login.location &&
-        target != Screen.settings.location) {
-      return Future.value(Screen.login.location);
-    }
-
-    return null;
-  }
-
   void _onRouteChanged() {
-    String location = _router.location;
     if (_customerIOSDK.sdkConfig?.screenTrackingEnabled == true) {
-      final screen = Screen.locationToScreenMap[location];
+      final Screen? screen = _router.location.toAppScreen();
       if (screen != null) {
         CustomerIO.screen(name: screen.name);
       }
@@ -215,7 +225,6 @@ class _AmiAppState extends State<AmiApp> {
     if (_auth.signedIn == false) {
       CustomerIO.clearIdentify();
       _auth.clearUserState();
-      _router.go(Screen.login.location);
     }
   }
 

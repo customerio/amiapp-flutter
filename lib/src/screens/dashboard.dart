@@ -155,7 +155,7 @@ class _ActionList extends StatelessWidget {
     context.showSnackBar('Event sent successfully');
   }
 
-  void _showPushPrompt(BuildContext context) {
+  void _showPushPermissionStatus(BuildContext context) {
     Permission.notification.status.then((status) {
       if (status.isGranted) {
         context.showMessageDialog(_pushPermissionAlertTitle,
@@ -172,11 +172,8 @@ class _ActionList extends StatelessWidget {
     Permission.notification.request().then((status) {
       if (status.isGranted) {
         context.showSnackBar('Push notifications are enabled on this device');
-      } else if (status.isPermanentlyDenied) {
-        _onPushPermissionPermanentlyDenied(context);
       } else {
-        context.showMessageDialog(_pushPermissionAlertTitle,
-            'Push notifications are disabled on this device');
+        _onPushPermissionPermanentlyDenied(context);
       }
     });
   }
@@ -222,7 +219,7 @@ class _ActionList extends StatelessWidget {
                           _sendRandomEvent(context);
                           break;
                         case _ActionItem.showPushPrompt:
-                          _showPushPrompt(context);
+                          _showPushPermissionStatus(context);
                           break;
                         case _ActionItem.signOut:
                           authState.signOut();

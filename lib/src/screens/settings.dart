@@ -1,6 +1,9 @@
+import 'package:amiapp_flutter/src/data/screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
+import '../auth.dart';
 import '../components/container.dart';
 import '../customer_io.dart';
 import '../data/config.dart';
@@ -11,11 +14,16 @@ import '../widgets/header.dart';
 import '../widgets/settings_form_field.dart';
 
 class SettingsScreen extends StatefulWidget {
+  final AmiAppAuth auth;
   final String? siteIdInitialValue;
   final String? apiKeyInitialValue;
 
-  const SettingsScreen(
-      {super.key, this.siteIdInitialValue, this.apiKeyInitialValue});
+  const SettingsScreen({
+    required this.auth,
+    this.siteIdInitialValue,
+    this.apiKeyInitialValue,
+    super.key,
+  });
 
   CustomerIOSDK get _customerIOSDK => CustomerIOSDKInstance.get();
 
@@ -118,165 +126,179 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final Sizes sizes = Theme.of(context).extension<Sizes>()!;
 
-    return AppContainer(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: Scrollbar(
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Container(
-                    constraints:
-                        BoxConstraints.loose(sizes.inputFieldDefault()),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0, vertical: 16.0),
-                    child: Column(
-                      children: [
-                        TextSettingsFormField(
-                          labelText: 'Device Token',
-                          valueController: _deviceTokenValueController,
-                          readOnly: true,
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.copy),
-                            tooltip: 'Copy Token',
-                            onPressed: () {
-                              final clipboardData = ClipboardData(
-                                  text: _deviceTokenValueController.text);
-                              Clipboard.setData(clipboardData).then((_) =>
-                                  context.showSnackBar(
-                                      'Device Token copied to clipboard'));
+    return WillPopScope(
+      onWillPop: () {
+        if (widget.auth.signedIn == false) {
+          context.go(Screen.login.location);
+          return Future.value(false);
+        }
+
+        return Future.value(true);
+      },
+      child: AppContainer(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          title: const Text('Settings'),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Container(
+                      constraints:
+                          BoxConstraints.loose(sizes.inputFieldDefault()),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0, vertical: 16.0),
+                      child: Column(
+                        children: [
+                          TextSettingsFormField(
+                            labelText: 'Device Token',
+                            valueController: _deviceTokenValueController,
+                            readOnly: true,
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.copy),
+                              tooltip: 'Copy Token',
+                              onPressed: () {
+                                final clipboardData = ClipboardData(
+                                    text: _deviceTokenValueController.text);
+                                Clipboard.setData(clipboardData).then((_) =>
+                                    context.showSnackBar(
+                                        'Device Token copied to clipboard'));
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextSettingsFormField(
+                            labelText: 'CIO Track URL',
+                            valueController: _trackingURLValueController,
+                            validator: (value) => value?.isValidUrl() != false
+                                ? null
+                                : 'Please enter formatted url e.g. https://tracking.cio/',
+                          ),
+                          const SizedBox(height: 32),
+                          TextSettingsFormField(
+                            labelText: 'Site Id',
+                            valueController: _siteIDValueController,
+                            validator: (value) =>
+                                value?.trim().isNotEmpty == true
+                                    ? null
+                                    : 'This field cannot be blank',
+                          ),
+                          const SizedBox(height: 16),
+                          TextSettingsFormField(
+                            labelText: 'API Key',
+                            valueController: _apiKeyValueController,
+                            validator: (value) =>
+                                value?.trim().isNotEmpty == true
+                                    ? null
+                                    : 'This field cannot be blank',
+                          ),
+                          const SizedBox(height: 32),
+                          TextSettingsFormField(
+                            labelText: 'backgroundQueueSecondsDelay',
+                            valueController: _bqSecondsDelayValueController,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            validator: (value) {
+                              bool isBlank = value?.trim().isNotEmpty != true;
+                              if (isBlank) {
+                                return 'This field cannot be blank';
+                              }
+
+                              double minValue = 1.0;
+                              bool isInvalid =
+                                  value?.isValidDouble(min: minValue) != true;
+                              if (isInvalid) {
+                                return 'The value must be greater than or equal to $minValue';
+                              }
+
+                              return null;
                             },
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        TextSettingsFormField(
-                          labelText: 'CIO Track URL',
-                          valueController: _trackingURLValueController,
-                          validator: (value) => value?.isValidUrl() != false
-                              ? null
-                              : 'Please enter formatted url e.g. https://tracking.cio/',
-                        ),
-                        const SizedBox(height: 32),
-                        TextSettingsFormField(
-                          labelText: 'Site Id',
-                          valueController: _siteIDValueController,
-                          validator: (value) => value?.trim().isNotEmpty == true
-                              ? null
-                              : 'This field cannot be blank',
-                        ),
-                        const SizedBox(height: 16),
-                        TextSettingsFormField(
-                          labelText: 'API Key',
-                          valueController: _apiKeyValueController,
-                          validator: (value) => value?.trim().isNotEmpty == true
-                              ? null
-                              : 'This field cannot be blank',
-                        ),
-                        const SizedBox(height: 32),
-                        TextSettingsFormField(
-                          labelText: 'backgroundQueueSecondsDelay',
-                          valueController: _bqSecondsDelayValueController,
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
-                          validator: (value) {
-                            bool isBlank = value?.trim().isNotEmpty != true;
-                            if (isBlank) {
-                              return 'This field cannot be blank';
-                            }
+                          const SizedBox(height: 16),
+                          TextSettingsFormField(
+                            labelText: 'backgroundQueueMinNumberOfTasks',
+                            valueController: _bqMinNumberOfTasksValueController,
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              bool isBlank = value?.trim().isNotEmpty != true;
+                              if (isBlank) {
+                                return 'This field cannot be blank';
+                              }
 
-                            double minValue = 1.0;
-                            bool isInvalid = value?.isValidDouble(min: minValue) != true;
-                            if (isInvalid) {
-                              return 'The value must be greater than $minValue';
-                            }
+                              int minValue = 1;
+                              bool isInvalid =
+                                  value?.isValidInt(min: minValue) != true;
+                              if (isInvalid) {
+                                return 'The value must be greater than or equal to $minValue';
+                              }
 
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextSettingsFormField(
-                          labelText: 'backgroundQueueMinNumberOfTasks',
-                          valueController: _bqMinNumberOfTasksValueController,
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            bool isBlank = value?.trim().isNotEmpty != true;
-                            if (isBlank) {
-                              return 'This field cannot be blank';
-                            }
-
-                            int minValue = 1;
-                            bool isInvalid = value?.isValidInt(min: minValue) != true;
-                            if (isInvalid) {
-                              return 'The value must be greater than $minValue';
-                            }
-
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 32),
-                        const TextSectionHeader(
-                          text: 'Features',
-                        ),
-                        SwitchSettingsFormField(
-                          labelText: 'Track Screens',
-                          value: _featureTrackScreens,
-                          updateState: ((value) =>
-                              setState(() => _featureTrackScreens = value)),
-                        ),
-                        SwitchSettingsFormField(
-                          labelText: 'Track Device Attributes',
-                          value: _featureTrackDeviceAttributes,
-                          updateState: ((value) => setState(
-                              () => _featureTrackDeviceAttributes = value)),
-                        ),
-                        SwitchSettingsFormField(
-                          labelText: 'Debug Mode',
-                          value: _featureDebugMode,
-                          updateState: ((value) =>
-                              setState(() => _featureDebugMode = value)),
-                        ),
-                      ],
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 32),
+                          const TextSectionHeader(
+                            text: 'Features',
+                          ),
+                          SwitchSettingsFormField(
+                            labelText: 'Track Screens',
+                            value: _featureTrackScreens,
+                            updateState: ((value) =>
+                                setState(() => _featureTrackScreens = value)),
+                          ),
+                          SwitchSettingsFormField(
+                            labelText: 'Track Device Attributes',
+                            value: _featureTrackDeviceAttributes,
+                            updateState: ((value) => setState(
+                                () => _featureTrackDeviceAttributes = value)),
+                          ),
+                          SwitchSettingsFormField(
+                            labelText: 'Debug Mode',
+                            value: _featureDebugMode,
+                            updateState: ((value) =>
+                                setState(() => _featureDebugMode = value)),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
-            child: FilledButton(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  minimumSize: sizes.buttonDefault(),
+                ),
+                onPressed: () => _saveSettings(),
+                child: Text(
+                  'Save'.toUpperCase(),
+                ),
+              ),
+            ),
+            TextButton(
               style: FilledButton.styleFrom(
                 minimumSize: sizes.buttonDefault(),
               ),
-              onPressed: () => _saveSettings(),
-              child: Text(
-                'Save'.toUpperCase(),
+              onPressed: () => _restoreDefaultSettings(),
+              child: const Text(
+                'Restore Defaults',
               ),
             ),
-          ),
-          TextButton(
-            style: FilledButton.styleFrom(
-              minimumSize: sizes.buttonDefault(),
-            ),
-            onPressed: () => _restoreDefaultSettings(),
-            child: const Text(
-              'Restore Defaults',
-            ),
-          ),
-          const SizedBox(height: 8),
-          const TextFooter(
-              text: 'Note: You must restart the app to apply these settings'),
-          const SizedBox(height: 8),
-        ],
+            const SizedBox(height: 8),
+            const TextFooter(
+                text: 'Note: You must restart the app to apply these settings'),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }
