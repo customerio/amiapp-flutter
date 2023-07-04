@@ -8,8 +8,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Load SDK configurations
   await dotenv.load(fileName: ".env");
-  // Initialize and run app
+  // Wait for user state to be updated
   AmiAppAuth auth = AmiAppAuth();
   await auth.updateState();
+  // Initialize and run app
   runApp(AmiApp(auth: auth));
 }
