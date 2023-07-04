@@ -38,3 +38,19 @@ enum Screen {
     for (final screen in Screen.values) screen.location: screen
   };
 }
+
+extension ScreenProperties on Screen {
+  bool get isAuthenticatedViewOnly =>
+      !isUnauthenticatedViewOnly && this != Screen.settings;
+
+  bool get isUnauthenticatedViewOnly => this == Screen.login;
+}
+
+extension ScreenFactory on Screen {
+  static Screen fromRouterLocation(String location) {
+    return Screen.values.firstWhere(
+        (screen) =>
+            location.startsWith(screen.location) && screen != Screen.dashboard,
+        orElse: () => Screen.dashboard);
+  }
+}
