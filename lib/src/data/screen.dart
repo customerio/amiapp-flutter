@@ -1,4 +1,5 @@
 enum Screen {
+  undefined(name: '', path: ''),
   login(name: 'Login', path: '/login'),
   // For GoRouter, initial path must be `/`
   dashboard(name: 'Dashboard', path: '/'),
@@ -31,12 +32,6 @@ enum Screen {
       return '${dashboard.path}$path';
     }
   }
-
-  // Static map to get screen using location without looping everytime
-  // Helps tracking screens without delays
-  static Map<String, Screen> locationToScreenMap = {
-    for (final screen in Screen.values) screen.location: screen
-  };
 }
 
 extension ScreenProperties on Screen {
@@ -51,14 +46,29 @@ extension ScreenProperties on Screen {
   bool get isPublicViewAllowed => this == Screen.settings;
 }
 
+extension RouterProperties on String {
+  Screen? toAppScreen() => ScreenFactory.fromRouterLocation(this);
+}
+
 extension ScreenFactory on Screen {
   /// Creates a screen from router location.
   /// Falls back to [fallback] screen if no screen is found.
   /// Defaults to [Screen.dashboard] as fallback.
-  static Screen fromRouterLocation(String location,
-      {Screen fallback = Screen.dashboard}) {
-    return Screen.values.firstWhere(
-        (screen) => location.startsWith(screen.location) && screen != fallback,
-        orElse: () => fallback);
+  static Screen? fromRouterLocation(String location) {
+    Screen screen = Screen.values
+        .where((screen) =>
+            screen != Screen.dashboard && screen != Screen.undefined)
+        .firstWhere(
+            (screen) =>
+                location.startsWith(screen.location) &&
+                screen != Screen.dashboard,
+            orElse: () => Screen.undefined);
+
+    if (screen != Screen.undefined) {
+      return screen;
+    } else if (location.startsWith(Screen.dashboard.location)) {
+      return Screen.dashboard;
+    }
+    return null;
   }
 }
