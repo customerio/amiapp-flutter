@@ -11,10 +11,7 @@ class AmiAppAuth extends ChangeNotifier {
 
   bool? get signedIn => _signedIn;
 
-  AmiAppAuth() {
-    // Update authentication state at earliest.
-    updateState();
-  }
+  AmiAppAuth();
 
   // Validates current signed in state
   Future<bool> updateState() =>

@@ -17,7 +17,9 @@ import 'utils/logs.dart';
 
 /// Main entry point of AmiApp
 class AmiApp extends StatefulWidget {
-  const AmiApp({Key? key}) : super(key: key);
+  final AmiAppAuth auth;
+
+  const AmiApp({required this.auth, Key? key}) : super(key: key);
 
   @override
   State<AmiApp> createState() => _AmiAppState();
@@ -26,8 +28,9 @@ class AmiApp extends StatefulWidget {
 /// App state that holds states for authentication, navigation and Customer.io SDK
 class _AmiAppState extends State<AmiApp> {
   final CustomerIOSDK _customerIOSDK = CustomerIOSDKInstance.get();
-  final AmiAppAuth _auth = AmiAppAuth();
   late final GoRouter _router;
+
+  AmiAppAuth get _auth => widget.auth;
 
   final PageTransitionsTheme _pageTransitionsTheme = const PageTransitionsTheme(
     builders: {
@@ -62,8 +65,8 @@ class _AmiAppState extends State<AmiApp> {
           name: Screen.login.name,
           path: Screen.login.path,
           redirect: (context, state) async {
-            // Wait for auth state to be updated
-            final signedIn = _auth.signedIn ?? await _auth.updateState();
+            // Auth state is updated in main before the corresponding widget is built.
+            final signedIn = _auth.signedIn ?? false;
             // If user is already signed in, redirect to dashboard
             if (signedIn) {
               return Screen.dashboard.location;
@@ -90,8 +93,8 @@ class _AmiAppState extends State<AmiApp> {
           name: Screen.dashboard.name,
           path: Screen.dashboard.path,
           redirect: (context, state) async {
-            // Wait for auth state to be updated
-            final bool signedIn = _auth.signedIn ?? await _auth.updateState();
+            // Auth state is updated in main before the corresponding widget is built.
+            final signedIn = _auth.signedIn ?? false;
             // If user is not signed in and public view is not allowed, redirect
             // to login screen
             final isPublicViewAllowed =
