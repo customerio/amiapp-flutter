@@ -40,17 +40,22 @@ enum Screen {
 }
 
 extension ScreenProperties on Screen {
+  /// Returns true if screen requires user to be authenticated to view it.
   bool get isAuthenticatedViewOnly =>
       !isUnauthenticatedViewOnly && this != Screen.settings;
 
+  /// Returns true if screen can be viewed without authentication.
   bool get isUnauthenticatedViewOnly => this == Screen.login;
 }
 
 extension ScreenFactory on Screen {
-  static Screen fromRouterLocation(String location) {
+  /// Creates a screen from router location.
+  /// Falls back to [fallback] screen if no screen is found.
+  /// Defaults to [Screen.dashboard] as fallback.
+  static Screen fromRouterLocation(String location,
+      {Screen fallback = Screen.dashboard}) {
     return Screen.values.firstWhere(
-        (screen) =>
-            location.startsWith(screen.location) && screen != Screen.dashboard,
-        orElse: () => Screen.dashboard);
+        (screen) => location.startsWith(screen.location) && screen != fallback,
+        orElse: () => fallback);
   }
 }
