@@ -42,10 +42,13 @@ enum Screen {
 extension ScreenProperties on Screen {
   /// Returns true if screen requires user to be authenticated to view it.
   bool get isAuthenticatedViewOnly =>
-      !isUnauthenticatedViewOnly && this != Screen.settings;
+      !isUnauthenticatedViewOnly && !isPublicViewAllowed;
 
   /// Returns true if screen can be viewed without authentication.
   bool get isUnauthenticatedViewOnly => this == Screen.login;
+
+  /// Returns true if screen can be viewed by both authenticated and unauthenticated users.
+  bool get isPublicViewAllowed => this == Screen.settings;
 }
 
 extension ScreenFactory on Screen {

@@ -219,7 +219,7 @@ class _AmiAppState extends State<AmiApp> {
       CustomerIO.clearIdentify();
       _auth.clearUserState();
       final currentScreen = ScreenFactory.fromRouterLocation(_router.location);
-      if (currentScreen.isAuthenticatedViewOnly) {
+      if (!currentScreen.isPublicViewAllowed) {
         _router.go(Screen.login.location);
       }
     }
