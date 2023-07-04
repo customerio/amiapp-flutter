@@ -189,12 +189,15 @@ class _AmiAppState extends State<AmiApp> {
   Future<String?> _guard(GoRouterState state) async {
     final signedIn = _auth.signedIn ?? await _auth.updateState();
 
-    final target = state.path ?? state.location;
-    if (signedIn && target == Screen.login.location) {
-      return Future.value(Screen.dashboard.location);
-    } else if (!signedIn &&
-        target != Screen.login.location &&
-        target != Screen.settings.location) {
+    final targetLocation = state.path ?? state.location;
+    final target = ScreenFactory.fromRouterLocation(targetLocation);
+    if (signedIn) {
+      // Redirect only if signed in user is trying to access screen that
+      // is only viewable by unauthenticated users.
+      if (target.isUnauthenticatedViewOnly) {
+        return Future.value(Screen.dashboard.location);
+      }
+    } else if (target.isAuthenticatedViewOnly) {
       return Future.value(Screen.login.location);
     }
 
@@ -215,7 +218,10 @@ class _AmiAppState extends State<AmiApp> {
     if (_auth.signedIn == false) {
       CustomerIO.clearIdentify();
       _auth.clearUserState();
-      _router.go(Screen.login.location);
+      final currentScreen = ScreenFactory.fromRouterLocation(_router.location);
+      if (currentScreen.isAuthenticatedViewOnly) {
+        _router.go(Screen.login.location);
+      }
     }
   }
 
