@@ -62,7 +62,9 @@ class _AmiAppState extends State<AmiApp> {
           name: Screen.login.name,
           path: Screen.login.path,
           redirect: (context, state) async {
+            // Wait for auth state to be updated
             final signedIn = _auth.signedIn ?? await _auth.updateState();
+            // If user is already signed in, redirect to dashboard
             if (signedIn) {
               return Screen.dashboard.location;
             }
@@ -88,7 +90,10 @@ class _AmiAppState extends State<AmiApp> {
           name: Screen.dashboard.name,
           path: Screen.dashboard.path,
           redirect: (context, state) async {
+            // Wait for auth state to be updated
             final bool signedIn = _auth.signedIn ?? await _auth.updateState();
+            // If user is not signed in and public view is not allowed, redirect
+            // to login screen
             final isPublicViewAllowed =
                 state.location.toAppScreen()?.isPublicViewAllowed == true;
             if (!signedIn && !isPublicViewAllowed) {

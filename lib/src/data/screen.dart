@@ -1,4 +1,5 @@
 enum Screen {
+  // Used for screens that are not configured in GoRouter
   undefined(name: '', path: ''),
   login(name: 'Login', path: '/login'),
   // For GoRouter, initial path must be `/`
@@ -46,29 +47,29 @@ extension ScreenProperties on Screen {
   bool get isPublicViewAllowed => this == Screen.settings;
 }
 
-extension RouterProperties on String {
+extension RouterPathProperties on String {
   Screen? toAppScreen() => ScreenFactory.fromRouterLocation(this);
 }
 
 extension ScreenFactory on Screen {
   /// Creates a screen from router location.
-  /// Falls back to [fallback] screen if no screen is found.
-  /// Defaults to [Screen.dashboard] as fallback.
+  /// Falls back to [Screen.undefined] if no screen is found.
   static Screen? fromRouterLocation(String location) {
     Screen screen = Screen.values
+        // Exclude screen that are not configured our have children
         .where((screen) =>
             screen != Screen.dashboard && screen != Screen.undefined)
-        .firstWhere(
-            (screen) =>
-                location.startsWith(screen.location) &&
-                screen != Screen.dashboard,
+        .firstWhere((screen) => location.startsWith(screen.location),
             orElse: () => Screen.undefined);
 
+    // If screen is found, return it
     if (screen != Screen.undefined) {
       return screen;
+      // Else, check if location is dashboard, then return dashboard
     } else if (location.startsWith(Screen.dashboard.location)) {
       return Screen.dashboard;
     }
+    // Else, no screen found, return null
     return null;
   }
 }
