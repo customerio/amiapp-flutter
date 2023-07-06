@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../components/container.dart';
 import '../components/scroll_view.dart';
+import '../components/text_field_label.dart';
 import '../customer_io.dart';
 import '../data/screen.dart';
 import '../data/user.dart';
@@ -47,8 +48,11 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Open SDK Configurations',
+            icon: Semantics(
+              label: 'Settings',
+              child: const Icon(Icons.settings),
+            ),
+            tooltip: 'Open SDK Settings',
             onPressed: () {
               context.push(Screen.settings.location);
             },
@@ -84,7 +88,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         isDense: true,
-                        labelText: 'First Name',
+                        label: TextFieldLabel(
+                          text: 'First Name',
+                          semanticLabel: 'First Name Input',
+                        ),
                       ),
                       keyboardType: TextInputType.name,
                       textCapitalization: TextCapitalization.words,
@@ -97,7 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           isDense: true,
-                          labelText: 'Email',
+                          label: TextFieldLabel(
+                            text: 'Email',
+                            semanticLabel: 'Email Input',
+                          ),
                         ),
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.done,
@@ -126,6 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: Text(
                           'Login'.toUpperCase(),
+                          semanticsLabel: 'Login Button',
                         ),
                       ),
                     ),
@@ -145,6 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: const Text(
                           'Generate Random Login',
+                          semanticsLabel: 'Random Login Button',
                         ),
                       ),
                     ),
