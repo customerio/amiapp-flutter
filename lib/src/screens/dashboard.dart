@@ -101,7 +101,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Semantics(
+              label: 'Settings',
+              child: const Icon(Icons.settings),
+            ),
             tooltip: 'Open SDK Configurations',
             onPressed: () {
               context.push(Screen.settings.location);
