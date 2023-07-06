@@ -160,6 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           TextSettingsFormField(
                             labelText: 'Device Token',
+                            semanticsLabel: 'Device Token Input',
                             valueController: _deviceTokenValueController,
                             readOnly: true,
                             suffixIcon: IconButton(
@@ -177,6 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(height: 16),
                           TextSettingsFormField(
                             labelText: 'CIO Track URL',
+                            semanticsLabel: 'Track URL Input',
                             valueController: _trackingURLValueController,
                             validator: (value) => value?.isValidUrl() != false
                                 ? null
@@ -185,6 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(height: 32),
                           TextSettingsFormField(
                             labelText: 'Site Id',
+                            semanticsLabel: 'Site ID Input',
                             valueController: _siteIDValueController,
                             validator: (value) =>
                                 value?.trim().isNotEmpty == true
@@ -194,6 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(height: 16),
                           TextSettingsFormField(
                             labelText: 'API Key',
+                            semanticsLabel: 'API Key Input',
                             valueController: _apiKeyValueController,
                             validator: (value) =>
                                 value?.trim().isNotEmpty == true
@@ -203,6 +207,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(height: 32),
                           TextSettingsFormField(
                             labelText: 'backgroundQueueSecondsDelay',
+                            semanticsLabel: 'BQ Seconds Delay Input',
                             valueController: _bqSecondsDelayValueController,
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
@@ -225,6 +230,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(height: 16),
                           TextSettingsFormField(
                             labelText: 'backgroundQueueMinNumberOfTasks',
+                            semanticsLabel: 'BQ Min Number of Tasks Input',
                             valueController: _bqMinNumberOfTasksValueController,
                             keyboardType: TextInputType.number,
                             validator: (value) {
@@ -249,18 +255,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SwitchSettingsFormField(
                             labelText: 'Track Screens',
+                            semanticsLabel: 'Track Screens Toggle',
                             value: _featureTrackScreens,
                             updateState: ((value) =>
                                 setState(() => _featureTrackScreens = value)),
                           ),
                           SwitchSettingsFormField(
                             labelText: 'Track Device Attributes',
+                            semanticsLabel: 'Track Device Attributes Toggle',
                             value: _featureTrackDeviceAttributes,
                             updateState: ((value) => setState(
                                 () => _featureTrackDeviceAttributes = value)),
                           ),
                           SwitchSettingsFormField(
                             labelText: 'Debug Mode',
+                            semanticsLabel: 'Debug Mode Toggle',
                             value: _featureDebugMode,
                             updateState: ((value) =>
                                 setState(() => _featureDebugMode = value)),
@@ -281,6 +290,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: () => _saveSettings(),
                 child: Text(
                   'Save'.toUpperCase(),
+                  semanticsLabel: 'Save Settings Button',
                 ),
               ),
             ),
@@ -291,6 +301,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: () => _restoreDefaultSettings(),
               child: const Text(
                 'Restore Defaults',
+                semanticsLabel: 'Restore Default Settings Button',
               ),
             ),
             const SizedBox(height: 8),
