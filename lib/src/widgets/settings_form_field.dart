@@ -1,5 +1,6 @@
-import 'package:amiapp_flutter/src/components/text_field_label.dart';
 import 'package:flutter/material.dart';
+
+import '../components/text_field_label.dart';
 
 class TextSettingsFormField extends StatelessWidget {
   const TextSettingsFormField({

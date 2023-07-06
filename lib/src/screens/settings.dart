@@ -1,4 +1,3 @@
-import 'package:amiapp_flutter/src/data/screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +6,7 @@ import '../auth.dart';
 import '../components/container.dart';
 import '../customer_io.dart';
 import '../data/config.dart';
+import '../data/screen.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
 import '../widgets/app_footer.dart';
