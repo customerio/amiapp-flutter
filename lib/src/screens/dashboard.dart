@@ -234,6 +234,7 @@ class _ActionList extends StatelessWidget {
                     },
                     child: Text(
                       item.buildText(),
+                      semanticsLabel: item.semanticsLabel(),
                     ),
                   ),
                 ))
@@ -268,6 +269,23 @@ extension _ActionNames on _ActionItem {
         return 'Show Push Prompt';
       case _ActionItem.signOut:
         return 'Log Out';
+    }
+  }
+
+  String semanticsLabel() {
+    switch (this) {
+      case _ActionItem.randomEvent:
+        return 'Random Event Button';
+      case _ActionItem.customEvent:
+        return 'Custom Event Button';
+      case _ActionItem.deviceAttributes:
+        return 'Device Attribute Button';
+      case _ActionItem.profileAttributes:
+        return 'Profile Attribute Button';
+      case _ActionItem.showPushPrompt:
+        return 'Show Push Prompt Button';
+      case _ActionItem.signOut:
+        return 'Log Out Button';
     }
   }
 
