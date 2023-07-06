@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 /// If semantic label is not provided, it will use the text as semantic label
 class TextFieldLabel extends StatelessWidget {
   final String text;
-  final String? semanticLabel;
+  final String? semanticsLabel;
 
   const TextFieldLabel({
     super.key,
     required this.text,
-    this.semanticLabel,
+    this.semanticsLabel,
   });
 
   @override
@@ -19,7 +19,7 @@ class TextFieldLabel extends StatelessWidget {
             WidgetSpan(
               child: Text(
                 text,
-                semanticsLabel: semanticLabel ?? text,
+                semanticsLabel: semanticsLabel ?? text,
               ),
             ),
           ],

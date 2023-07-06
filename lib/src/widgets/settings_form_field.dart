@@ -58,7 +58,7 @@ class TextSettingsFormField extends StatelessWidget {
                 border: const OutlineInputBorder(),
                 label: TextFieldLabel(
                   text: labelText,
-                  semanticLabel: semanticsLabel,
+                  semanticsLabel: semanticsLabel,
                 ),
                 hintText: hintText,
                 isDense: true,

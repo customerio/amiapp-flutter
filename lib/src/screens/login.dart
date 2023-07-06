@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         isDense: true,
                         label: TextFieldLabel(
                           text: 'First Name',
-                          semanticLabel: 'First Name Input',
+                          semanticsLabel: 'First Name Input',
                         ),
                       ),
                       keyboardType: TextInputType.name,
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           isDense: true,
                           label: TextFieldLabel(
                             text: 'Email',
-                            semanticLabel: 'Email Input',
+                            semanticsLabel: 'Email Input',
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
