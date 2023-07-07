@@ -97,67 +97,59 @@ class _LoginScreenState extends State<LoginScreen> {
                       textCapitalization: TextCapitalization.words,
                       textInputAction: TextInputAction.next,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TextFormField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          label: TextFieldLabel(
-                            text: 'Email',
-                            semanticsLabel: 'Email Input',
-                          ),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.done,
-                        validator: (value) =>
-                            EmailValidator.validate(value ?? '')
-                                ? null
-                                : 'Please enter valid email',
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 48.0),
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                          minimumSize: sizes.buttonDefault(),
-                        ),
-                        onPressed: () async {
-                          _autoValidateMode =
-                              AutovalidateMode.onUserInteraction;
-                          if (_formKey.currentState!.validate()) {
-                            widget.onLogin(User(
-                              displayName: _fullNameController.value.text,
-                              email: _emailController.value.text,
-                              isGuest: false,
-                            ));
-                          }
-                        },
-                        child: Text(
-                          'Login'.toUpperCase(),
-                          semanticsLabel: 'Login Button',
+                    const SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        label: TextFieldLabel(
+                          text: 'Email',
+                          semanticsLabel: 'Email Input',
                         ),
                       ),
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
+                      validator: (value) => EmailValidator.validate(value ?? '')
+                          ? null
+                          : 'Please enter valid email',
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TextButton(
-                        style: FilledButton.styleFrom(
-                          minimumSize: sizes.buttonDefault(),
-                        ),
-                        onPressed: () async {
-                          final randomValues = RandomValues();
+                    const SizedBox(height: 48.0),
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        minimumSize: sizes.buttonDefault(),
+                      ),
+                      onPressed: () async {
+                        _autoValidateMode = AutovalidateMode.onUserInteraction;
+                        if (_formKey.currentState!.validate()) {
                           widget.onLogin(User(
-                            displayName: '',
-                            email: randomValues.getEmail(),
-                            isGuest: true,
+                            displayName: _fullNameController.value.text,
+                            email: _emailController.value.text,
+                            isGuest: false,
                           ));
-                        },
-                        child: const Text(
-                          'Generate Random Login',
-                          semanticsLabel: 'Random Login Button',
-                        ),
+                        }
+                      },
+                      child: Text(
+                        'Login'.toUpperCase(),
+                        semanticsLabel: 'Login Button',
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextButton(
+                      style: FilledButton.styleFrom(
+                        minimumSize: sizes.buttonDefault(),
+                      ),
+                      onPressed: () async {
+                        final randomValues = RandomValues();
+                        widget.onLogin(User(
+                          displayName: '',
+                          email: randomValues.getEmail(),
+                          isGuest: true,
+                        ));
+                      },
+                      child: const Text(
+                        'Generate Random Login',
+                        semanticsLabel: 'Random Login Button',
                       ),
                     ),
                   ],
