@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../components/container.dart';
 import '../components/scroll_view.dart';
+import '../components/text_field_label.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
 
@@ -57,6 +58,17 @@ class AttributesScreen extends StatefulWidget {
     }
   }
 
+  String get sendAttributeButtonSemanticsLabel {
+    switch (_attributeType) {
+      case _attributeTypeDevice:
+        return 'Set Device Attribute Button';
+      case _attributeTypeProfile:
+        return 'Set Profile Attribute Button';
+      default:
+        throw ArgumentError('Invalid attribute type specified');
+    }
+  }
+
   @override
   State<AttributesScreen> createState() => _AttributesScreenState();
 }
@@ -106,7 +118,10 @@ class _AttributesScreenState extends State<AttributesScreen> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     isDense: true,
-                    labelText: 'Attribute Name',
+                    label: TextFieldLabel(
+                      text: 'Attribute Name',
+                      semanticsLabel: 'Attribute Name Input',
+                    ),
                   ),
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
@@ -118,7 +133,10 @@ class _AttributesScreenState extends State<AttributesScreen> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     isDense: true,
-                    labelText: 'Attribute Value',
+                    label: TextFieldLabel(
+                      text: 'Attribute Value',
+                      semanticsLabel: 'Attribute Value Input',
+                    ),
                   ),
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
@@ -150,6 +168,7 @@ class _AttributesScreenState extends State<AttributesScreen> {
                   },
                   child: Text(
                     widget.sendAttributeButtonText,
+                    semanticsLabel: widget.sendAttributeButtonSemanticsLabel,
                   ),
                 ),
                 const Spacer(),

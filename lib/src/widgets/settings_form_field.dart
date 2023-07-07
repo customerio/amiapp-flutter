@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../components/text_field_label.dart';
+
 class TextSettingsFormField extends StatelessWidget {
   const TextSettingsFormField({
     super.key,
     required this.labelText,
+    required this.semanticsLabel,
     required this.valueController,
     this.hintText,
     this.readOnly = false,
@@ -15,6 +18,7 @@ class TextSettingsFormField extends StatelessWidget {
   });
 
   final String labelText;
+  final String semanticsLabel;
   final String? hintText;
   final bool readOnly;
   final TextInputType keyboardType;
@@ -53,7 +57,10 @@ class TextSettingsFormField extends StatelessWidget {
               readOnly: readOnly,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                labelText: labelText,
+                label: TextFieldLabel(
+                  text: labelText,
+                  semanticsLabel: semanticsLabel,
+                ),
                 hintText: hintText,
                 isDense: true,
                 floatingLabelBehavior: floatingLabelBehavior,
@@ -74,12 +81,14 @@ class SwitchSettingsFormField extends StatelessWidget {
   const SwitchSettingsFormField({
     super.key,
     required this.labelText,
+    required this.semanticsLabel,
     required this.value,
     required this.updateState,
     this.enabled = true,
   });
 
   final String labelText;
+  final String semanticsLabel;
   final bool value;
   final void Function(bool) updateState;
   final bool enabled;
@@ -97,9 +106,12 @@ class SwitchSettingsFormField extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
-          Switch(
-            value: value,
-            onChanged: (bool value) => updateState(value),
+          Semantics(
+            label: semanticsLabel,
+            child: Switch(
+              value: value,
+              onChanged: (bool value) => updateState(value),
+            ),
           ),
         ],
       ),

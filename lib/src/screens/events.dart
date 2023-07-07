@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../components/container.dart';
 import '../components/scroll_view.dart';
+import '../components/text_field_label.dart';
 import '../theme/sizes.dart';
 import '../utils/extensions.dart';
 
@@ -58,7 +59,10 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     isDense: true,
-                    labelText: 'Event Name',
+                    label: TextFieldLabel(
+                      text: 'Event Name',
+                      semanticsLabel: 'Event Name Input',
+                    ),
                   ),
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
@@ -70,7 +74,10 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     isDense: true,
-                    labelText: 'Property Name',
+                    label: TextFieldLabel(
+                      text: 'Property Name',
+                      semanticsLabel: 'Property Name Input',
+                    ),
                   ),
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
@@ -82,7 +89,10 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     isDense: true,
-                    labelText: 'Property Value',
+                    label: TextFieldLabel(
+                      text: 'Property Value',
+                      semanticsLabel: 'Property Value Input',
+                    ),
                   ),
                   keyboardType: TextInputType.text,
                   textCapitalization: TextCapitalization.none,
@@ -108,6 +118,7 @@ class _CustomEventScreenState extends State<CustomEventScreen> {
                   },
                   child: const Text(
                     'Send Event',
+                    semanticsLabel: 'Send Event Button',
                   ),
                 ),
                 const Spacer(),

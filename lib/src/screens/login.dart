@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../components/container.dart';
 import '../components/scroll_view.dart';
+import '../components/text_field_label.dart';
 import '../customer_io.dart';
 import '../data/screen.dart';
 import '../data/user.dart';
@@ -47,8 +48,11 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Open SDK Configurations',
+            icon: Semantics(
+              label: 'Settings',
+              child: const Icon(Icons.settings),
+            ),
+            tooltip: 'Open SDK Settings',
             onPressed: () {
               context.push(Screen.settings.location);
             },
@@ -84,68 +88,68 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         isDense: true,
-                        labelText: 'First Name',
+                        label: TextFieldLabel(
+                          text: 'First Name',
+                          semanticsLabel: 'First Name Input',
+                        ),
                       ),
                       keyboardType: TextInputType.name,
                       textCapitalization: TextCapitalization.words,
                       textInputAction: TextInputAction.next,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TextFormField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          labelText: 'Email',
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.done,
-                        validator: (value) =>
-                            EmailValidator.validate(value ?? '')
-                                ? null
-                                : 'Please enter valid email',
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 48.0),
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                          minimumSize: sizes.buttonDefault(),
-                        ),
-                        onPressed: () async {
-                          _autoValidateMode =
-                              AutovalidateMode.onUserInteraction;
-                          if (_formKey.currentState!.validate()) {
-                            widget.onLogin(User(
-                              displayName: _fullNameController.value.text,
-                              email: _emailController.value.text,
-                              isGuest: false,
-                            ));
-                          }
-                        },
-                        child: Text(
-                          'Login'.toUpperCase(),
+                    const SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        label: TextFieldLabel(
+                          text: 'Email',
+                          semanticsLabel: 'Email Input',
                         ),
                       ),
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
+                      validator: (value) => EmailValidator.validate(value ?? '')
+                          ? null
+                          : 'Please enter valid email',
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TextButton(
-                        style: FilledButton.styleFrom(
-                          minimumSize: sizes.buttonDefault(),
-                        ),
-                        onPressed: () async {
-                          final randomValues = RandomValues();
+                    const SizedBox(height: 48.0),
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        minimumSize: sizes.buttonDefault(),
+                      ),
+                      onPressed: () async {
+                        _autoValidateMode = AutovalidateMode.onUserInteraction;
+                        if (_formKey.currentState!.validate()) {
                           widget.onLogin(User(
-                            displayName: '',
-                            email: randomValues.getEmail(),
-                            isGuest: true,
+                            displayName: _fullNameController.value.text,
+                            email: _emailController.value.text,
+                            isGuest: false,
                           ));
-                        },
-                        child: const Text(
-                          'Generate Random Login',
-                        ),
+                        }
+                      },
+                      child: Text(
+                        'Login'.toUpperCase(),
+                        semanticsLabel: 'Login Button',
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextButton(
+                      style: FilledButton.styleFrom(
+                        minimumSize: sizes.buttonDefault(),
+                      ),
+                      onPressed: () async {
+                        final randomValues = RandomValues();
+                        widget.onLogin(User(
+                          displayName: '',
+                          email: randomValues.getEmail(),
+                          isGuest: true,
+                        ));
+                      },
+                      child: const Text(
+                        'Generate Random Login',
+                        semanticsLabel: 'Random Login Button',
                       ),
                     ),
                   ],

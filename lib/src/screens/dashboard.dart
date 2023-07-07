@@ -101,7 +101,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Semantics(
+              label: 'Settings',
+              child: const Icon(Icons.settings),
+            ),
             tooltip: 'Open SDK Configurations',
             onPressed: () {
               context.push(Screen.settings.location);
@@ -117,6 +120,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Center(
               child: Text(
                 _email ?? '',
+                semanticsLabel: 'Email ID Text',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
@@ -234,6 +238,7 @@ class _ActionList extends StatelessWidget {
                     },
                     child: Text(
                       item.buildText(),
+                      semanticsLabel: item.semanticsLabel(),
                     ),
                   ),
                 ))
@@ -268,6 +273,23 @@ extension _ActionNames on _ActionItem {
         return 'Show Push Prompt';
       case _ActionItem.signOut:
         return 'Log Out';
+    }
+  }
+
+  String semanticsLabel() {
+    switch (this) {
+      case _ActionItem.randomEvent:
+        return 'Random Event Button';
+      case _ActionItem.customEvent:
+        return 'Custom Event Button';
+      case _ActionItem.deviceAttributes:
+        return 'Device Attribute Button';
+      case _ActionItem.profileAttributes:
+        return 'Profile Attribute Button';
+      case _ActionItem.showPushPrompt:
+        return 'Show Push Prompt Button';
+      case _ActionItem.signOut:
+        return 'Log Out Button';
     }
   }
 
