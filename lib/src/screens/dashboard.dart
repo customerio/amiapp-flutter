@@ -120,6 +120,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Center(
               child: Text(
                 _email ?? '',
+                semanticsLabel: 'Email ID Text',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
