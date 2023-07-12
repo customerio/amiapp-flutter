@@ -59,8 +59,8 @@ class CustomerIOSDK extends ChangeNotifier {
           apiKey: _sdkConfig?.apiKey ?? '',
           enableInApp: true,
           region: Region.us,
-          trackingApiUrl: _sdkConfig?.trackingUrl ?? '',
           //config options go here
+          trackingApiUrl: _sdkConfig?.trackingUrl ?? '',
           autoTrackDeviceAttributes:
               _sdkConfig?.deviceAttributesTrackingEnabled ?? true,
           autoTrackPushEvents: true,
