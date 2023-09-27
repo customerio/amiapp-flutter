@@ -118,3 +118,55 @@ class SwitchSettingsFormField extends StatelessWidget {
     );
   }
 }
+
+class DropdownSettingsFormField<T> extends StatelessWidget {
+  const DropdownSettingsFormField({
+    super.key,
+    required this.labelText,
+    required this.semanticsLabel,
+    required this.value,
+    required this.options,
+    required this.getLabel,
+    required this.onOptionSelected,
+    this.enabled = true,
+  });
+
+  final String labelText;
+  final String semanticsLabel;
+  final T value;
+  final List<T> options;
+  final String Function(T) getLabel;
+  final void Function(T) onOptionSelected;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return UnmanagedRestorationScope(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Text(
+              labelText,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          Semantics(
+            label: semanticsLabel,
+            child: DropdownButton<T>(
+              value: value,
+              items: options.map((T value) {
+                return DropdownMenuItem<T>(
+                  value: value,
+                  child: Text(getLabel(value)),
+                );
+              }).toList(),
+              onChanged: (item) => onOptionSelected(item as T),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

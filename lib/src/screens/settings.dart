@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:customer_io/customer_io_enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -41,6 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController _bqSecondsDelayValueController;
   late final TextEditingController _bqMinNumberOfTasksValueController;
 
+  late AndroidPushClickBehavior _pushClickBehaviorAndroid;
   late bool _featureTrackScreens;
   late bool _featureTrackDeviceAttributes;
   late bool _featureDebugMode;
@@ -62,6 +66,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         text: cioConfig?.backgroundQueueSecondsDelay?.toTrimmedString());
     _bqMinNumberOfTasksValueController = TextEditingController(
         text: cioConfig?.backgroundQueueMinNumOfTasks?.toString());
+    _pushClickBehaviorAndroid = cioConfig?.androidPushClickBehavior ??
+        AndroidPushClickBehavior.activityPreventRestart;
     _featureTrackScreens = cioConfig?.screenTrackingEnabled ?? true;
     _featureTrackDeviceAttributes =
         cioConfig?.deviceAttributesTrackingEnabled ?? true;
@@ -83,6 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _bqSecondsDelayValueController.text.trim().toDoubleOrNull(),
       backgroundQueueMinNumOfTasks:
           _bqMinNumberOfTasksValueController.text.trim().toIntOrNull(),
+      androidPushClickBehavior: _pushClickBehaviorAndroid,
       screenTrackingEnabled: _featureTrackScreens,
       deviceAttributesTrackingEnabled: _featureTrackDeviceAttributes,
       debugModeEnabled: _featureDebugMode,
@@ -114,6 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           defaultConfig.backgroundQueueSecondsDelay?.toTrimmedString() ?? '';
       _bqMinNumberOfTasksValueController.text =
           defaultConfig.backgroundQueueMinNumOfTasks?.toString() ?? '';
+      _pushClickBehaviorAndroid = defaultConfig.androidPushClickBehavior;
       _featureTrackScreens = defaultConfig.screenTrackingEnabled;
       _featureTrackDeviceAttributes =
           defaultConfig.deviceAttributesTrackingEnabled;
@@ -249,6 +257,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               return null;
                             },
                           ),
+                          const SizedBox(height: 16),
+                          Platform.isAndroid
+                              ? DropdownSettingsFormField<
+                                  AndroidPushClickBehavior>(
+                                  labelText: 'Push Click Behavior',
+                                  semanticsLabel: 'Push Click Behavior',
+                                  value: _pushClickBehaviorAndroid,
+                                  options: AndroidPushClickBehavior.values,
+                                  getLabel: (item) => item.rawValue,
+                                  onOptionSelected: ((value) => setState(
+                                      () => _pushClickBehaviorAndroid = value)),
+                                )
+                              : const SizedBox.shrink(),
                           const SizedBox(height: 32),
                           const TextSectionHeader(
                             text: 'Features',

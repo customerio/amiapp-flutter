@@ -1,3 +1,4 @@
+import 'package:customer_io/customer_io_enums.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -7,6 +8,7 @@ class CustomerIOSDKConfig {
   String? trackingUrl;
   double? backgroundQueueSecondsDelay;
   int? backgroundQueueMinNumOfTasks;
+  AndroidPushClickBehavior androidPushClickBehavior;
   bool screenTrackingEnabled;
   bool deviceAttributesTrackingEnabled;
   bool debugModeEnabled;
@@ -17,6 +19,8 @@ class CustomerIOSDKConfig {
     this.trackingUrl = "https://track-sdk.customer.io/",
     this.backgroundQueueSecondsDelay = 30.0,
     this.backgroundQueueMinNumOfTasks = 10,
+    this.androidPushClickBehavior =
+        AndroidPushClickBehavior.activityPreventRestart,
     this.screenTrackingEnabled = true,
     this.deviceAttributesTrackingEnabled = true,
     this.debugModeEnabled = true,
@@ -36,6 +40,17 @@ class CustomerIOSDKConfig {
       throw ArgumentError('apiKey cannot be null');
     }
 
+    AndroidPushClickBehavior? pushBehavior;
+    try {
+      final pushBehaviorValue =
+          prefs.getString(_PreferencesKey.androidPushClickBehavior);
+      if (pushBehaviorValue != null && pushBehaviorValue.isNotEmpty) {
+        pushBehavior = AndroidPushClickBehavior.fromValue(pushBehaviorValue);
+      }
+    } catch (_) {
+      // Empty catch block
+    }
+
     return CustomerIOSDKConfig(
       siteId: siteId,
       apiKey: apiKey,
@@ -44,6 +59,8 @@ class CustomerIOSDKConfig {
           prefs.getDouble(_PreferencesKey.backgroundQueueSecondsDelay),
       backgroundQueueMinNumOfTasks:
           prefs.getInt(_PreferencesKey.backgroundQueueMinNumOfTasks),
+      androidPushClickBehavior:
+          pushBehavior ?? AndroidPushClickBehavior.activityPreventRestart,
       screenTrackingEnabled:
           prefs.getBool(_PreferencesKey.screenTrackingEnabled) != false,
       deviceAttributesTrackingEnabled:
@@ -90,6 +107,9 @@ extension ConfigurationPreferencesExtensions on SharedPreferences {
         await setOrRemoveInt(_PreferencesKey.backgroundQueueMinNumOfTasks,
             config.backgroundQueueMinNumOfTasks);
     result = result &&
+        await setOrRemoveString(_PreferencesKey.androidPushClickBehavior,
+            config.androidPushClickBehavior.rawValue);
+    result = result &&
         await setOrRemoveBool(_PreferencesKey.screenTrackingEnabled,
             config.screenTrackingEnabled);
     result = result &&
@@ -109,6 +129,7 @@ class _PreferencesKey {
   static const backgroundQueueSecondsDelay = 'BACKGROUND_QUEUE_SECONDS_DELAY';
   static const backgroundQueueMinNumOfTasks =
       'BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS';
+  static const androidPushClickBehavior = 'ANDROID_PUSH_CLICK_BEHAVIOR';
   static const screenTrackingEnabled = 'TRACK_SCREENS';
   static const deviceAttributesTrackingEnabled = 'TRACK_DEVICE_ATTRIBUTES';
   static const debugModeEnabled = 'DEBUG_MODE';
