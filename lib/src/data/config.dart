@@ -8,7 +8,7 @@ class CustomerIOSDKConfig {
   String? trackingUrl;
   double? backgroundQueueSecondsDelay;
   int? backgroundQueueMinNumOfTasks;
-  PushClickBehaviorAndroid androidPushClickBehavior;
+  PushClickBehaviorAndroid pushClickBehaviorAndroid;
   bool screenTrackingEnabled;
   bool deviceAttributesTrackingEnabled;
   bool debugModeEnabled;
@@ -19,7 +19,7 @@ class CustomerIOSDKConfig {
     this.trackingUrl = "https://track-sdk.customer.io/",
     this.backgroundQueueSecondsDelay = 30.0,
     this.backgroundQueueMinNumOfTasks = 10,
-    this.androidPushClickBehavior =
+    this.pushClickBehaviorAndroid =
         PushClickBehaviorAndroid.activityPreventRestart,
     this.screenTrackingEnabled = true,
     this.deviceAttributesTrackingEnabled = true,
@@ -59,7 +59,7 @@ class CustomerIOSDKConfig {
           prefs.getDouble(_PreferencesKey.backgroundQueueSecondsDelay),
       backgroundQueueMinNumOfTasks:
           prefs.getInt(_PreferencesKey.backgroundQueueMinNumOfTasks),
-      androidPushClickBehavior:
+      pushClickBehaviorAndroid:
           pushBehavior ?? PushClickBehaviorAndroid.activityPreventRestart,
       screenTrackingEnabled:
           prefs.getBool(_PreferencesKey.screenTrackingEnabled) != false,
@@ -108,7 +108,7 @@ extension ConfigurationPreferencesExtensions on SharedPreferences {
             config.backgroundQueueMinNumOfTasks);
     result = result &&
         await setOrRemoveString(_PreferencesKey.androidPushClickBehavior,
-            config.androidPushClickBehavior.rawValue);
+            config.pushClickBehaviorAndroid.rawValue);
     result = result &&
         await setOrRemoveBool(_PreferencesKey.screenTrackingEnabled,
             config.screenTrackingEnabled);

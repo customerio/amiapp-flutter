@@ -66,7 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         text: cioConfig?.backgroundQueueSecondsDelay?.toTrimmedString());
     _bqMinNumberOfTasksValueController = TextEditingController(
         text: cioConfig?.backgroundQueueMinNumOfTasks?.toString());
-    _pushClickBehaviorAndroid = cioConfig?.androidPushClickBehavior ??
+    _pushClickBehaviorAndroid = cioConfig?.pushClickBehaviorAndroid ??
         PushClickBehaviorAndroid.activityPreventRestart;
     _featureTrackScreens = cioConfig?.screenTrackingEnabled ?? true;
     _featureTrackDeviceAttributes =
@@ -89,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _bqSecondsDelayValueController.text.trim().toDoubleOrNull(),
       backgroundQueueMinNumOfTasks:
           _bqMinNumberOfTasksValueController.text.trim().toIntOrNull(),
-      androidPushClickBehavior: _pushClickBehaviorAndroid,
+      pushClickBehaviorAndroid: _pushClickBehaviorAndroid,
       screenTrackingEnabled: _featureTrackScreens,
       deviceAttributesTrackingEnabled: _featureTrackDeviceAttributes,
       debugModeEnabled: _featureDebugMode,
@@ -121,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           defaultConfig.backgroundQueueSecondsDelay?.toTrimmedString() ?? '';
       _bqMinNumberOfTasksValueController.text =
           defaultConfig.backgroundQueueMinNumOfTasks?.toString() ?? '';
-      _pushClickBehaviorAndroid = defaultConfig.androidPushClickBehavior;
+      _pushClickBehaviorAndroid = defaultConfig.pushClickBehaviorAndroid;
       _featureTrackScreens = defaultConfig.screenTrackingEnabled;
       _featureTrackDeviceAttributes =
           defaultConfig.deviceAttributesTrackingEnabled;
