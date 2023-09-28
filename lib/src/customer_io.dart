@@ -69,7 +69,7 @@ class CustomerIOSDK extends ChangeNotifier {
           backgroundQueueSecondsDelay:
               _sdkConfig?.backgroundQueueSecondsDelay ?? 30.0,
           pushClickBehaviorAndroid: _sdkConfig?.pushClickBehaviorAndroid ??
-              PushClickBehaviorAndroid.activityPreventRestart,
+              ConfigConstants.androidPushClickBehavior,
           logLevel: logLevel,
         ),
       );

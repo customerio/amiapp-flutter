@@ -67,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _bqMinNumberOfTasksValueController = TextEditingController(
         text: cioConfig?.backgroundQueueMinNumOfTasks?.toString());
     _pushClickBehaviorAndroid = cioConfig?.pushClickBehaviorAndroid ??
-        PushClickBehaviorAndroid.activityPreventRestart;
+        ConfigConstants.androidPushClickBehavior;
     _featureTrackScreens = cioConfig?.screenTrackingEnabled ?? true;
     _featureTrackDeviceAttributes =
         cioConfig?.deviceAttributesTrackingEnabled ?? true;

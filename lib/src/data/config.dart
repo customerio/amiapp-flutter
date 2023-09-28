@@ -19,8 +19,7 @@ class CustomerIOSDKConfig {
     this.trackingUrl = "https://track-sdk.customer.io/",
     this.backgroundQueueSecondsDelay = 30.0,
     this.backgroundQueueMinNumOfTasks = 10,
-    this.pushClickBehaviorAndroid =
-        PushClickBehaviorAndroid.activityPreventRestart,
+    this.pushClickBehaviorAndroid = ConfigConstants.androidPushClickBehavior,
     this.screenTrackingEnabled = true,
     this.deviceAttributesTrackingEnabled = true,
     this.debugModeEnabled = true,
@@ -60,7 +59,7 @@ class CustomerIOSDKConfig {
       backgroundQueueMinNumOfTasks:
           prefs.getInt(_PreferencesKey.backgroundQueueMinNumOfTasks),
       pushClickBehaviorAndroid:
-          pushBehavior ?? PushClickBehaviorAndroid.activityPreventRestart,
+          pushBehavior ?? ConfigConstants.androidPushClickBehavior,
       screenTrackingEnabled:
           prefs.getBool(_PreferencesKey.screenTrackingEnabled) != false,
       deviceAttributesTrackingEnabled:
@@ -133,4 +132,9 @@ class _PreferencesKey {
   static const screenTrackingEnabled = 'TRACK_SCREENS';
   static const deviceAttributesTrackingEnabled = 'TRACK_DEVICE_ATTRIBUTES';
   static const debugModeEnabled = 'DEBUG_MODE';
+}
+
+class ConfigConstants {
+  static const androidPushClickBehavior =
+      PushClickBehaviorAndroid.activityPreventRestart;
 }
