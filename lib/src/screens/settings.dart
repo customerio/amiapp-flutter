@@ -44,7 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController _bqSecondsDelayValueController;
   late final TextEditingController _bqMinNumberOfTasksValueController;
 
-  late AndroidPushClickBehavior _pushClickBehaviorAndroid;
+  late PushClickBehaviorAndroid _pushClickBehaviorAndroid;
   late bool _featureTrackScreens;
   late bool _featureTrackDeviceAttributes;
   late bool _featureDebugMode;
@@ -67,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _bqMinNumberOfTasksValueController = TextEditingController(
         text: cioConfig?.backgroundQueueMinNumOfTasks?.toString());
     _pushClickBehaviorAndroid = cioConfig?.androidPushClickBehavior ??
-        AndroidPushClickBehavior.activityPreventRestart;
+        PushClickBehaviorAndroid.activityPreventRestart;
     _featureTrackScreens = cioConfig?.screenTrackingEnabled ?? true;
     _featureTrackDeviceAttributes =
         cioConfig?.deviceAttributesTrackingEnabled ?? true;
@@ -260,11 +260,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(height: 16),
                           Platform.isAndroid
                               ? DropdownSettingsFormField<
-                                  AndroidPushClickBehavior>(
+                                  PushClickBehaviorAndroid>(
                                   labelText: 'Push Click Behavior',
                                   semanticsLabel: 'Push Click Behavior',
                                   value: _pushClickBehaviorAndroid,
-                                  options: AndroidPushClickBehavior.values,
+                                  options: PushClickBehaviorAndroid.values,
                                   getLabel: (item) => item.rawValue,
                                   onOptionSelected: ((value) => setState(
                                       () => _pushClickBehaviorAndroid = value)),

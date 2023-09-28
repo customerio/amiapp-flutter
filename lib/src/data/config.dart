@@ -8,7 +8,7 @@ class CustomerIOSDKConfig {
   String? trackingUrl;
   double? backgroundQueueSecondsDelay;
   int? backgroundQueueMinNumOfTasks;
-  AndroidPushClickBehavior androidPushClickBehavior;
+  PushClickBehaviorAndroid androidPushClickBehavior;
   bool screenTrackingEnabled;
   bool deviceAttributesTrackingEnabled;
   bool debugModeEnabled;
@@ -20,7 +20,7 @@ class CustomerIOSDKConfig {
     this.backgroundQueueSecondsDelay = 30.0,
     this.backgroundQueueMinNumOfTasks = 10,
     this.androidPushClickBehavior =
-        AndroidPushClickBehavior.activityPreventRestart,
+        PushClickBehaviorAndroid.activityPreventRestart,
     this.screenTrackingEnabled = true,
     this.deviceAttributesTrackingEnabled = true,
     this.debugModeEnabled = true,
@@ -40,12 +40,12 @@ class CustomerIOSDKConfig {
       throw ArgumentError('apiKey cannot be null');
     }
 
-    AndroidPushClickBehavior? pushBehavior;
+    PushClickBehaviorAndroid? pushBehavior;
     try {
       final pushBehaviorValue =
           prefs.getString(_PreferencesKey.androidPushClickBehavior);
       if (pushBehaviorValue != null && pushBehaviorValue.isNotEmpty) {
-        pushBehavior = AndroidPushClickBehavior.fromValue(pushBehaviorValue);
+        pushBehavior = PushClickBehaviorAndroid.fromValue(pushBehaviorValue);
       }
     } catch (_) {
       // Empty catch block
@@ -60,7 +60,7 @@ class CustomerIOSDKConfig {
       backgroundQueueMinNumOfTasks:
           prefs.getInt(_PreferencesKey.backgroundQueueMinNumOfTasks),
       androidPushClickBehavior:
-          pushBehavior ?? AndroidPushClickBehavior.activityPreventRestart,
+          pushBehavior ?? PushClickBehaviorAndroid.activityPreventRestart,
       screenTrackingEnabled:
           prefs.getBool(_PreferencesKey.screenTrackingEnabled) != false,
       deviceAttributesTrackingEnabled:
