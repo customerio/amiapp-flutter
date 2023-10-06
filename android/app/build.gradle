@@ -48,8 +48,8 @@ android {
         applicationId "io.customer.amiapp_flutter"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 72201
-        versionName "push-click-behavior-01"
+        versionCode 72202
+        versionName "push-click-behavior-02"
     }
 
     signingConfigs {
