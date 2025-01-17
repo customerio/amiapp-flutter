@@ -1,3 +1,5 @@
+**Notice: This repository is deprecated and is no longer being maintained. We continue to maintain the sample app/s [in the Flutter SDK repository](https://github.com/customerio/customerio-flutter/tree/main/apps/amiapp_flutter). We would love for you to check out all our latest work! (We do plan to delete this repository on 5/4/2025 to reduce confusion between current and archived samples)**
+
 # Flutter Sample App (FCM)
 
 Runner app in Flutter
